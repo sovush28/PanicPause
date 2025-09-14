@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name" translatable="false">SafeSpace</string>
+
+    <string name="welcome">Добро пожаловать в</string>
+
+    <string name="log_in_page">Вход</string>
+    <string name="email">Электронная почта</string>
+    <string name="password">Пароль</string>
+    <string name="forgot_passw"><![CDATA[<u>Забыли пароль?</u>]]></string>
+    <string name="log_in">Войти</string>
+    <string name="frst_time_here">Впервые в SafeSpace?</string>
+    <string name="create_acc"><![CDATA[<u>Создать учётную запись</u>]]></string>
+
+    <string name="sign_in_page">Регистрация</string>
+    <string name="create_passw">Придумайте пароль</string>
+    <string name="code_from_mail">Код из письма</string>
+    <string name="get_code">Получить код</string>
+    <string name="has_signed_in">Уже есть учётная запись?</string>
+
+    <string name="passw_reset_page">Восстановление пароля</string>
+    <string name="create_new_passw">Придумайте новый пароль</string>
+    <string name="reset_passw">Сбросить пароль</string>
+    <string name="cancel">Отмена</string>
+
+    <string name="code_sent">На указанный адрес был отправлен пятизначный код</string>
+
+    <!---->
+    <string name="main">Главная</string>
+    <string name="Im_panicking">Я чувствую панику</string>
+    <string name="history">История</string>
+    <string name="config_grounding">Настроить Заземление</string>
+    <string name="useful_info">Полезная информация</string>
+    <string name="whats_pa">Что такое паническая атака?</string>
+    <string name="help_urself">Как помочь себе?</string>
+    <string name="whats_trigger">Что такое триггеры?</string>
+
+</resources>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="normalTextDark">
+        <item name="android:textColor">@color/colorDarkBlueish</item>
+        <item name="android:textSize">15dp</item>
+        <item name="fontFamily">Rubik</item>
+    </style>
+
+    <style name="normalTextLight" parent="normalTextDark">
+        <item name="android:textColor">@color/colorBeige</item>
+    </style>
+
+    <style name="normalTextGreen" parent="normalTextDark">
+        <item name="android:textColor">@color/colorSoftGreen</item>
+    </style>
+    
+    <style name="SafeSpaceTitle">
+        <item name="android:textColor">@color/colorDarkBlueish</item>
+        <item name="android:textSize">64dp</item>
+        <item name="fontFamily">Sofia Sans</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+    </style>
+
+    <style name="et_outlined_green" parent="ThemeOverlay.Material3.AutoCompleteTextView.OutlinedBox">
+        <item name="boxStrokeColor">@color/colorSoftGreen</item>
+        <item name="strokeWidth">3dp</item>
+        <item name="cornerRadius">10dp</item>
+        <item name="hintTextColor">@color/colorDarkBlueish</item>
+
+
+    </style>
+</resources>

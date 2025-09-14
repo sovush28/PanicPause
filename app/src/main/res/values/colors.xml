@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="colorBeige">#F5EDDE</color>
+    <color name="colorLighterBeige">#F7EFE7</color>
+    <color name="colorSoftGreen">#6F9283</color>
+    <color name="colorLightGreen">#CDC6A5</color>
+    <color name="colorDarkBlueish">#475853</color>
+    <color name="colorMainDivider">#8D9F87</color>
+
+    <color name="colorPrimaryDark">#6F9283</color>
+</resources>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        style="@style/normalTextGreen"
+        android:textStyle="bold"
+        android:text="@string/main"
+        android:layout_marginTop="50dp"
+        android:padding="20dp"
+        android:layout_gravity="center_horizontal"
+        />
+
+    <Button
+        android:id="@+id/panic_btn"
+        style="@style/normalTextLight"
+        android:layout_width="270dp"
+        android:layout_height="280dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/btn_shape"
+        android:gravity="center_horizontal"
+        android:padding="10dp"
+        android:text="@string/Im_panicking"
+        android:textAlignment="center"
+        android:textSize="32dp"
+        android:textStyle="bold" />
+
+</LinearLayout>
