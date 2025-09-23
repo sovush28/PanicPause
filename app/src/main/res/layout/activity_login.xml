@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -11,103 +11,102 @@
     >
 
     <LinearLayout
+        android:id="@+id/center_login_linlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_gravity="center_vertical"
         android:layout_marginHorizontal="50dp"
-        >
+        android:orientation="vertical"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="150dp"
+        android:layout_marginEnd="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/welcome"
             style="@style/normalTextDark"
-            android:textSize="24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:alpha="216"
-            android:layout_gravity="center_horizontal"
-            />
+            android:text="@string/welcome"
+            android:textSize="24dp" />
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"
             style="@style/SafeSpaceTitle"
-            />
-        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/log_in_page"
+            android:text="@string/app_name" />
+
+        <TextView
             style="@style/normalTextGreen"
-            android:layout_gravity="center_horizontal"
-            />
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/log_in_page" />
+
+        <EditText
             android:id="@+id/login_email_et"
-            android:hint="@string/email"
-            style="et_outlined_green"
-            android:layout_marginTop="45dp"
-            >
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/colorDarkBlueish"
-                />
-        </com.google.android.material.textfield.TextInputLayout>
-        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="55dp"
+            android:layout_marginTop="45dp"
+            android:autofillHints="emailAddress"
+            android:background="@drawable/et_dark_border"
+            android:hint="@string/email"
+            android:textColor="@color/colorDarkBlueish" />
+
+        <EditText
             android:id="@+id/login_passw_et"
-            android:hint="@string/password"
-            style="et_outlined_green"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
             android:layout_marginTop="30dp"
-            >
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/colorDarkBlueish"
-                />
-        </com.google.android.material.textfield.TextInputLayout>
+            android:autofillHints="password"
+            android:background="@drawable/et_dark_border"
+            android:hint="@string/password"
+            android:textColor="@color/colorDarkBlueish" />
+
         <TextView
+            android:id="@+id/forgot_passw_tv"
+            style="@style/normalTextGreen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/forgot_passw_tv"
-            android:text="@string/forgot_passw"
-            style="@style/normalTextGreen"
-            android:layout_margin="20dp"
             android:layout_gravity="center_horizontal"
-            />
+            android:layout_margin="20dp"
+            android:text="@string/forgot_passw" />
+
         <Button
+            android:id="@+id/log_in_btn"
+            style="@style/normalTextLight"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/log_in_btn"
-            android:text="@string/log_in"
-            style="@style/normalTextLight"
-            android:textStyle="bold"
             android:background="@drawable/btn_shape"
-            />
+            android:text="@string/log_in"
+            android:textStyle="bold" />
 
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_gravity="bottom|center"
-        >
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/center_login_linlayout"
+        android:layout_marginTop="150dp">
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/frst_time_here"
             style="@style/normalTextGreen"
-            />
-        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@string/frst_time_here" />
+
+        <TextView
             android:id="@+id/create_acc_tv"
-            android:text="@string/create_acc"
-            android:layout_marginStart="5dp"
             style="@style/normalTextDark"
-            />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="@string/create_acc" />
     </LinearLayout>
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorSoftGreen"
+    tools:context=".SignInActivity">
+
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="120dp"
+        android:layout_marginEnd="48dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            style="@style/normalTextLight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/welcome"
+            android:textSize="24dp" />
+
+        <TextView
+            style="@style/SafeSpaceTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textColor="@color/colorBeige" />
+
+        <TextView
+            style="@style/normalTextLight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/sign_in_page" />
+
+        <EditText
+            android:id="@+id/signin_email_et"
+            android:hint="@string/email"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="45dp"
+            android:background="@drawable/et_light_border"
+            android:textColor="@color/colorBeige"
+            android:textColorHint="@color/colorBeige"
+            />
+
+        <EditText
+            android:id="@+id/signin_passw_et"
+            android:hint="@string/create_new_passw"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/et_light_border"
+            android:textColor="@color/colorBeige"
+            android:textColorHint="@color/colorBeige"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/code_et"
+                android:layout_width="190dp"
+                android:layout_height="55dp"
+                android:hint="@string/code_from_mail"
+                android:background="@drawable/et_light_border"
+                android:inputType="number"
+                android:textColor="@color/colorBeige"
+                android:textColorHint="@color/colorBeige"
+                android:layout_gravity="fill_horizontal"
+                />
+
+            <Button
+                android:id="@+id/get_code_btn"
+                style="@style/normalTextDark"
+                android:layout_width="110dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="@string/get_code"
+                android:textAlignment="center"
+                android:textSize="12dp"
+                app:backgroundTint="@null"
+                android:background="@drawable/light_btn_shape"/>
+
+        </LinearLayout>
+
+
+        <Button
+            android:id="@+id/sign_in_btn"
+            style="@style/normalTextDark"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="@string/create_acc"
+            android:textAlignment="center"
+            app:backgroundTint="@null"
+            android:background="@drawable/light_btn_shape"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
+        android:layout_marginTop="130dp"
+        android:gravity="center"
+        android:foregroundGravity="bottom">
+
+        <TextView
+            style="@style/normalTextLight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/has_signed_in" />
+
+        <TextView
+            android:id="@+id/to_login_tv"
+            style="@style/normalTextLight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="@string/log_in" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

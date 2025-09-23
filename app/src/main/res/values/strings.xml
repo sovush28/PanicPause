@@ -6,10 +6,10 @@
     <string name="log_in_page">Вход</string>
     <string name="email">Электронная почта</string>
     <string name="password">Пароль</string>
-    <string name="forgot_passw"><![CDATA[<u>Забыли пароль?</u>]]></string>
+    <string name="forgot_passw">Забыли пароль?</string>
     <string name="log_in">Войти</string>
     <string name="frst_time_here">Впервые в SafeSpace?</string>
-    <string name="create_acc"><![CDATA[<u>Создать учётную запись</u>]]></string>
+    <string name="create_acc">Создать учётную запись</string>
 
     <string name="sign_in_page">Регистрация</string>
     <string name="create_passw">Придумайте пароль</string>
