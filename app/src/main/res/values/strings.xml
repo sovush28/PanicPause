@@ -13,6 +13,7 @@
 
     <string name="sign_in_page">Регистрация</string>
     <string name="create_passw">Придумайте пароль</string>
+    <string name="repeat_passw">Повторите пароль</string>
     <string name="has_signed_in">Уже есть учётная запись?</string>
 
     <string name="passw_reset_page">Восстановление пароля</string>

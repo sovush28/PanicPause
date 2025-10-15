@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "SafeSpace"
+rootProject.name = "PanicPause"
 include(":app")
  

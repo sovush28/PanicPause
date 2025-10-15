@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="48dp"
         android:layout_marginEnd="48dp"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="130dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -51,7 +51,7 @@
             android:layout_marginTop="45dp"
             android:background="@drawable/et_light_border"
             android:textColor="@color/colorBeige"
-            android:textColorHint="@color/colorBeige"
+            android:textColorHint="@color/colorTransparentBeige"
             />
 
         <EditText
@@ -62,7 +62,19 @@
             android:layout_marginTop="30dp"
             android:background="@drawable/et_light_border"
             android:textColor="@color/colorBeige"
-            android:textColorHint="@color/colorBeige"/>
+            android:textColorHint="@color/colorTransparentBeige"/>
+
+        <EditText
+            android:id="@+id/signin_repeat_passw_et"
+            android:hint="@string/repeat_passw"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/et_light_border"
+            android:textColor="@color/colorBeige"
+            android:textColorHint="@color/colorTransparentBeige"
+            />
+
 
         <!--<LinearLayout
             android:layout_width="match_parent"
