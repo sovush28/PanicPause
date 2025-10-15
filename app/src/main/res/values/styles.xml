@@ -18,7 +18,7 @@
     
     <style name="SafeSpaceTitle">
         <item name="android:textColor">@color/colorDarkBlueish</item>
-        <item name="android:textSize">64dp</item>
+        <item name="android:textSize">60dp</item>
         <item name="fontFamily">@font/sofia_sans_regular</item>
         <item name="android:layout_gravity">center_horizontal</item>
     </style>

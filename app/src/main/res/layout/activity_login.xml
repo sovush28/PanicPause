@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:alpha="216"
-            android:text="@string/welcome"
+            android:text="@string/welcome_to"
             android:textSize="24dp" />
 
         <TextView
@@ -55,7 +55,10 @@
             android:autofillHints="emailAddress"
             android:background="@drawable/et_dark_border"
             android:hint="@string/email"
-            android:textColor="@color/colorDarkBlueish" />
+            android:textColor="@color/colorDarkBlueish"
+            android:textCursorDrawable="@null"
+            />
+<!--Setting the android:textCursorDrawable attribute to @null should result in the use of android:textColor as the cursor color.-->
 
         <EditText
             android:id="@+id/login_passw_et"
@@ -65,7 +68,8 @@
             android:autofillHints="password"
             android:background="@drawable/et_dark_border"
             android:hint="@string/password"
-            android:textColor="@color/colorDarkBlueish" />
+            android:textColor="@color/colorDarkBlueish"
+            android:textCursorDrawable="@null"/>
 
         <TextView
             android:id="@+id/forgot_passw_tv"

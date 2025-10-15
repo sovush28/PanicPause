@@ -1,24 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:background="@color/colorBeige"
-    android:orientation="vertical"
     >
 
-    <!-- ViewPager2 для свайпов -->
-    <androidx.viewpager2.widget.ViewPager2
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:id="@+id/view_pager"
-        />
-
-    <!--<TextView
+    <TextView
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         style="@style/normalTextGreen"
@@ -42,16 +30,24 @@
         android:textSize="32dp"
         android:textStyle="bold"
         app:backgroundTint="@null"
-        android:background="@drawable/panic_btn_shape"/>-->
+        android:background="@drawable/panic_btn_shape"/>
 
-    <!-- Bottom Navigation -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        style="@style/Widget.MaterialComponents.BottomNavigationView.PrimarySurface"
-        android:layout_width="match_parent"
+<!--    временное -->
+    <Button
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/colorSoftGreen"
-        app:menu="@menu/bottom_nav_menu"
+        android:layout_marginTop="50dp"
+        android:text="Удалить учетную запись"
+        android:id="@+id/temp_delete_user_btn"
         />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="Выйти из учетной записи"
+        android:id="@+id/temp_sign_out_btn"
+        />
+
 
 </LinearLayout>

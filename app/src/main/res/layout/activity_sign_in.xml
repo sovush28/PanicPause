@@ -13,8 +13,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="48dp"
-        android:layout_marginTop="120dp"
         android:layout_marginEnd="48dp"
+        android:layout_marginTop="150dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -26,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="@string/welcome"
+            android:text="@string/welcome_to"
             android:textSize="24dp" />
 
         <TextView
@@ -56,7 +56,7 @@
 
         <EditText
             android:id="@+id/signin_passw_et"
-            android:hint="@string/create_new_passw"
+            android:hint="@string/create_passw"
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:layout_marginTop="30dp"
@@ -64,7 +64,7 @@
             android:textColor="@color/colorBeige"
             android:textColorHint="@color/colorBeige"/>
 
-        <LinearLayout
+        <!--<LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
@@ -94,7 +94,7 @@
                 app:backgroundTint="@null"
                 android:background="@drawable/light_btn_shape"/>
 
-        </LinearLayout>
+        </LinearLayout>-->
 
 
         <Button
@@ -116,7 +116,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
-        android:layout_marginTop="130dp"
+        android:layout_marginTop="180dp"
         android:gravity="center"
         android:foregroundGravity="bottom">
 
