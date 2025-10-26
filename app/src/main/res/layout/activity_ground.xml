@@ -8,51 +8,29 @@
     tools:context=".GroundActivity"
     android:background="@color/colorBeige">
 
-    <!--<ImageButton
+    <!-- Back button positioned at the top left -->
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/back_arrow_icon"
         android:layout_marginTop="40dp"
         android:layout_marginStart="30dp"
         android:id="@+id/back_btn"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:contentDescription="Back Button"
         />
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignBottom="@id/back_btn"
-        android:orientation="horizontal"
-        >
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            />
-    </LinearLayout>-->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/back_arrow_icon"
-            android:layout_marginTop="40dp"
-            android:layout_marginStart="30dp"
-            android:id="@+id/back_btn"
-            />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignBottom="@id/back_btn"
-            android:layout_alignParentBottom="true"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal" />
-        </LinearLayout>
-    </RelativeLayout>
+    <!-- Fragment container where all the grounding exercise fragments will be displayed -->
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/back_btn"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

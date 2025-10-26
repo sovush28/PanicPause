@@ -32,7 +32,7 @@ import java.util.Map;
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
 
-    EditText emailET, passwET;
+    EditText emailET, passwET, repeatPasswET;
     TextView logInTV;
     Button signInBtn;
     private FirebaseAuth mAuth;
@@ -45,6 +45,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_sign_in);
 
         emailET=(EditText)findViewById(R.id.signin_email_et);
+        repeatPasswET=(EditText)findViewById(R.id.signin_repeat_passw_et);
         passwET=(EditText)findViewById(R.id.signin_passw_et);
         logInTV=(TextView)findViewById(R.id.to_login_tv);
         signInBtn=(Button)findViewById(R.id.sign_in_btn);
@@ -73,6 +74,12 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             finish();
         }
         else if (v.getId()==R.id.sign_in_btn) {
+            String passw=passwET.getText().toString();
+            String passwRepeat=repeatPasswET.getText().toString();
+            if(!passw.trim().equals(passwRepeat.trim())) {
+                Toast.makeText(this, getString(R.string.passws_not_same),Toast.LENGTH_SHORT).show();
+                return;
+            }
             signInUser();
         }
     }
@@ -199,8 +206,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         userData.put("email", user.getEmail());
         userData.put("created_at", System.currentTimeMillis());
         userData.put("triggers", new String[]{});
-        userData.put("ground_ex_amount", 3);
-        userData.put("breath_repeat_amount", 2);
+        //userData.put("ground_ex_amount", 3); //нам оно не надо
+        userData.put("breath_repeat_amount", 3);
         userData.put("use_faves_only", false);
         userData.put("use_math", true);
         userData.put("use_search_objects_color", true);

@@ -23,10 +23,10 @@
         <item name="android:layout_gravity">center_horizontal</item>
     </style>
 
-    <!--<style name="et_outlined_green" parent="ThemeOverlay.Material3.AutoCompleteTextView.OutlinedBox">
-        <item name="boxStrokeColor">@color/colorSoftGreen</item>
-        <item name="strokeWidth">3dp</item>
-        <item name="cornerRadius">10dp</item>
-        <item name="hintTextColor">@color/colorDarkBlueish</item>
-    </style>-->
+    <style name="bottomNavStyle" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="itemHorizontalTranslationEnabled">false</item>
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:padding">0dp</item>
+    </style>
+
 </resources>

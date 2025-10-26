@@ -14,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.safespace"
-        minSdk = 24
+        minSdk = 29
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -61,4 +61,7 @@ dependencies {
 
     //adding the material design components dependency (MDC)
     implementation ("com.google.android.material:material:1.13.0")
+
+    //библиотека glide для загрузки изображений из интернета
+    implementation (libs.glide)
 }

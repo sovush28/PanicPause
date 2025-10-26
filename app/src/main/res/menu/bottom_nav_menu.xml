@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/navigation_home"
         android:title="@string/main"
@@ -8,6 +9,57 @@
     <item
         android:id="@+id/navigation_profile"
         android:title="@string/profile"
-        android:icon="@drawable/bottom_nav_menu_profile"
+        app:icon="@drawable/bottom_nav_menu_profile"
+        app:iconTint="#0000"
+        app:iconTintMode="add"
         />
 </menu>
+
+
+<!--
+    Use this and quit tint icon to show real color
+
+    app:icon="@drawable/ic_google"
+    app:iconTint="@null"
+
+    Example
+
+<Button
+android:id="@+id/idGoogle"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+app:icon="@drawable/ic_google"
+app:iconTint="@null"/>
+
+
+or :
+app:iconTint="@android:color/transparent"
+    app:iconTintMode="add"
+
+    or:
+     app:iconTint="@color/white"
+ app:iconTintMode="multiply"
+
+
+ or:
+None of these answers worked for me. But after experimenting a lot I found this did the trick.
+
+<Button
+    android:layout_width="100dp"
+    android:layout_height="100dp"
+    android:scaleType="fitCenter"
+    android:background="#0000"
+    android:foreground="@android:drawable/ic_menu_camera"
+    />
+
+It seems that the key is android:background="#0000".
+Don't know why @null didn't work, but this is what finally got that stupid color to go away.
+
+
+or (downvoted):
+button.iconTint = ColorStateList.valueOf(Color.TRANSPARENT)
+
+
+
+
+-->

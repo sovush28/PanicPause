@@ -39,7 +39,9 @@ public class HomeFragment extends Fragment {
         panicBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: переход к упражнениям "Заземление"
+                // TODO: переход к упражнениям "Заземление" (GroundActivity.GroundBreathFragment)
+                Intent intent = new Intent(getActivity(), GroundActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -107,6 +109,7 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    //TODO: ошибка (необходим недавний вход?)
     // УДАЛЕНИЕ аккаунта пользователя
     private void deleteUserAccount() {
         // Получаем текущего пользователя

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".GroundMathFragment">
+
+    <!-- Back button positioned at the top left -->
+    <!-- <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/back_arrow_icon"
+        android:layout_gravity="start"
+        android:layout_marginTop="40dp"
+        android:layout_marginStart="30dp"
+        android:id="@+id/back_btn"
+        android:contentDescription="Back Arrow Button"
+        /> -->
+
+    <!-- Main content container -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:gravity="center"
+        >
+
+        <!-- Instruction text -->
+        <TextView
+            android:id="@+id/instruction_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="@string/ground_math"
+            android:textSize="24dp"
+            android:textStyle="bold"
+            style="@style/normalTextDark"
+            android:layout_marginBottom="40dp"
+            />
+
+        <!-- Math problem text -->
+        <TextView
+            android:id="@+id/math_problem_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize="32dp"
+            android:textStyle="bold"
+            style="@style/normalTextDark"
+            android:layout_marginBottom="40dp"
+            />
+
+        <!-- Button container -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginStart="80dp"
+            android:layout_marginEnd="80dp"
+            >
+
+            <!-- Another Expression button -->
+            <Button
+                android:id="@+id/another_expression_btn"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                app:backgroundTint="@null"
+                android:background="@drawable/outlined_btn_shape"
+                android:layout_marginBottom="20dp"
+                android:text="@string/another_math"
+                style="@style/normalTextGreen"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:visibility="gone"
+                />
+
+            <!-- Next button -->
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:background="@drawable/btn_shape"
+                android:text="@string/next"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                style="@style/normalTextLight"
+                android:gravity="center"
+                android:id="@+id/next_btn"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

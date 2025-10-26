@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -7,16 +7,20 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:background="@color/colorBeige"
-    android:orientation="vertical"
     >
 
     <!-- ViewPager2 для свайпов -->
     <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:id="@+id/view_pager"
+        android:layout_above="@+id/bottom_navigation"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+
         />
+
+<!--    android:layout_weight="1"-->
 
     <!--<TextView
         android:layout_height="wrap_content"
@@ -44,14 +48,21 @@
         app:backgroundTint="@null"
         android:background="@drawable/panic_btn_shape"/>-->
 
-    <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
-        style="@style/Widget.MaterialComponents.BottomNavigationView.PrimarySurface"
+        style="@style/bottomNavStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:background="@color/colorSoftGreen"
+        app:itemRippleColor="@null"
+        app:itemIconSize="50dp"
+        app:labelVisibilityMode="unlabeled"
         app:menu="@menu/bottom_nav_menu"
+        android:paddingBottom="0dp"
+        android:layout_marginBottom="0dp"
         />
+<!--ripple - расходящаяся волна от нажатия    -->
+<!--    app:itemActiveIndicatorStyle="@null"   does nothing?-->
 
-</LinearLayout>
+</RelativeLayout>

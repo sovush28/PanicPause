@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".GroundBreathFragment">
+
+    <!-- Back button positioned at the top left -->
+    <!-- <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/back_arrow_icon"
+        android:layout_gravity="start"
+        android:layout_marginTop="40dp"
+        android:layout_marginStart="30dp"
+        android:id="@+id/back_btn"
+        android:contentDescription="Back Arrow Button"
+        /> -->
+
+    <!-- Main content container -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical"
+        android:gravity="center"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            style="@style/normalTextDark"
+            android:textSize="32dp"
+            android:text="@string/focus_breathe"
+            android:layout_marginBottom="50dp"
+            />
+            
+
+        <!-- Square breathing animation container -->
+        <FrameLayout
+            android:layout_width="270dp"
+            android:layout_height="270dp"
+            android:layout_marginBottom="50dp"
+            >
+
+            <!-- The square that will be animated -->
+            <View
+                android:id="@+id/square_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorBeige"
+                android:layout_gravity="center"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center"
+                android:gravity="center_horizontal"
+                >
+                <TextView
+                    android:id="@+id/instruction_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/normalTextDark"
+                    android:textSize="24dp"
+                    android:layout_marginBottom="10dp"
+                    android:textAlignment="center"
+                    />
+                <!-- Countdown text overlay -->
+                <TextView
+                    android:id="@+id/countdown_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="24dp"
+                    style="@style/normalTextGreen"
+                    android:text=""
+                    android:textAlignment="center"
+                    />
+            </LinearLayout>
+
+        </FrameLayout>
+
+        <!-- Button container -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginStart="80dp"
+            android:layout_marginEnd="80dp"
+            >
+
+            <!-- Repeat button (only visible on last breathing exercise) -->
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:background="@drawable/btn_shape"
+                android:layout_marginBottom="20dp"
+                android:text="@string/repeat"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                style="@style/normalTextLight"
+                android:gravity="center"
+                android:drawableStart="@drawable/repeat_btn_icon"
+                android:drawablePadding="8dp"
+                android:id="@+id/repeat_ground_btn"
+                android:visibility="gone"
+                />
+
+            <!-- Next button -->
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:background="@drawable/btn_shape"
+                android:text="@string/next"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                style="@style/normalTextLight"
+                android:gravity="center"
+                android:id="@+id/next_btn"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

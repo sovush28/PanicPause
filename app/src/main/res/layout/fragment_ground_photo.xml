@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".GroundPhotoFragment">
+
+    <!-- <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/back_arrow_icon"
+        android:layout_gravity="start"
+        android:layout_marginTop="40dp"
+        android:layout_marginStart="30dp"
+        android:id="@+id/back_btn"
+        android:contentDescription="Back Arrow Button"
+        /> -->
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        >
+
+        <!-- Image view for the photo -->
+        <ImageView
+            android:id="@+id/photo_iv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxHeight="470dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/ground_photo_shape"
+            android:scaleType="centerInside"
+            android:adjustViewBounds="true"
+            />
+
+        <!-- Instruction text -->
+        <TextView
+            android:id="@+id/count_things_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            style="@style/normalTextDark"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="40dp"
+            android:text="Загрузка фотографии..."
+            />
+
+        <!-- Next button -->
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:background="@drawable/btn_shape"
+            android:layout_marginStart="80dp"
+            android:layout_marginEnd="80dp"
+            android:text="@string/next"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            style="@style/normalTextLight"
+            android:gravity="center"
+            android:id="@+id/next_btn"
+            />
+
+
+    </LinearLayout>
+
+
+</FrameLayout>
