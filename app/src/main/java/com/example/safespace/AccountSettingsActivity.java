@@ -36,6 +36,8 @@ public class AccountSettingsActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_account_settings);
 
+        mAuth = FirebaseAuth.getInstance();
+
         backBtn=findViewById(R.id.back_btn);
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,21 +75,28 @@ public class AccountSettingsActivity extends AppCompatActivity {
     // ВЫХОД из аккаунта
     private void signOutUser() {
 
-        // Выходим из Firebase Auth
-        mAuth.signOut();
+        FirebaseUser user = mAuth.getCurrentUser();
+        if(user!=null){
+            // Выходим из Firebase Auth
+            mAuth.signOut();
 
-        Toast.makeText(AccountSettingsActivity.this, R.string.signout_success, Toast.LENGTH_SHORT).show();
+            Toast.makeText(AccountSettingsActivity.this, R.string.signout_success, Toast.LENGTH_SHORT).show();
 
-        // Переходим на экран входа
-        Intent intent = new Intent(this, LoginActivity.class);
+            // Переходим на экран входа
+            Intent intent = new Intent(this, LoginActivity.class);
 
-        // Очищаем историю навигации
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            // Очищаем историю навигации
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
-        startActivity(intent);
+            startActivity(intent);
 
-        // Завершаем текущую активность
-        finish();
+            // Завершаем текущую активность
+            finish();
+        }
+        else{
+            Toast.makeText(AccountSettingsActivity.this, "Пользователь не обнаружен",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void showSignOutConfirmationDialog() {

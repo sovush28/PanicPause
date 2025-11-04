@@ -22,11 +22,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +38,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     TextView logInTV;
     Button signInBtn;
     private FirebaseAuth mAuth;
+    //private FirebaseAuthHelper authHelper;
     private FirebaseFirestore db;
 
     @Override
@@ -137,6 +140,48 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         // loadingDialog.show("Регистрация...");
 
+        // регистрация
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+                            Log.d(TAG, "createUserWithEmail:success");
+
+                            FirebaseUser user = mAuth.getCurrentUser();
+
+                            if(user!=null){
+                                saveUserToFirestore(user);
+
+                                Toast.makeText(SignInActivity.this,
+                                        getString(R.string.signin_success),
+                                        Toast.LENGTH_SHORT).show();
+
+                                goToLoginActivity();
+                            }
+                            else{
+                                Log.w(TAG, "Failed to save user to Firestore");
+                                Toast.makeText(SignInActivity.this,
+                                        getString(R.string.user_data_saving_error),
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        }
+                        else{
+                            String errorMessage = getErrorMessage(task.getException());
+                            Toast.makeText(SignInActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        String errorMessage = getErrorMessage(e);
+                        Toast.makeText(SignInActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                        Log.e(TAG, "Registration failed", e);
+                    }
+                });
+
+        /*
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -145,7 +190,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
 
-                            FirebaseUser user = mAuth.getCurrentUser(); //??? нужно ли?
+                            FirebaseUser user = mAuth.getCurrentUser();
 
                             if (user!=null){
                                 saveUserToFirestore(user, new OnUserSavedListener() {
@@ -156,6 +201,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                                         Toast.makeText(SignInActivity.this,
                                                 getString(R.string.signin_success),
                                                 Toast.LENGTH_SHORT).show();
+
+                                        //sendEmailVerification(user);
 
                                         goToLoginActivity();
                                     }
@@ -187,33 +234,33 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                             return;
                         }
                     }
-                });
+                });*/
     }
 
     ////
 
     //коллбэки для асинхронных операций
     // Интерфейс для коллбэка сохранения пользователя
-    interface OnUserSavedListener{
+    /*interface OnUserSavedListener{
         void onUserSaved();
         void onUserSaveFailed(Exception e);
-    }
+    }*/
 
     /////
 
-    private void saveUserToFirestore(FirebaseUser user, OnUserSavedListener listener) {
+    private void saveUserToFirestore(FirebaseUser user) { //, OnUserSavedListener listener
         Map<String, Object> userData = new HashMap<>();
         userData.put("email", user.getEmail());
         userData.put("created_at", System.currentTimeMillis());
-        userData.put("triggers", new String[]{});
-        userData.put("faves", new String[]{});
-        //userData.put("ground_ex_amount", 3); //нам оно не надо
-        userData.put("breath_repeat_amount", 3);
+        userData.put("triggers", new ArrayList<String>());
+        userData.put("faves", new ArrayList<String>());
+        //userData.put("ground_ex_amount", 3); //лучше не надо
+        userData.put("breath_repeat_amount", 1);
         userData.put("use_faves_only", false);
         userData.put("use_math", true);
         userData.put("use_search_objects_color", true);
         userData.put("ground_on_launch", false);
-        //userData.put("displayName", ""); // пустое поле для имени
+        //userData.put("displayName", ""); // поле для имени
 
         db.collection("users")
                 .document(user.getUid())
@@ -222,19 +269,21 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "User data saved to Firestore");
-                        listener.onUserSaved();
+                        //listener.onUserSaved();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w(TAG, "Error saving user data", e);
-                        listener.onUserSaveFailed(e);
+                        //listener.onUserSaveFailed(e);
                     }
                 });
     }
 
     /////
+
+    ////
 
     private void goToLoginActivity(){
         Intent intent = new Intent(SignInActivity.this,LoginActivity.class);

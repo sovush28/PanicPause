@@ -69,7 +69,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
 
         // Инициализация Firebase
-        mAuth = FirebaseAuth.getInstance(); //initialize the FirebaseAuth instance
+        mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         //loadingDialog = new LoadingDialog(this); ///////////////////////////
 
@@ -134,6 +134,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             return getString(R.string.invalid_email_error);
         } else if (errorMessage.contains("network error")) {
             return getString(R.string.network_error);
+        } else if(errorMessage.contains("auth credential is incorrect")){
+            return getString(R.string.invalid_auth_data);
         }
         return getString(R.string.an_error_occured) + errorMessage;
 
@@ -177,38 +179,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
 
                             if (user != null) {
                                 Toast.makeText(LoginActivity.this, R.string.login_success, Toast.LENGTH_SHORT).show();
 
-                                //TODO: перенести вошедшего юзера на главную, подгрузив его данные
-
+                                // перенести вошедшего юзера на главную, подгрузив его данные
                                 goToMainActivity();
                             }
                             else{
                                 String errorMessage = getErrorMessage(task.getException());
                                 Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_LONG).show();
                             }
-
-                            /*// ПРОВЕРЯЕМ, ПОДТВЕРЖДЕН ЛИ EMAIL
-                            if (user != null && user.isEmailVerified()) {
-                                Toast.makeText(LoginActivity.this, "Добро пожаловать!", Toast.LENGTH_SHORT).show();
-                                goToMainActivity(); //только здесь можно перейти на главную
-
-                            } else {
-                                // Email НЕ подтвержден
-                                mAuth.signOut(); // Выходим из аккаунта //?
-
-                                Toast.makeText(LoginActivity.this,
-                                        getString(R.string.email_verification_needed),
-                                        Toast.LENGTH_LONG).show();
-
-                                // Предлагаем отправить письмо повторно
-                                showResendVerificationDialog(email);
-                            }*/
 
                             return;
                         }

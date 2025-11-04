@@ -34,11 +34,13 @@ public class GroundBreathFragment extends Fragment {
     // UI elements
     //private ImageButton backBtn;
     private Button nextBtn, repeatBtn;
+    private ImageButton backBtn;
     private TextView instructionText, countdownText;
-    private View squareView; // The view that will be animated
-    
-    // Animation and timing variables
-    private ObjectAnimator squareAnimator;
+
+    ValueAnimator animator;
+
+    //private AnimatedSquareView squareView;
+    private View squareView;
     private Handler handler;
     private Runnable countdownRunnable;
     
@@ -95,7 +97,7 @@ public class GroundBreathFragment extends Fragment {
      * @param view The root view of the fragment
      */
     private void initializeViews(View view) {
-        //backBtn = view.findViewById(R.id.back_btn);
+        backBtn = view.findViewById(R.id.back_btn);
         nextBtn = view.findViewById(R.id.next_btn);
         repeatBtn = view.findViewById(R.id.repeat_ground_btn);
         instructionText = view.findViewById(R.id.instruction_text);
@@ -109,7 +111,7 @@ public class GroundBreathFragment extends Fragment {
         // Repeat button should only be visible on the last breathing exercise (6th fragment)
         if (isLastBreathingExercise()) {
             repeatBtn.setVisibility(View.VISIBLE);
-            nextBtn.setText(getString(R.string.finish));
+            nextBtn.setText(getString(R.string.end));
         } else {
             repeatBtn.setVisibility(View.GONE);
             nextBtn.setText(getString(R.string.next));
@@ -120,14 +122,16 @@ public class GroundBreathFragment extends Fragment {
      * Sets up click listeners for all buttons.
      */
     private void setupButtonListeners() {
-        // Back button - handled by the activity, but we can add fragment-specific logic here if needed
-        /* backBtn.setOnClickListener(new View.OnClickListener() {
+        backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // The back button is handled by GroundActivity
-                // This is just a placeholder in case we need fragment-specific logic
+                // Get reference to the parent activity and call its method
+                if (getActivity() instanceof GroundActivity) {
+                    GroundActivity activity = (GroundActivity) getActivity();
+                    activity.goToPreviousFragment();
+                }
             }
-        }); */
+        });
 
         // Next button - moves to the next fragment
         nextBtn.setOnClickListener(new View.OnClickListener() {
@@ -163,7 +167,7 @@ public class GroundBreathFragment extends Fragment {
         currentPhase = 0;
         
         // Set initial square color (light)
-        squareView.setBackgroundColor(LIGHT_COLOR);
+        //squareView.setBackgroundColor(LIGHT_COLOR);
         
         // Start the first phase
         startPhase(0);
@@ -184,7 +188,7 @@ public class GroundBreathFragment extends Fragment {
         startCountdown();
         
         // Start the square animation for this phase
-        animateSquare();
+        //animateSquare();
     }
 
     /**
@@ -202,7 +206,7 @@ public class GroundBreathFragment extends Fragment {
             int countdown = 4; // Start from 4 seconds
             
             @Override
-            public void run() {
+            public void run() { //TODO плавное затухание и смена текста
                 if (countdown > 0) {
                     // Update countdown text
                     countdownText.setText(String.valueOf(countdown) + "...");
@@ -218,8 +222,13 @@ public class GroundBreathFragment extends Fragment {
                         // Move to next phase
                         startPhase(currentPhase + 1);
                     } else {
+                        currentPhase = 0;
+                        startPhase(currentPhase);
+
+                        //TODO nextBtn.visibility=visible
+
                         // All phases completed
-                        onBreathingExerciseCompleted();
+                        //onBreathingExerciseCompleted();
                     }
                 }
             }
@@ -235,13 +244,24 @@ public class GroundBreathFragment extends Fragment {
      */
     private void animateSquare() {
         // Cancel any existing animation
-        if (squareAnimator != null) {
-            squareAnimator.cancel();
+        if (animator != null) {
+            animator.cancel();
         }
-        
+        // Use a ValueAnimator instead
+        ValueAnimator animator = ValueAnimator.ofFloat(0, 4 * squareView.getWidth());
+        animator.setDuration(ANIMATION_DURATION * 4); // Total time for one full cycle
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float animatedValue = (float) animation.getAnimatedValue();
+                ((AnimatedSquareView) squareView).animateStroke(animatedValue);
+            }
+        });
+        animator.start();
+
         // Create a value animator that will change the background color
         // We'll animate from light color to dark color over 4 seconds
-        squareAnimator = ObjectAnimator.ofArgb(squareView, "backgroundColor", LIGHT_COLOR, DARK_COLOR);
+        /*squareAnimator = ObjectAnimator.ofArgb(squareView, "backgroundColor", LIGHT_COLOR, DARK_COLOR);
         squareAnimator.setDuration(ANIMATION_DURATION);
         
         // Add animation listener to handle completion
@@ -251,10 +271,10 @@ public class GroundBreathFragment extends Fragment {
                 // Animation completed, but we don't need to do anything here
                 // The countdown will handle moving to the next phase
             }
-        });
+        });*/
         
         // Start the animation
-        squareAnimator.start();
+        animator.start();
     }
 
     /**
@@ -294,9 +314,9 @@ public class GroundBreathFragment extends Fragment {
         super.onDestroyView();
         
         // Clean up resources to prevent memory leaks
-        if (squareAnimator != null) {
-            squareAnimator.cancel();
-        }
+        /*if (animator != null) {
+            animator.cancel();
+        }*/
         
         if (countdownRunnable != null) {
             handler.removeCallbacks(countdownRunnable);

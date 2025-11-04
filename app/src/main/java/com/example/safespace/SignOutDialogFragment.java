@@ -65,7 +65,6 @@ public class SignOutDialogFragment extends DialogFragment {
     }
 
     private void setupViews(View view) {
-        // Находим все элементы
         Button signOutBtn = view.findViewById(R.id.yes_sign_out_btn);
         Button cancelBtn = view.findViewById(R.id.cancel_btn);
         //TextView title = view.findViewById(R.id.dialog_title);

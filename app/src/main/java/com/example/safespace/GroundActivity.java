@@ -44,8 +44,7 @@ public class GroundActivity extends AppCompatActivity {
         GroundPhotoFragment.class,
         GroundBreathFragment.class
     };
-    
-    // Back button that will be shared across all fragments
+
     private ImageButton backButton;
 
     @Override
@@ -58,10 +57,10 @@ public class GroundActivity extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
         
         // Get reference to the back button from the layout
-        backButton = findViewById(R.id.back_btn);
+        //backButton = findViewById(R.id.back_btn);
         
         // Set up the back button click listener
-        setupBackButton();
+        //setupBackButton();
         
         // Start the grounding sequence with the first fragment
         startGroundingSequence();
@@ -81,7 +80,7 @@ public class GroundActivity extends AppCompatActivity {
      * - Other fragments: Goes to the previous fragment in the sequence
      */
     private void setupBackButton() {
-        backButton.setOnClickListener(new View.OnClickListener() {
+        /*backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (currentFragmentIndex == 0) {
@@ -92,7 +91,7 @@ public class GroundActivity extends AppCompatActivity {
                     goToPreviousFragment();
                 }
             }
-        });
+        });*/
     }
 
     /**
@@ -150,12 +149,17 @@ public class GroundActivity extends AppCompatActivity {
 
     /**
      * Moves to the previous fragment in the sequence.
-     * This method is called by the back button when not on the first fragment.
+     * This method is called by by fragments when the "Back" button is pressed.
      */
     public void goToPreviousFragment() {
-        if (currentFragmentIndex > 0) {
-            // If we're not on the first fragment, go to the previous one
-            showFragment(currentFragmentIndex - 1);
+        if (currentFragmentIndex == 0) {
+            // If we're on the first fragment, go back to MainActivity
+            finish(); // This closes the current activity and returns to the previous one
+        } else {
+            if (currentFragmentIndex > 0) {
+                // If we're not on the first fragment, go to the previous one
+                showFragment(currentFragmentIndex - 1);
+            }
         }
     }
 

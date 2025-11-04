@@ -16,7 +16,7 @@
         <item name="android:textColor">@color/colorSoftGreen</item>
     </style>
     
-    <style name="SafeSpaceTitle">
+    <style name="PanicPauseTitle">
         <item name="android:textColor">@color/colorDarkBlueish</item>
         <item name="android:textSize">60dp</item>
         <item name="fontFamily">@font/sofia_sans_regular</item>

@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">PanicPause</string>
 
+    <!--Вход-->
     <string name="welcome_to">Добро пожаловать в</string>
 
     <string name="log_in_page">Вход</string>
@@ -8,15 +9,19 @@
     <string name="password">Пароль</string>
     <string name="forgot_passw">Забыли пароль?</string>
     <string name="log_in">Войти</string>
-    <string name="frst_time_here">Впервые в SafeSpace?</string>
+    <string name="frst_time_here">Впервые в PanicPause?</string>
     <string name="create_acc">Создать учётную запись</string>
 
+
+    <!--Регистрация-->
     <string name="sign_in_page">Регистрация</string>
     <string name="create_passw">Придумайте пароль</string>
     <string name="repeat_passw">Повторите пароль</string>
     <string name="passws_not_same">Пароли не совпадают</string>
     <string name="has_signed_in">Уже есть учётная запись?</string>
 
+
+    <!--Сброс пароля-->
     <string name="passw_reset_page">Восстановление пароля</string>
     <string name="create_new_passw">Придумайте новый пароль</string>
     <string name="reset_passw">Сбросить пароль</string>
@@ -36,32 +41,36 @@
     </string-array>
         <string name="enter_code">Введите пятизначный код подтверждения</string>-->
 
-    <string name="enter_all">Заполните поля</string>
-    <string name="enter_email">Введите пароль</string>
-    <string name="enter_passw">Введите адрес электронной почты</string>
-    <string name="passw_length">Длина пароля должна составлять минимум 8 символов</string>
-    <string name="invalid_email">Введите корректный email адрес</string>
-    <string name="user_email_exists">Аккаунт с таким email уже существует</string>
-
-    <string name="email_verification_needed">Необходимо подтвердить email перед входом. Перейдите по ссылке из полученного письма</string>
+    <!--<string name="email_verification_needed">Необходимо подтвердить email перед входом. Перейдите по ссылке из полученного письма</string>
     <string name="email_not_verified">Email не подтвержден</string>
     <string name="send_ver_link_again">Отправить письмо с подтверждением повторно на </string>
     <string name="send">Отправить</string>
     <string name="seconds">с.</string>
 
     <string name="ver_link_sent">Письмо с подтверждением отправлено на </string>
-    <string name="email_sending_error">Ошибка отправки письма: </string>
+    <string name="email_sending_error">Ошибка отправки письма: </string>-->
+
+
+    <string name="enter_all">Заполните поля</string>
+    <string name="enter_email">Введите пароль</string>
+    <string name="enter_passw">Введите адрес электронной почты</string>
+    <string name="passw_length">Длина пароля должна составлять минимум 8 символов</string>
+    <string name="invalid_email">Введите корректный Email-адрес</string>
+    <string name="user_email_exists">Аккаунт с таким Email уже существует</string>
 
     <string name="signin_error">Ошибка регистрации</string>
     <string name="user_create_error">Ошибка создания пользователя</string>
-    <string name="login_error">Ошибка входа. Перепроверьте введённые данные</string>
+    <string name="user_data_saving_error">Не удалось сохранить данные пользователя</string>
     <string name="signin_success">Вы успешно зарегистрировались</string>
+
+    <string name="login_error">Ошибка входа. Перепроверьте введённые данные</string>
     <string name="login_success">Вход выполнен успешно</string>
 
     <string name="unknown_error">Неизвестная ошибка</string>
     <string name="invalid_passw_error">Неверный пароль</string>
     <string name="email_not_found">Пользователь с таким email не найден</string>
     <string name="invalid_email_error">Неверный формат email</string>
+    <string name="invalid_auth_data">Неверные данные</string>
     <string name="network_error">Проблемы с интернет-соединением</string>
     <string name="an_error_occured">Произошла ошибка: </string>
 

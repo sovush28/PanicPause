@@ -30,7 +30,7 @@ public class GroundCountColorFragment extends Fragment {
     private TextView colorText;
     private Button anotherColorBtn;
     private Button nextBtn;
-    //ImageButton backBtn;
+    ImageButton backBtn;
     
     // Color names from strings.xml
     private String[] colorNames;
@@ -72,7 +72,7 @@ public class GroundCountColorFragment extends Fragment {
      * @param view The root view of the fragment
      */
     private void initializeViews(View view) {
-        //backBtn = view.findViewById(R.id.back_btn);
+        backBtn = view.findViewById(R.id.back_btn);
         colorText = view.findViewById(R.id.count_color_tv);
         anotherColorBtn = view.findViewById(R.id.another_color_btn);
         nextBtn = view.findViewById(R.id.next_btn);
@@ -118,14 +118,17 @@ public class GroundCountColorFragment extends Fragment {
      * Sets up click listeners for all buttons.
      */
     private void setupButtonListeners() {
-        // Back button - handled by the activity, but we can add fragment-specific logic here if needed
-        /* backBtn.setOnClickListener(new View.OnClickListener() {
+        // Back button - handled by the activity
+         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // The back button is handled by GroundActivity
-                // This is just a placeholder in case we need fragment-specific logic
+                // Get reference to the parent activity and call its method
+                if (getActivity() instanceof GroundActivity) {
+                    GroundActivity activity = (GroundActivity) getActivity();
+                    activity.goToPreviousFragment();
+                }
             }
-        }); */
+        });
         // Another Color button - generates a new random color
         anotherColorBtn.setOnClickListener(new View.OnClickListener() {
             @Override

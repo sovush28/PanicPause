@@ -46,7 +46,7 @@ public class GroundPhotoFragment extends Fragment {
     private ImageView photoIV;
     private TextView countThingsTV;
     private Button nextBtn;
-    //ImageButton backBtn;
+    ImageButton backBtn;
     
     // Firebase and data
     private FirebaseFirestore firestore;
@@ -98,7 +98,7 @@ public class GroundPhotoFragment extends Fragment {
      * @param view The root view of the fragment
      */
     private void initializeViews(View view) {
-        //backBtn = view.findViewById(R.id.back_btn);
+        backBtn = view.findViewById(R.id.back_btn);
         photoIV = view.findViewById(R.id.photo_iv);
         countThingsTV = view.findViewById(R.id.count_things_tv);
         nextBtn = view.findViewById(R.id.next_btn);
@@ -123,13 +123,16 @@ public class GroundPhotoFragment extends Fragment {
      */
     private void setupButtonListeners() {
         // Back button - handled by the activity, but we can add fragment-specific logic here if needed
-        /* backBtn.setOnClickListener(new View.OnClickListener() {
+         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // The back button is handled by GroundActivity
-                // This is just a placeholder in case we need fragment-specific logic
+                // Get reference to the parent activity and call its method
+                if (getActivity() instanceof GroundActivity) {
+                    GroundActivity activity = (GroundActivity) getActivity();
+                    activity.goToPreviousFragment();
+                }
             }
-        }); */
+        });
         // Next button - moves to the next fragment
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override

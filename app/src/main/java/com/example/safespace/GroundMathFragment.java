@@ -30,16 +30,15 @@ import java.util.Random;
  */
 public class GroundMathFragment extends Fragment {
 
-    // UI elements
-    //private ImageButton backBtn;
+
+    private ImageButton backBtn;
     private TextView instructionText;
     private TextView mathProblemText;
     private Button anotherExpressionBtn;
     private Button nextBtn;
     
     // Math problem components
-    private int number1;
-    private int number2;
+    private int number1, number2;
     private String operation;
     private int correctAnswer; /////////////
     
@@ -77,7 +76,7 @@ public class GroundMathFragment extends Fragment {
      * @param view The root view of the fragment
      */
     private void initializeViews(View view) {
-        //backBtn = view.findViewById(R.id.back_btn);
+        backBtn = view.findViewById(R.id.back_btn);
         instructionText = view.findViewById(R.id.instruction_text);
         mathProblemText = view.findViewById(R.id.math_problem_text);
         anotherExpressionBtn = view.findViewById(R.id.another_expression_btn);
@@ -95,21 +94,24 @@ public class GroundMathFragment extends Fragment {
         handler = new Handler(Looper.getMainLooper());
         
         // Initially hide the "Another Expression" button
-        anotherExpressionBtn.setVisibility(View.GONE);
+        anotherExpressionBtn.setVisibility(View.INVISIBLE);
     }
 
     /**
      * Sets up click listeners for all buttons.
      */
     private void setupButtonListeners() {
-        // Back button - handled by the activity, but we can add fragment-specific logic here if needed
-        /* backBtn.setOnClickListener(new View.OnClickListener() {
+        // Back button - handled by the activity
+         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // The back button is handled by GroundActivity
-                // This is just a placeholder in case we need fragment-specific logic
+                // Get reference to the parent activity and call its method
+                if (getActivity() instanceof GroundActivity) {
+                    GroundActivity activity = (GroundActivity) getActivity();
+                    activity.goToPreviousFragment();
+                }
             }
-        }); */
+        });
         // Another Expression button - generates a new math problem
         anotherExpressionBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,7 +145,7 @@ public class GroundMathFragment extends Fragment {
         }
         
         // Hide the "Another Expression" button initially
-        anotherExpressionBtn.setVisibility(View.GONE);
+        anotherExpressionBtn.setVisibility(View.INVISIBLE);
         
         // Generate random operation (0=addition, 1=subtraction, 2=multiplication)
         int operationType = random.nextInt(3);
@@ -190,7 +192,14 @@ public class GroundMathFragment extends Fragment {
      * The format is: "number1 operation number2 = ?"
      */
     private void displayMathProblem() {
-        String problemText = number1 + " " + operation + " " + number2 + " = ?";
+        String problemText;
+        if(number2 < 0){
+            problemText=number1 + " " + operation + " (" + number2 + ") = ?";
+        }
+        else{
+            problemText=number1 + " " + operation + " " + number2 + " = ?";
+        }
+
         mathProblemText.setText(problemText);
     }
 
