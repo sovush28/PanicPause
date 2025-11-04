@@ -56,11 +56,12 @@
         android:layout_alignParentBottom="true"
         android:background="@color/colorSoftGreen"
         app:itemRippleColor="@null"
+        app:itemIconTint="@color/colorBeige"
         app:itemIconSize="50dp"
         app:labelVisibilityMode="unlabeled"
         app:menu="@menu/bottom_nav_menu"
-        android:paddingBottom="0dp"
-        android:layout_marginBottom="0dp"
+        android:padding="5dp"
+        android:layout_margin="0dp"
         />
 <!--ripple - расходящаяся волна от нажатия    -->
 <!--    app:itemActiveIndicatorStyle="@null"   does nothing?-->

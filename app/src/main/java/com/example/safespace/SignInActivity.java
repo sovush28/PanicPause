@@ -206,6 +206,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         userData.put("email", user.getEmail());
         userData.put("created_at", System.currentTimeMillis());
         userData.put("triggers", new String[]{});
+        userData.put("faves", new String[]{});
         //userData.put("ground_ex_amount", 3); //нам оно не надо
         userData.put("breath_repeat_amount", 3);
         userData.put("use_faves_only", false);

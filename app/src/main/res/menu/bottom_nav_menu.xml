@@ -9,12 +9,10 @@
     <item
         android:id="@+id/navigation_profile"
         android:title="@string/profile"
-        app:icon="@drawable/bottom_nav_menu_profile"
-        app:iconTint="#0000"
-        app:iconTintMode="add"
+        android:icon="@drawable/bottom_nav_menu_profile"
         />
 </menu>
-
+<!--  -->
 
 <!--
     Use this and quit tint icon to show real color

@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
@@ -219,18 +220,20 @@ public class GroundPhotoFragment extends Fragment {
 
         // Load the image using Glide library
         // Glide handles image loading, caching, and error handling automatically
-        /*Glide.with(this)
+        Glide.with(this)
                 .load(currentPhoto.imgUrl)
                 //.placeholder(R.drawable.placeholder_image) // Show placeholder while loading
                 //.error(R.drawable.error_image) // Show error image if loading fails
-                .into(photoIV);*/
+                .into(photoIV);
 
-        //ТЕСТ ОБЛАКА (УБРАТЬ) (ЗАМЕНИТЬ НА ЗАКОМЕНТИРОВАННОЕ СВЕРХУ)
+        //тест с енотами (ЗАМЕНИТЬ НА ЗАКОМЕНТИРОВАННОЕ СВЕРХУ)
+        /*
         Glide.with(this)
                 .load("https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/fr0ggy5-MZrt80_mD7M-unsplash.jpg")
                 //.placeholder(R.drawable.placeholder_image) // Show placeholder while loading
                 //.error(R.drawable.error_image) // Show error image if loading fails
                 .into(photoIV);
+        */
     }
 
     /**

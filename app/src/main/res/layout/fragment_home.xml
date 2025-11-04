@@ -12,7 +12,7 @@
         style="@style/normalTextGreen"
         android:textStyle="bold"
         android:text="@string/main"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="30dp"
         android:layout_marginBottom="30dp"
         android:layout_gravity="center_horizontal"
         />
@@ -30,22 +30,106 @@
         app:backgroundTint="@null"
         android:background="@drawable/panic_btn_shape"/>
 
-<!--    временное -->
-    <Button
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:text="Удалить учетную запись"
-        android:id="@+id/temp_delete_user_btn"
-        />
+        android:orientation="vertical"
+        android:layout_marginTop="30dp"
+        android:layout_marginHorizontal="28dp"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_gravity="start"
+            style="@style/normalTextDark"
+            android:textStyle="bold"
+            android:text="@string/history"
+            android:id="@+id/history_tv"
+            />
+        <View
+            app:backgroundTint="@null"
+            android:background="@drawable/divider_main_shape"
+            style="@style/MainDivider"
+            android:layout_marginVertical="20dp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_gravity="start"
+            style="@style/normalTextDark"
+            android:textStyle="bold"
+            android:text="@string/config_grounding"
+            android:id="@+id/ground_settings_tv"
+            />
+        <View
+            app:backgroundTint="@null"
+            android:background="@drawable/divider_main_shape"
+            style="@style/MainDivider"
+            android:layout_marginVertical="20dp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_gravity="start"
+            style="@style/normalTextDark"
+            android:textStyle="bold"
+            android:text="@string/useful_info"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="25dp"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_gravity="start"
+                style="@style/normalTextDark"
+                android:text="@string/whats_pa"
+                android:id="@+id/whats_pa_tv"
+                />
+            <View
+                app:backgroundTint="@null"
+                android:background="@drawable/divider_main_shape"
+                android:backgroundTint="@color/colorLightGreen"
+                style="@style/MainDivider"
+                android:layout_marginVertical="16dp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_gravity="start"
+                style="@style/normalTextDark"
+                android:text="@string/how_to_help_yourself"
+                android:id="@+id/how_to_help_yourself_tv"
+                />
+            <View
+                app:backgroundTint="@null"
+                android:background="@drawable/divider_main_shape"
+                android:backgroundTint="@color/colorLightGreen"
+                style="@style/MainDivider"
+                android:layout_marginVertical="16dp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_gravity="start"
+                style="@style/normalTextDark"
+                android:text="@string/whats_trigger"
+                android:id="@+id/whats_trigger_tv"
+                />
+        </LinearLayout>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:text="Выйти из учетной записи"
-        android:id="@+id/temp_sign_out_btn"
-        />
+    </LinearLayout>
+
 
 
 </LinearLayout>

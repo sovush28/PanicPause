@@ -58,6 +58,40 @@
     <string name="signin_success">Вы успешно зарегистрировались</string>
     <string name="login_success">Вход выполнен успешно</string>
 
+    <string name="unknown_error">Неизвестная ошибка</string>
+    <string name="invalid_passw_error">Неверный пароль</string>
+    <string name="email_not_found">Пользователь с таким email не найден</string>
+    <string name="invalid_email_error">Неверный формат email</string>
+    <string name="network_error">Проблемы с интернет-соединением</string>
+    <string name="an_error_occured">Произошла ошибка: </string>
+
+
+    <!--Главная-->
+    <string name="main">Главная</string>
+    <string name="Im_panicking">Я чувствую панику</string>
+    <string name="history">История</string>
+    <string name="config_grounding">Настроить Заземление</string>
+    <string name="useful_info">Полезная информация</string>
+    <string name="whats_pa">Что такое паническая атака?</string>
+    <string name="how_to_help_yourself">Как помочь себе?</string>
+    <string name="whats_trigger">Что такое триггеры?</string>
+
+
+    <!--Профиль-->
+    <string name="profile">Профиль</string>
+    <string name="set_triggers">Обозначить триггеры</string>
+    <string name="favorites">Избранные</string>
+    <string name="account_settings">Учётная запись</string>
+    <string name="app_info">О приложении</string>
+    <string name="first_time_welcome_msg1">Добро пожаловать в PanicPause! Давайте </string>
+    <string name="first_time_welcome_msg2_bold">настроим приложение под вас</string>
+    <string name="first_time_welcome_msg3"> приложение под вас</string>
+
+
+    <!--Настройки учетной записи-->
+    <string name="sign_out">Выйти из учетной записи</string>
+    <string name="delete_account">Удалить учетную запись</string>
+
     <string name="signout_delete_warning1">Вы уверены, что хотите </string>
     <string name="signout_warning2_bold">выйти из учётной записи</string>
     <string name="yes_sign_out">Да, выйти</string>
@@ -69,33 +103,11 @@
     <string name="user_deleted">Учетная запись успешно удалена</string>
     <string name="signout_success">Вы успешно вышли из аккаунта</string>
 
-    <string name="unknown_error">Неизвестная ошибка</string>
-    <string name="invalid_passw_error">Неверный пароль</string>
-    <string name="email_not_found">Пользователь с таким email не найден</string>
-    <string name="invalid_email_error">Неверный формат email</string>
-    <string name="network_error">Проблемы с интернет-соединением</string>
-    <string name="an_error_occured">Произошла ошибка: </string>
-
     <string name="acc_deletion_error">Ошибка удаления аккаунта: </string>
     <string name="user_isnt_signed_in">Пользователь не авторизован</string>
 
-    <!---->
-    <string name="main">Главная</string>
-    <string name="Im_panicking">Я чувствую панику</string>
-    <string name="history">История</string>
-    <string name="config_grounding">Настроить Заземление</string>
-    <string name="useful_info">Полезная информация</string>
-    <string name="whats_pa">Что такое паническая атака?</string>
-    <string name="help_urself">Как помочь себе?</string>
-    <string name="whats_trigger">Что такое триггеры?</string>
 
-    <!---->
-    <string name="profile">Профиль</string>
-    <string name="set_triggers">Обозначить триггеры</string>
-    <string name="favorites">Избранные</string>
-    <string name="app_info">О приложении</string>
-
-    <!---->
+    <!--Заземление-->
     <string name="focus_breathe">Сфокусируйтесь на дыхании</string>
     <string name="breath_in">Вдыхайте...</string>
     <string name="breath_out">Выдыхайте...</string>
