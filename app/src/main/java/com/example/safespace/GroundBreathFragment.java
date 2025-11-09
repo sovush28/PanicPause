@@ -1,11 +1,14 @@
 package com.example.safespace;
 
+import static android.content.ContentValues.TAG;
+
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,10 +53,6 @@ public class GroundBreathFragment extends Fragment {
     // Text resources for each phase - will be initialized in onCreateView
     private String[] phaseInstructions;
     
-    // Colors for the square animation
-    private static final int LIGHT_COLOR = Color.parseColor("#CDC6A5");
-    private static final int DARK_COLOR = Color.parseColor("#6F9283");
-    
     // Animation duration for each side (4 seconds)
     private static final int ANIMATION_DURATION = 4000;
 
@@ -68,6 +67,8 @@ public class GroundBreathFragment extends Fragment {
         
         // Initialize UI elements
         initializeViews(view);
+
+        updateButtonVisibility();
         
         // Set up button click listeners
         setupButtonListeners();
@@ -108,14 +109,14 @@ public class GroundBreathFragment extends Fragment {
         handler = new Handler(Looper.getMainLooper());
         
         // Set initial visibility of buttons
-        // Repeat button should only be visible on the last breathing exercise (6th fragment)
-        if (isLastBreathingExercise()) {
+        // Repeat button should only be visible on the last breathing exercise
+        /*if (isLastBreathingExercise()) {
             repeatBtn.setVisibility(View.VISIBLE);
             nextBtn.setText(getString(R.string.end));
         } else {
             repeatBtn.setVisibility(View.GONE);
             nextBtn.setText(getString(R.string.next));
-        }
+        }*/
     }
 
     /**
@@ -156,6 +157,36 @@ public class GroundBreathFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private void updateButtonVisibility() {
+        if (getActivity() instanceof GroundActivity) {
+            GroundActivity activity = (GroundActivity) getActivity();
+            boolean isLast = activity.isLastFragment();
+
+            Log.d(TAG, "Updating button visibility - isLast: " + isLast + ", currentIndex: " +
+                    activity.getCurrentFragmentIndex() + ", total: " + activity.getTotalExercisesCount());
+
+
+            if (isLast) {
+                repeatBtn.setVisibility(View.VISIBLE);
+                nextBtn.setText(getString(R.string.end));
+            } else {
+                repeatBtn.setVisibility(View.GONE);
+                nextBtn.setText(getString(R.string.next));
+            }
+        }
+    }
+
+    public void onFragmentResumed(){
+        super.onResume();
+        updateButtonVisibility();
+        startBreathingExercise();
+    }
+
+    public void onFragmentPaused() {
+        super.onPause();
+        // Остановка таймеров, анимаций
     }
 
     /**
@@ -275,24 +306,6 @@ public class GroundBreathFragment extends Fragment {
         
         // Start the animation
         animator.start();
-    }
-
-    /**
-     * Called when the breathing exercise is completed.
-     * This happens after all 4 phases are finished.
-     */
-    private void onBreathingExerciseCompleted() {
-        // Reset the square to light color
-        //squareView.setBackgroundColor(LIGHT_COLOR);
-        
-        // Update instruction text
-        instructionText.setText("Упражнение завершено");
-        
-        // Clear countdown text
-        countdownText.setText("...");
-        
-        // The user can now proceed to the next exercise or repeat
-        // The buttons are already set up to handle this
     }
 
     /**

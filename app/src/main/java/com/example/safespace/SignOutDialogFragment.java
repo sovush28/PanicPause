@@ -96,7 +96,7 @@ public class SignOutDialogFragment extends DialogFragment {
             }
         });
 
-        // Закрытие при клике на затемненную область
+        // закрытие при клике на затемненную область
         view.findViewById(R.id.dialog_container).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

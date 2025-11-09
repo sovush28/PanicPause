@@ -56,9 +56,7 @@ public class GroundPhotoFragment extends Fragment {
     // Random number generator for selecting photos
     private Random random;
 
-    /**
-     * Data class to hold photo information from Firestore
-     */
+    // Data class to hold photo information from Firestore
     private static class PhotoData {
         String imgUrl;
         String word;
@@ -78,44 +76,27 @@ public class GroundPhotoFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_ground_photo, container, false);
 
         // Initialize UI elements
-        initializeViews(view);
-        
-        // Initialize Firebase and other components
-        initializeComponents();
-        
-        // Set up button click listeners
-        setupButtonListeners();
-        
-        // Load photos from Firestore
-        loadPhotoFromFirestore();
-
-        return view;
-    }
-
-    /**
-     * Initializes all the UI elements from the layout.
-     * 
-     * @param view The root view of the fragment
-     */
-    private void initializeViews(View view) {
         backBtn = view.findViewById(R.id.back_btn);
         photoIV = view.findViewById(R.id.photo_iv);
         countThingsTV = view.findViewById(R.id.count_things_tv);
         nextBtn = view.findViewById(R.id.next_btn);
-    }
 
-    /**
-     * Initializes Firebase Firestore and other components.
-     */
-    private void initializeComponents() {
         // Initialize Firebase Firestore
         firestore = FirebaseFirestore.getInstance();
-        
+
         // Initialize photo list
         photoList = new ArrayList<>();
-        
+
         // Initialize random number generator
         random = new Random();
+        
+        // Set up button click listeners
+        setupButtonListeners();
+
+        // Load photos from Firestore
+        loadPhotoFromFirestore();
+
+        return view;
     }
 
     /**

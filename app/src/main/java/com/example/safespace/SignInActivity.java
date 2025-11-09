@@ -254,7 +254,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         userData.put("created_at", System.currentTimeMillis());
         userData.put("triggers", new ArrayList<String>());
         userData.put("faves", new ArrayList<String>());
-        //userData.put("ground_ex_amount", 3); //лучше не надо
+        userData.put("ground_photo_ex_amount", 2); //?
         userData.put("breath_repeat_amount", 1);
         userData.put("use_faves_only", false);
         userData.put("use_math", true);

@@ -133,6 +133,14 @@ public class GroundMathFragment extends Fragment {
         });
     }
 
+    public void onFragmentResumed() {
+        generateNewMathProblem();
+    }
+
+    public void onFragmentPaused() {
+        // Остановка таймеров, анимаций
+    }
+
     /**
      * Generates a new random math problem and displays it.
      * This method creates a new problem, displays it, and schedules the "Another Expression"

@@ -52,7 +52,7 @@ public class HomeFragment extends Fragment {
         whatsPATV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                showWhatsPADialog();
             }
         });
 
@@ -60,7 +60,7 @@ public class HomeFragment extends Fragment {
         howHelpYourselfTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                goToSelfHelpActivity();
             }
         });
 
@@ -68,7 +68,7 @@ public class HomeFragment extends Fragment {
         whatsTriggerTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                showWhatsTriggerDialog();
             }
         });
 
@@ -77,7 +77,31 @@ public class HomeFragment extends Fragment {
 
     /////////////////////////// конец oncreate
 
+    private void showWhatsPADialog(){
+        try{
+            WhatsPADialogFragment dialog=new WhatsPADialogFragment();
+            dialog.show(getActivity().getSupportFragmentManager(), "whats_pa_dialog");
+        }
+        catch(IllegalStateException ex){
+            // Обработка случая, когда Activity уничтожается
+            Log.e("Dialog", "Cannot show dialog - activity state invalid");
+        }
+    }
 
+    private void showWhatsTriggerDialog(){
+        try{
+            WhatsTriggerDialogFragment dialog=new WhatsTriggerDialogFragment();
+            dialog.show(getActivity().getSupportFragmentManager(), "whats_trigger_dialog");
+        }
+        catch(IllegalStateException ex){
+            // Обработка случая, когда Activity уничтожается
+            Log.e("Dialog", "Cannot show dialog - activity state invalid");
+        }
+    }
+
+    private void goToSelfHelpActivity(){
+
+    }
 
     ////////
 }
