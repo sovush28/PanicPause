@@ -60,7 +60,29 @@
             />
 <!--Setting the android:textCursorDrawable attribute to @null should result in the use of android:textColor as the cursor color.-->
 
-        <EditText
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:passwordToggleEnabled="true"
+            android:layout_marginTop="30dp"
+            android:textColorHint="#A49E96"
+            app:passwordToggleTint="#A49E96"
+            app:hintEnabled="false"
+            >
+<!--        app:hintEnabled="false" - убирает анимацию хинта при фокусе  -->
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:background="@drawable/et_dark_border"
+                android:hint="@string/password"
+                android:textColor="@color/colorDarkBlueish"
+                android:textCursorDrawable="@null"
+                android:inputType="textPassword"
+                android:id="@+id/login_passw_et"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!--<EditText
             android:id="@+id/login_passw_et"
             android:layout_width="match_parent"
             android:layout_height="55dp"
@@ -69,7 +91,9 @@
             android:background="@drawable/et_dark_border"
             android:hint="@string/password"
             android:textColor="@color/colorDarkBlueish"
-            android:textCursorDrawable="@null"/>
+            android:textCursorDrawable="@null"
+            android:inputType="textPassword"
+            />-->
 
         <TextView
             android:id="@+id/forgot_passw_tv"
@@ -111,6 +135,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            android:text="@string/create_acc" />
+            android:text="@string/create_acc_underline" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

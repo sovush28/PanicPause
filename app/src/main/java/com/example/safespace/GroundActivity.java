@@ -398,29 +398,6 @@ public class GroundActivity extends AppCompatActivity {
         catch (Exception e) {
             Log.e(TAG, "Error showing fragment", e);
         }
-
-        /*try {
-            // Create a new instance of the fragment class
-            Fragment fragment = fragmentClasses[fragmentIndex].newInstance();
-            
-            // Start a fragment transaction
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            
-            // Replace the current fragment with the new one
-            // We use replace because we want only one fragment visible at a time
-            transaction.replace(R.id.fragment_container, fragment);
-            
-            // Commit the transaction to make the changes visible
-            transaction.commit();
-            
-            // Update the current fragment index
-            currentFragmentIndex = fragmentIndex;
-            
-        } catch (Exception e) {
-            // If something goes wrong, print the error
-            e.printStackTrace();
-        }
-        */
     }
 
     public void goToNextFragment() {

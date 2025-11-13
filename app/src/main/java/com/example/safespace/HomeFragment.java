@@ -100,7 +100,9 @@ public class HomeFragment extends Fragment {
     }
 
     private void goToSelfHelpActivity(){
-
+        Intent intent = new Intent(getActivity(), SelfHelpActivity.class);
+        startActivity(intent);
+        //TODO плавный переход
     }
 
     ////////

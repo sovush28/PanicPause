@@ -53,6 +53,9 @@ dependencies {
     // Importing the Firebase BoM (Bill of Materials)
     implementation(platform("com.google.firebase:firebase-bom:34.2.0"))
 
+    implementation (libs.material.v100)
+
+
     // dependencies for Firebase products:
     // https://firebase.google.com/docs/android/setup#available-libraries
 

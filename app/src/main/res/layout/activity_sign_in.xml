@@ -58,6 +58,29 @@
             android:textColorHint="@color/colorTransparentBeige"
             />
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:passwordToggleEnabled="true"
+            android:layout_marginTop="30dp"
+            android:textColorHint="@color/colorTransparentBeige"
+            app:passwordToggleTint="@color/colorTransparentBeige"
+            app:hintEnabled="false"
+            >
+<!--    app:hintEnabled="false" - убирает анимацию хинта при фокусе  -->
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:background="@drawable/et_light_border"
+                android:hint="@string/create_passw"
+                android:textColor="@color/colorBeige"
+                android:textColorHint="@color/colorTransparentBeige"
+                android:textCursorDrawable="@null"
+                android:inputType="textPassword"
+                android:id="@+id/signin_passw_et"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+        <!--
         <EditText
             android:id="@+id/signin_passw_et"
             android:hint="@string/create_passw"
@@ -67,7 +90,31 @@
             android:background="@drawable/et_light_border"
             android:textColor="@color/colorBeige"
             android:textColorHint="@color/colorTransparentBeige"/>
+        -->
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:passwordToggleEnabled="true"
+            android:layout_marginTop="30dp"
+            android:textColorHint="@color/colorTransparentBeige"
+            app:passwordToggleTint="@color/colorTransparentBeige"
+            app:hintEnabled="false"
+            >
+<!--    app:hintEnabled="false" - убирает анимацию хинта при фокусе  -->
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:background="@drawable/et_light_border"
+                android:hint="@string/repeat_passw"
+                android:textColor="@color/colorBeige"
+                android:textColorHint="@color/colorTransparentBeige"
+                android:textCursorDrawable="@null"
+                android:inputType="textPassword"
+                android:id="@+id/signin_repeat_passw_et"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+        <!--
         <EditText
             android:id="@+id/signin_repeat_passw_et"
             android:hint="@string/repeat_passw"
@@ -78,7 +125,7 @@
             android:textColor="@color/colorBeige"
             android:textColorHint="@color/colorTransparentBeige"
             />
-
+-->
         <Button
             android:id="@+id/sign_in_btn"
             style="@style/normalTextDark"
@@ -115,7 +162,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            android:text="@string/log_in" />
+            android:text="@string/log_in_underline" />
     </LinearLayout>
 
 </LinearLayout>

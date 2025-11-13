@@ -13,10 +13,8 @@
         android:theme="@style/Base.Theme.SafeSpace"
         tools:targetApi="31">
         <activity
-            android:name=".SelfHelpInfoActivity"
-            android:exported="false"
-            android:label="@string/title_activity_self_help_info"
-            android:theme="@style/Base.Theme.SafeSpace.NoActionBar" />
+            android:name=".SelfHelpActivity"
+            android:exported="false" />
         <activity
             android:name=".AccountSettingsActivity"
             android:exported="false" />
