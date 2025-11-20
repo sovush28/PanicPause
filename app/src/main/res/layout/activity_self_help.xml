@@ -50,12 +50,12 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
+                    android:layout_marginHorizontal="12dp"
                     android:id="@+id/during_pa_title_lin_layout"
                     >
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="12dp"
                         style="@style/normalTextDark"
                         android:textSize="18dp"
                         android:text="@string/during_pa"
@@ -67,7 +67,7 @@
                         android:background="@drawable/small_triangle_right"
                         android:contentDescription="small triangle"
                         android:rotation="0"
-                        android:layout_marginStart="20dp"
+                        android:layout_marginStart="32dp"
                         android:id="@+id/during_pa_triangle_iv"
                         />
                 </LinearLayout>
@@ -164,12 +164,12 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
+                    android:layout_marginStart="12dp"
                     android:id="@+id/after_pa_title_lin_layout"
                     >
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="12dp"
                         style="@style/normalTextDark"
                         android:textSize="18dp"
                         android:text="@string/how_to_help_yourself_afterwards"
@@ -181,7 +181,7 @@
                         android:background="@drawable/small_triangle_right"
                         android:contentDescription="small triangle"
                         android:rotation="0"
-                        android:layout_marginStart="20dp"
+                        android:layout_marginStart="32dp"
                         android:id="@+id/after_pa_triangle_iv"
                         />
                 </LinearLayout>

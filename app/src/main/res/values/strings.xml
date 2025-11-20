@@ -158,17 +158,37 @@
     <string name="first_time_welcome_msg2_bold">настроим приложение под вас</string>
     <string name="first_time_welcome_msg3"> приложение под вас</string>
 
-    
+
     <!--Триггеры-->
     <string name="set_triggers_info1">В упражнениях приложения используются фотографии.
         Настоятельно рекомендуем выбрать предметы (сущности, явления, животные, вещи и т. д.),
         которые вам <b>неприятны</b>. Изображения с ними будут <b>исключены</b> из вашей подборки.</string>
-    <string name="set_triggers_info2">Вы можете изменять ваш выбор в любое время</string>
+    <string name="set_triggers_info2">Вы можете изменять ваш выбор \nв любое время</string>
 
     <string name="tr_people">Люди</string>
     <string name="tr_men">Мужчины</string>
     <string name="tr_women">Женщины</string>
     <string name="tr_children">Дети</string>
+
+    <string name="tr_animals">Животные</string>
+    <string name="tr_birds">Птицы</string>
+    <string name="tr_pigeons">Голуби</string>
+    <string name="tr_parrots">Попугаи</string>
+    <string name="tr_owls">Совы</string>
+    <string name="tr_ducks">Утки</string>
+    <string name="tr_cats">Кошки</string>
+    <string name="tr_dogs">Собаки</string>
+    <string name="tr_bunnies">Кролики</string>
+    <string name="tr_guinea_pigs">Морские свинки</string>
+    <string name="tr_capybaras">Капибары</string>
+    <string name="tr_otters">Выдры</string>
+    <string name="tr_raccoons">Еноты</string>
+    <string name="tr_cheetahs">Гепарды</string>
+    <string name="tr_cows">Коровы</string>
+    <string name="tr_sheep">Овцы</string>
+    <string name="tr_fish">Рыбы</string>
+    <string name="tr_seals">Тюлени</string>
+    <string name="tr_sea_lions">Морские львы</string>
 
     <string name="tr_food">Еда</string>
     <string name="tr_desserts">Сладости</string>
@@ -179,26 +199,6 @@
     <string name="tr_tomatoes">Помидоры</string>
     <string name="tr_porridges">Каши</string>
     <string name="tr_eggs">Яйца</string>
-    
-    <string name="tr_animals">Животные</string>
-    <string name="tr_birds">Птицы</string>
-    <string name="tr_pigeons">Голуби</string>
-    <string name="tr_parrots">Попугаи</string>
-    <string name="tr_owls">Совы</string>
-    <string name="ducks">Утки</string>
-    <string name="tr_cats">Кошки</string>
-    <string name="tr_dogs">Собаки</string>
-    <string name="tr_bunnies">Кролики</string>
-    <string name="tr_capybaras">Капибары</string>
-    <string name="tr_otters">Выдры</string>
-    <string name="tr_cows">Коровы</string>
-    <string name="tr_sheep">Овцы</string>
-    <string name="tr_cheetahs">Гепарды</string>
-    <string name="tr_fish">Рыбы</string>
-    <string name="tr_seals">Тюлени</string>
-    <string name="tr_sea_lions">Морские львы</string>
-    <string name="tr_guinea_pigs">Морские свинки</string>
-    <string name="tr_raccoons">Еноты</string>
 
 
     <!--Настройки учетной записи-->

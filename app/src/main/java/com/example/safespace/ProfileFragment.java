@@ -46,6 +46,15 @@ public class ProfileFragment extends Fragment{
             }
         });
 
+        setTriggersTV=view.findViewById(R.id.set_triggers_tv);
+        setTriggersTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(getActivity(), SetTriggersActivity.class);
+                startActivity(intent);
+            }
+        });
+
         return view;  // Возвращаем готовый экран
     }
 }

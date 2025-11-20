@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.RotateAnimation;
 import android.view.animation.Transformation;
 import android.widget.ImageButton;
@@ -112,15 +113,31 @@ public class SelfHelpActivity extends AppCompatActivity {
         ExpandView(duringPALayoutExpanded);
         duringPATitleTV.setTypeface(null, Typeface.BOLD);
         duringPATriangleIV.setRotation(90);
-        //RotateTriangle(afterPATriangleIV, 0, -90);
+        //RotateTriangleDown(duringPATriangleIV);
     }
 
     private void ShowAfterPAText(){
         ExpandView(afterPALayoutExpanded);
         afterPATitleTV.setTypeface(null, Typeface.BOLD);
         afterPATriangleIV.setRotation(90);
-        //RotateTriangle(afterPATriangleIV, 0, -90);
+        //RotateTriangleDown(afterPATriangleIV);
     }
+
+
+/*
+    //doesnt work as well!!
+    private void RotateTriangle(View triangleIV, int animResID){
+        Animation animation = AnimationUtils.loadAnimation(SelfHelpActivity.this, animResID);
+        triangleIV.startAnimation(animation);
+    }
+
+    private void RotateTriangleDown(View triangleIV){
+        triangleIV.setRotation(0);
+        RotateTriangle(triangleIV, R.anim.rotate_small_triangle_down_anim);
+        triangleIV.setRotation(90);
+    }
+*/
+
 
 /*
     //doesnt work!! damn!!!

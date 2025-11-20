@@ -42,7 +42,6 @@ public class AccountSettingsActivity extends AppCompatActivity {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO add smooth transition? theres the default one though
                 finish();
             }
         });
