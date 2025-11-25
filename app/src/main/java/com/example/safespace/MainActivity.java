@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity{
         }
         */
 
-        // initialize views
         viewPager = findViewById(R.id.view_pager);
         bottomNavigationV = findViewById(R.id.bottom_navigation);
 

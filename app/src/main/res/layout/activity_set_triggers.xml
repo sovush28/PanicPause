@@ -5,6 +5,91 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:context=".SetTriggersActivity"
+    >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:fillViewport="true"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="50dp"
+            >
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                style="@style/normalTextGreen"
+                android:textStyle="bold"
+                android:text="@string/set_triggers"
+                android:layout_marginTop="50dp"
+                android:layout_marginBottom="40dp"
+                android:layout_gravity="center_horizontal"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="35dp"
+                android:layout_marginEnd="15dp"
+                >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/normalTextDark"
+                    android:textSize="20dp"
+                    android:text="@string/set_triggers_info1"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_gravity="start"
+                    style="@style/normalTextGreen"
+                    android:text="@string/set_triggers_info2"
+                    />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/triggers_recycler_view"
+                />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/back_arrow_icon"
+        android:layout_marginTop="40dp"
+        android:layout_marginStart="30dp"
+        android:id="@+id/back_btn"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:contentDescription="Back Button"
+        />
+
+</RelativeLayout>
+
+<!--
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     tools:context=".SetTriggersActivity">
 
     <ScrollView
@@ -57,7 +142,7 @@
                     />
             </LinearLayout>
 
-            <!--Общий для всех списков-->
+            &lt;!&ndash;Общий для всех списков&ndash;&gt;
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -66,7 +151,7 @@
                 android:layout_marginHorizontal="28dp"
                 >
 
-                <!--Люди-->
+                &lt;!&ndash;Люди&ndash;&gt;
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -201,7 +286,7 @@
                     style="@style/MainDivider"
                     />
 
-                <!--Животные-->
+                &lt;!&ndash;Животные&ndash;&gt;
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -326,7 +411,7 @@
                         style="@style/MainDivider"
                         />
 
-                    <!--Птицы -->
+                    &lt;!&ndash;Птицы &ndash;&gt;
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -778,7 +863,7 @@
                             />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <!--end of animals-->
+                &lt;!&ndash;end of animals&ndash;&gt;
                 </LinearLayout>
 
                 <View
@@ -788,7 +873,7 @@
                     />
 
 
-                <!--Еда-->
+                &lt;!&ndash;Еда&ndash;&gt;
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -853,7 +938,7 @@
                         style="@style/MainDivider"
                         />
 
-                    <!--Ягоды-->
+                    &lt;!&ndash;Ягоды&ndash;&gt;
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -941,7 +1026,7 @@
                                 />
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <!--конец ягод-->
+                    &lt;!&ndash;конец ягод&ndash;&gt;
                     </LinearLayout>
 
                     <View
@@ -951,7 +1036,7 @@
                         style="@style/MainDivider"
                         />
 
-                    <!--Овощи-->
+                    &lt;!&ndash;Овощи&ndash;&gt;
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -1009,7 +1094,7 @@
                                 />
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
-                        <!--конец овощей-->
+                        &lt;!&ndash;конец овощей&ndash;&gt;
                     </LinearLayout>
                     <View
                         app:backgroundTint="@null"
@@ -1072,15 +1157,15 @@
                             />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <!--end of food-->
+                    &lt;!&ndash;end of food&ndash;&gt;
                 </LinearLayout>
 
 
 
-<!--            списки - конец    -->
+&lt;!&ndash;            списки - конец    &ndash;&gt;
             </LinearLayout>
 
-<!--            scrollview end-->
+&lt;!&ndash;            scrollview end&ndash;&gt;
         </LinearLayout>
     </ScrollView>
 
@@ -1097,3 +1182,4 @@
         />
 
 </RelativeLayout>
+-->

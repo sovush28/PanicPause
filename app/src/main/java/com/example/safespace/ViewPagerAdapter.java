@@ -1,13 +1,9 @@
 package com.example.safespace;
 
-import android.view.MenuItem;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 // класс ViewPagerAdapter, который будет управлять экранами
 // Он "наследует" от FragmentStateAdapter - это готовый шаблон для работы с ViewPager2

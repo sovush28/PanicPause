@@ -66,8 +66,9 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
 
     //adding the material design components dependency (MDC)
-    implementation ("com.google.android.material:material:1.13.0")
+    implementation (libs.material.v1130)
 
     //библиотека glide для загрузки изображений из интернета
     implementation (libs.glide)
+
 }

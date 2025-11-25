@@ -3,6 +3,250 @@ package com.example.safespace;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageButton;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class SetTriggersActivity extends AppCompatActivity implements TriggersRecycleViewAdapter.OnTriggerClickListener{
+
+    FirebaseAuth mAuth;
+    FirebaseFirestore db;
+
+    ImageButton backBtn;
+    RecyclerView triggersListRV;
+    TriggersRecycleViewAdapter triggersAdapter;
+
+    List<TriggerItem> allTriggerItems=new ArrayList<>();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_set_triggers);
+
+        mAuth=FirebaseAuth.getInstance();
+        //db = FirebaseFirestore.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        InitializeViews();
+
+        SetupRecyclerView();
+
+        LoadTriggersFromFirestore();
+
+
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+    }
+
+    private void InitializeViews(){
+        backBtn=findViewById(R.id.back_btn);
+        triggersListRV=findViewById(R.id.triggers_recycler_view);
+    }
+
+    private void SetupRecyclerView(){
+        // Use LinearLayoutManager for vertical scrolling list
+        triggersListRV.setLayoutManager(new LinearLayoutManager(this));
+
+        // Create adapter with empty list initially, will update when data loads
+        triggersAdapter=new TriggersRecycleViewAdapter(allTriggerItems,this);
+        triggersListRV.setAdapter(triggersAdapter);
+    }
+
+    // Load trigger hierarchy from Firestore
+    private void LoadTriggersFromFirestore(){
+        db = FirebaseFirestore.getInstance();
+        db.collection("tags_collection")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if(task.isSuccessful()){
+                        allTriggerItems.clear();
+
+                        for(QueryDocumentSnapshot document : task.getResult()){
+                            // Convert Firestore document to TriggerItem object
+                            try {
+                                TriggerItem item = document.toObject(TriggerItem.class);
+                                if (item != null) {
+                                    allTriggerItems.add(item);
+                                }
+                            } catch (Exception e) {
+                                // Log conversion error but continue with other items
+                                e.printStackTrace();
+                            }
+                        }
+
+                        triggersAdapter.updateItems(allTriggerItems);
+                    }
+                    else{
+                        // Handle database error
+                        Exception e = task.getException();
+                        if (e != null) {
+                            e.printStackTrace();
+                        }
+                        // TODO: Show error message to user
+                    }
+                });
+
+    }
+
+    // Handle category expand/collapse clicks
+    @Override
+    public void onCategoryClick(TriggerItem category, int position) {
+        triggersAdapter.toggleCategory(position);
+    }
+
+    // Handle trigger plus/minus button clicks
+    @Override
+    public void onTriggerClick(TriggerItem trigger, ImageButton plusButton) {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            SetOrRemoveTrigger(user, trigger.getImgTag(), plusButton);
+        }
+    }
+
+    private void SetOrRemoveTrigger(FirebaseUser user, String triggerTag, ImageButton imgBtn) {
+        // TODO: Implement Firestore update logic
+        // Add or remove the triggerTag from user's triggers array in Firestore
+
+        ChangeDrawablePlusOrCheckMark(imgBtn);
+    }
+    // TODO: add or delete the tag (triggerTag which will or wont be in the user's document
+    // (users/[uid]/triggers (string array)) in the users collection
+
+
+    // TODO: set initial checkmarks based on user's saved triggers
+    private void SetChosenTriggersDrawables(FirebaseUser user){
+        //TODO change plus drawables to the checkmark drawable on the tags that are in the user's "triggers" array
+    }
+
+    private void ChangeDrawablePlusOrCheckMark(ImageButton imgBtn){
+        if(imgBtn.getBackground().getConstantState() == getDrawable(R.drawable.plus).getConstantState()){     //AppCompatResources.getDrawable(this, R.drawable.plus))
+            imgBtn.setBackground(getDrawable(R.drawable.check_mark)); //getBackground()/getDrawable(...).getConstantState()
+        }
+        else if(imgBtn.getBackground().getConstantState()==getDrawable(R.drawable.check_mark).getConstantState()){
+            imgBtn.setBackground(getDrawable(R.drawable.plus));
+        }
+    }
+
+/*
+    private void ShowOrHideLayoutExpanded(View layoutExpanded, TextView titleTV, View triangleIV){
+        if (layoutExpanded.getVisibility()==View.GONE){
+            ShowLayoutExpanded(layoutExpanded, titleTV, triangleIV);
+        }
+        else {
+            HideLayoutExpanded(layoutExpanded, titleTV, triangleIV);
+        }
+    }
+
+    private void ShowLayoutExpanded(View layoutExpanded, TextView titleTV, View triangleIV){
+        ExpandView(layoutExpanded);
+        titleTV.setTypeface(null, Typeface.BOLD);
+        triangleIV.setRotation(90);
+    }
+
+    private void HideLayoutExpanded(View layoutExpanded, TextView titleTV, View triangleIV){
+        titleTV.setTypeface(null, Typeface.NORMAL);
+        triangleIV.setRotation(0);
+        CollapseView(layoutExpanded);
+    }
+
+
+    private void ExpandView(View v){
+        int matchParentMeasureSpec = View.MeasureSpec.makeMeasureSpec(((View) v.getParent()).getWidth(), View.MeasureSpec.EXACTLY);
+        int wrapContentMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        v.measure(matchParentMeasureSpec, wrapContentMeasureSpec);
+        final int targetHeight = v.getMeasuredHeight();
+
+        // Older versions of android (pre API 21) cancel animations for views with a height of 0.
+        v.getLayoutParams().height = 1;
+        v.setVisibility(View.VISIBLE);
+        Animation a = new Animation(){
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                v.getLayoutParams().height = interpolatedTime == 1
+                        ? LinearLayout.LayoutParams.WRAP_CONTENT
+                        : (int)(targetHeight * interpolatedTime);
+                v.requestLayout();
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+        // Expansion speed of 1dp/ms
+        a.setDuration((int)(targetHeight / v.getContext().getResources().getDisplayMetrics().density));
+        v.startAnimation(a);
+    }
+
+    private void CollapseView(View v){
+        final int initialHeight = v.getMeasuredHeight();
+
+        Animation a = new Animation()
+        {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                if(interpolatedTime == 1){
+                    v.setVisibility(View.GONE);
+                }else{
+                    v.getLayoutParams().height = initialHeight - (int)(initialHeight * interpolatedTime);
+                    v.requestLayout();
+                }
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        // Collapse speed of 1dp/ms
+        a.setDuration((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density));
+        v.startAnimation(a);
+
+        //you can obtain a smoother animation by changing the duration (and hence the speed) of the animation
+    }
+*/
+
+}
+
+
+
+
+
+
+
+
+/*
+package com.example.safespace;
+
+import android.graphics.Typeface;
+import android.os.Bundle;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.ImageButton;
@@ -218,3 +462,4 @@ public class SetTriggersActivity extends AppCompatActivity {
     }
 
 }
+*/
