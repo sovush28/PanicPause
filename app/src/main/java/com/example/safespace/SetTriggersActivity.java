@@ -15,11 +15,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SetTriggersActivity extends AppCompatActivity implements TriggersRecycleViewAdapter.OnTriggerClickListener{
 
@@ -31,6 +35,7 @@ public class SetTriggersActivity extends AppCompatActivity implements TriggersRe
     TriggersRecycleViewAdapter triggersAdapter;
 
     List<TriggerItem> allTriggerItems=new ArrayList<>();
+    Set<String> userTriggers = new HashSet<>(); // user's selected triggers
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,15 +44,18 @@ public class SetTriggersActivity extends AppCompatActivity implements TriggersRe
         setContentView(R.layout.activity_set_triggers);
 
         mAuth=FirebaseAuth.getInstance();
-        //db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
 
         InitializeViews();
 
         SetupRecyclerView();
 
-        LoadTriggersFromFirestore();
-
+        // Load both triggers data and user's selected triggers
+        LoadTriggersFromFirestore(); //triggers data
+        if (user != null) {
+            LoadUserTriggers(user); //user's selected triggers
+        }
 
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,6 +121,52 @@ public class SetTriggersActivity extends AppCompatActivity implements TriggersRe
 
     }
 
+    /** Load user's selected triggers from their Firestore document */
+    private void LoadUserTriggers(FirebaseUser user) {
+        db.collection("users").document(user.getUid())
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            // Get the triggers array from Firestore
+                            List<String> triggersList = (List<String>) document.get("triggers");
+                            if (triggersList != null) {
+                                userTriggers = new HashSet<>(triggersList);
+                                // Update adapter with user's selected triggers
+                                triggersAdapter.setUserSelectedTriggers(userTriggers);
+                            }
+                        } else {
+                            // User document doesn't exist, create it with empty triggers
+                            CreateUserDocument(user);
+                        }
+                    } else {
+                        // Handle error
+                        Exception e = task.getException();
+                        if (e != null) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    /** Create user document if it doesn't exist */
+    private void CreateUserDocument(FirebaseUser user) {
+        db.collection("users").document(user.getUid())
+                .set(new java.util.HashMap<String, Object>() {{
+                    put("triggers", new ArrayList<String>());
+                }})
+                .addOnSuccessListener(aVoid -> {
+                    // Document created successfully
+                    userTriggers.clear();
+                    triggersAdapter.setUserSelectedTriggers(userTriggers);
+                })
+                .addOnFailureListener(e -> {
+                    e.printStackTrace();
+                });
+    }
+
+
     // Handle category expand/collapse clicks
     @Override
     public void onCategoryClick(TriggerItem category, int position) {
@@ -121,13 +175,52 @@ public class SetTriggersActivity extends AppCompatActivity implements TriggersRe
 
     // Handle trigger plus/minus button clicks
     @Override
-    public void onTriggerClick(TriggerItem trigger, ImageButton plusButton) {
+    public void onTriggerClick(TriggerItem trigger, ImageButton plusButton,boolean isCurrentlySelected) {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
-            SetOrRemoveTrigger(user, trigger.getImgTag(), plusButton);
+            if (isCurrentlySelected) {
+                // Trigger is currently selected, so remove it
+                RemoveTriggerFromUser(user, trigger.getImgTag());
+            } else {
+                // Trigger is not selected, so add it
+                AddTriggerToUser(user, trigger.getImgTag());
+            }
         }
     }
 
+    /** Add a trigger to user's triggers array in Firestore */
+    private void AddTriggerToUser(FirebaseUser user, String triggerTag) {
+        db.collection("users").document(user.getUid())
+                .update("triggers", FieldValue.arrayUnion(triggerTag))
+                .addOnSuccessListener(aVoid -> {
+                    // Successfully added to Firestore, update local state
+                    userTriggers.add(triggerTag);
+                    triggersAdapter.addSelectedTrigger(triggerTag);
+                })
+                .addOnFailureListener(e -> {
+                    e.printStackTrace();
+                    // TODO: Show error message to user
+                });
+    }
+
+    /** Remove a trigger from user's triggers array in Firestore */
+    private void RemoveTriggerFromUser(FirebaseUser user, String triggerTag) {
+        db.collection("users").document(user.getUid())
+                .update("triggers", FieldValue.arrayRemove(triggerTag))
+                .addOnSuccessListener(aVoid -> {
+                    // Successfully removed from Firestore, update local state
+                    userTriggers.remove(triggerTag);
+                    triggersAdapter.removeSelectedTrigger(triggerTag);
+                })
+                .addOnFailureListener(e -> {
+                    e.printStackTrace();
+                    // TODO: Show error message to user
+                });
+    }
+
+    // ChangeDrawablePlusOrCheckMark method is handled by adapter
+    // SetChosenTriggersDrawables method is handled by LoadUserTriggers
+    /*
     private void SetOrRemoveTrigger(FirebaseUser user, String triggerTag, ImageButton imgBtn) {
         // TODO: Implement Firestore update logic
         // Add or remove the triggerTag from user's triggers array in Firestore
@@ -151,6 +244,7 @@ public class SetTriggersActivity extends AppCompatActivity implements TriggersRe
             imgBtn.setBackground(getDrawable(R.drawable.plus));
         }
     }
+*/
 
 /*
     private void ShowOrHideLayoutExpanded(View layoutExpanded, TextView titleTV, View triangleIV){

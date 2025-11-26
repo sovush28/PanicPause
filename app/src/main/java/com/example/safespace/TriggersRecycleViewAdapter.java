@@ -8,11 +8,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public class TriggersRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -25,10 +28,16 @@ public class TriggersRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
     private OnTriggerClickListener listener; // Click listener for user interactions
 
+
+    // Track which triggers are selected by the user
+    private Set<String> userSelectedTriggers = new HashSet<>();
+
     // Interface to handle click events in the activity
     public interface OnTriggerClickListener {
         void onCategoryClick(TriggerItem triggerCategory, int position);
-        void onTriggerClick(TriggerItem triggerChild, ImageButton plusButton);
+        void onTriggerClick(TriggerItem triggerChild,
+                            ImageButton plusButton,
+                            boolean isCurrentlySelected);
     }
 
     public TriggersRecycleViewAdapter(List<TriggerItem> triggerItems, OnTriggerClickListener listener){
@@ -36,6 +45,31 @@ public class TriggersRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVie
         this.listener=listener;
         this.displayedItems=new ArrayList<>();
         buildDisplayedItemsList(); //initial display list with only root items
+    }
+
+    /** Set the user's selected triggers and update UI */
+    public void setUserSelectedTriggers(Set<String> triggers) {
+        this.userSelectedTriggers = triggers != null ? triggers : new HashSet<>();
+        notifyDataSetChanged(); // Refresh all items to update plus/checkmark states
+    }
+
+    /** Check if a trigger is currently selected */
+    private boolean isTriggerSelected(String imgTag) {
+        return userSelectedTriggers.contains(imgTag);
+    }
+
+    /** Add a trigger to selected set */
+    public void addSelectedTrigger(String imgTag) {
+        userSelectedTriggers.add(imgTag);
+        // Find and update the specific item if possible, otherwise refresh all
+        notifyDataSetChanged();
+    }
+
+    /** Remove a trigger from selected set */
+    public void removeSelectedTrigger(String imgTag) {
+        userSelectedTriggers.remove(imgTag);
+        // Find and update the specific item if possible, otherwise refresh all
+        notifyDataSetChanged();
     }
 
 
@@ -94,112 +128,6 @@ public class TriggersRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVie
     @Override
     public int getItemCount(){
         return displayedItems.size();
-    }
-
-    // ViewHolder for category items (with expand/collapse triangle)
-    public class TriggerCategoryViewHolder extends RecyclerView.ViewHolder{
-        private TextView titleTV;
-        private ImageView triangleIV;
-        private View categoryLayout;
-
-        public TriggerCategoryViewHolder(@NonNull View itemView){
-            super(itemView);
-            titleTV=itemView.findViewById(R.id.tr_category_title_tv);
-            triangleIV=itemView.findViewById(R.id.tr_category_title_triangle_iv);
-            categoryLayout=itemView.findViewById(R.id.tr_category_title_layout);
-        }
-
-        public void bind(TriggerItem triggerItem, int position){
-            if (triggerItem == null)
-                return;
-
-            // Set text from string resource
-            try {
-                int strResID = itemView.getContext().getResources()
-                        .getIdentifier(triggerItem.getStrRes(), "string",
-                                itemView.getContext().getPackageName());
-                titleTV.setText(strResID);
-            }
-            catch (Exception e) {
-                // Fallback: use the string resource name directly
-                titleTV.setText(triggerItem.getStrRes());
-            }
-
-            // Set triangle rotation based on expanded state
-            if(triggerItem.isExpanded()){
-                triangleIV.setRotation(90);
-            }
-            else{
-                triangleIV.setRotation(0);
-            }
-
-            // Apply margins based on hierarchy level for visual indentation
-            ViewGroup.MarginLayoutParams params=(ViewGroup.MarginLayoutParams) categoryLayout.getLayoutParams();
-            int horizMargin=28+(triggerItem.getLevel()*18);
-            params.setMargins(dpToPx(horizMargin), dpToPx(18), dpToPx(28), 0);
-            categoryLayout.setLayoutParams(params);
-
-            // Set click listener for expand/collapse
-            categoryLayout.setOnClickListener(v -> {
-                if(listener!=null){
-                    listener.onCategoryClick(triggerItem, position);
-                }
-            });
-        }
-
-        private int dpToPx(int dp){
-            return (int)(dp*itemView.getContext().getResources().getDisplayMetrics().density);
-        }
-
-    }
-
-    // ViewHolder for trigger child items (with plus/checkmark button)
-    public class TriggerChildViewHolder extends RecyclerView.ViewHolder{
-        private TextView titleTV;
-        private ImageButton plusBtn;
-        private View triggerLayout;
-
-        public TriggerChildViewHolder(@NonNull View itemView){
-            super(itemView);
-            titleTV=itemView.findViewById(R.id.tr_child_title_tv);
-            plusBtn=itemView.findViewById(R.id.tr_plus_ib);
-            triggerLayout=itemView.findViewById(R.id.tr_child_layout);
-        }
-
-        public void bind(TriggerItem triggerItem){
-            if (triggerItem == null)
-                return;
-
-            // Set text from string resource
-            try {
-                int strResID = itemView.getContext().getResources()
-                        .getIdentifier(triggerItem.getStrRes(), "string",
-                                itemView.getContext().getPackageName());
-                titleTV.setText(strResID);
-            } catch (Exception e) {
-                // Fallback: use the string resource name directly
-                titleTV.setText(triggerItem.getStrRes());
-            }
-
-
-            // Apply margins based on hierarchy level for visual indentation
-            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) triggerLayout.getLayoutParams();
-            int margin = 46 + ((triggerItem.getLevel() - 1) * 18); // Deeper indentation for triggers
-            params.setMargins(dpToPx(margin), dpToPx(18), dpToPx(28), 0);
-            triggerLayout.setLayoutParams(params);
-
-            // Set click listener for adding/removing trigger
-            plusBtn.setOnClickListener(v -> {
-                if (listener != null) {
-                    listener.onTriggerClick(triggerItem, plusBtn);
-                }
-            });
-        }
-
-        private int dpToPx(int dp) {
-            return (int) (dp * itemView.getContext().getResources().getDisplayMetrics().density);
-        }
-
     }
 
     // Toggle category expand/collapse and update ui
@@ -340,7 +268,7 @@ public class TriggersRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
     // Count all visible children (for collapse operation)
-    private int countVisibleChildren(String parentTag) {
+    /*private int countVisibleChildren(String parentTag) {
         if (parentTag == null)
             return 0;
 
@@ -356,7 +284,7 @@ public class TriggersRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVie
             }
         }
         return count;
-    }
+    }*/
 
     // Update all items (e.g., when loading from Firestore)
     public void updateItems(List<TriggerItem> newItems) {
@@ -401,6 +329,128 @@ public class TriggersRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVie
             }
         }
         return currentLevel; // Fallback if parent not found
+    }
+
+
+    // ViewHolder for category items (with expand/collapse triangle)
+    public class TriggerCategoryViewHolder extends RecyclerView.ViewHolder{
+        private TextView titleTV;
+        private ImageView triangleIV;
+        private View categoryLayout;
+
+        public TriggerCategoryViewHolder(@NonNull View itemView){
+            super(itemView);
+            titleTV=itemView.findViewById(R.id.tr_category_title_tv);
+            triangleIV=itemView.findViewById(R.id.tr_category_title_triangle_iv);
+            categoryLayout=itemView.findViewById(R.id.tr_category_title_layout);
+        }
+
+        public void bind(TriggerItem triggerItem, int position){
+            if (triggerItem == null)
+                return;
+
+            // Set text from string resource
+            try {
+                int strResID = itemView.getContext().getResources()
+                        .getIdentifier(triggerItem.getStrRes(), "string",
+                                itemView.getContext().getPackageName());
+                titleTV.setText(strResID);
+            }
+            catch (Exception e) {
+                // Fallback: use the string resource name directly
+                titleTV.setText(triggerItem.getStrRes());
+            }
+
+            // Set triangle rotation based on expanded state
+            if(triggerItem.isExpanded()){
+                triangleIV.setRotation(90);
+            }
+            else{
+                triangleIV.setRotation(0);
+            }
+
+            // Apply margins based on hierarchy level for visual indentation
+            ViewGroup.MarginLayoutParams params=(ViewGroup.MarginLayoutParams) categoryLayout.getLayoutParams();
+            int horizMargin=28+(triggerItem.getLevel()*18);
+            params.setMargins(dpToPx(horizMargin), dpToPx(18), dpToPx(28), 0);
+            categoryLayout.setLayoutParams(params);
+
+            // Set click listener for expand/collapse
+            categoryLayout.setOnClickListener(v -> {
+                if(listener!=null){
+                    listener.onCategoryClick(triggerItem, position);
+                }
+            });
+        }
+
+        private int dpToPx(int dp){
+            return (int)(dp*itemView.getContext().getResources().getDisplayMetrics().density);
+        }
+
+    }
+
+    // ViewHolder for trigger child items (with plus/checkmark button)
+    public class TriggerChildViewHolder extends RecyclerView.ViewHolder{
+        private TextView titleTV;
+        private ImageButton plusBtn;
+        private View triggerLayout;
+
+        public TriggerChildViewHolder(@NonNull View itemView){
+            super(itemView);
+            titleTV=itemView.findViewById(R.id.tr_child_title_tv);
+            plusBtn=itemView.findViewById(R.id.tr_plus_ib);
+            triggerLayout=itemView.findViewById(R.id.tr_child_layout);
+        }
+
+        public void bind(TriggerItem triggerItem){
+            if (triggerItem == null)
+                return;
+
+            // Set text from string resource
+            try {
+                int strResID = itemView.getContext().getResources()
+                        .getIdentifier(triggerItem.getStrRes(), "string",
+                                itemView.getContext().getPackageName());
+                titleTV.setText(strResID);
+            } catch (Exception e) {
+                // Fallback: use the string resource name directly
+                titleTV.setText(triggerItem.getStrRes());
+            }
+
+            // Update button state based on whether trigger is selected
+            updatePlusButtonBG(triggerItem.getImgTag());
+
+            // Apply margins based on hierarchy level for visual indentation
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) triggerLayout.getLayoutParams();
+            int margin = 46 + ((triggerItem.getLevel() - 1) * 18); // Deeper indentation for triggers
+            params.setMargins(dpToPx(margin), dpToPx(18), dpToPx(28), 0);
+            triggerLayout.setLayoutParams(params);
+
+            // Set click listener for adding/removing trigger
+            plusBtn.setOnClickListener(v -> {
+                if (listener != null) {
+                    // Pass whether the trigger is currently selected
+                    boolean isCurrentlySelected = isTriggerSelected(triggerItem.getImgTag());
+                    listener.onTriggerClick(triggerItem, plusBtn, isCurrentlySelected);
+                }
+            });
+        }
+
+        private int dpToPx(int dp) {
+            return (int) (dp * itemView.getContext().getResources().getDisplayMetrics().density);
+        }
+
+        /** Update the plus button to show plus or checkmark based on selection state */
+        private void updatePlusButtonBG(String imgTag) {
+            if (isTriggerSelected(imgTag)) {
+                // Show checkmark for selected triggers
+                plusBtn.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.check_mark));
+            } else {
+                // Show plus for unselected triggers
+                plusBtn.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.plus));
+            }
+        }
+
     }
 
 }
