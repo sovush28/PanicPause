@@ -2,6 +2,7 @@ package com.example.safespace;
 
 import static android.content.ContentValues.TAG;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -96,8 +97,15 @@ public class GroundActivity extends AppCompatActivity {
             // пытаемся найти сохраненные фрагменты
             restoreFragments();
         } else {
-            // Загружаем настройки и запускаем новую сессию
-            loadUserSettingsAndStartSequence();
+            Intent intent = getIntent();
+            if(intent.hasExtra("default_settings")){
+                Boolean useDefaultSettings = intent.getBooleanExtra("default_settings", true);
+                loadUserSettingsAndStartSequence(useDefaultSettings);
+            }
+            else {
+                // Загружаем настройки и запускаем новую сессию
+                loadUserSettingsAndStartSequence(true);
+            }
         }
 
         // Handle system window insets (for edge-to-edge display)
@@ -145,36 +153,36 @@ public class GroundActivity extends AppCompatActivity {
     /**
      * Загружает настройки пользователя из Firestore и запускает последовательность упражнений
      */
-    private void loadUserSettingsAndStartSequence() {
+    private void loadUserSettingsAndStartSequence(boolean useDefaultSettings) {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
             Log.e(TAG, "User not authenticated");
             finish();
             return;
         }
+        if(!useDefaultSettings){
+            db.collection("users").document(currentUser.getUid())
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            DocumentSnapshot document = task.getResult();
 
-        db.collection("users").document(currentUser.getUid())
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        DocumentSnapshot document = task.getResult();
-
-                        // Получаем настройки пользователя, используя значения по умолчанию если данных нет
-                        if(document.getLong("ground_photo_ex_amount") != null){
-                            this.groundPhotoExAmount = document.getLong("ground_photo_ex_amount").intValue();
-                        } else{
-                            this.groundPhotoExAmount = 2;
-                        }
-                        if(document.getBoolean("use_math") != null){
-                            this.useMath = document.getBoolean("use_math");
-                        } else{
-                            this.useMath = true;
-                        }
-                        if(document.getBoolean("use_search_objects_color") != null){
-                            this.useSearchObjectsColor = document.getBoolean("use_search_objects_color");
-                        } else{
-                            this.useSearchObjectsColor = true;
-                        }
+                            // Получаем настройки пользователя, используя значения по умолчанию если данных нет
+                            if(document.getLong("ground_photo_ex_amount") != null){
+                                this.groundPhotoExAmount = document.getLong("ground_photo_ex_amount").intValue();
+                            } else{
+                                this.groundPhotoExAmount = 2;
+                            }
+                            if(document.getBoolean("use_math") != null){
+                                this.useMath = document.getBoolean("use_math");
+                            } else{
+                                this.useMath = true;
+                            }
+                            if(document.getBoolean("use_search_objects_color") != null){
+                                this.useSearchObjectsColor = document.getBoolean("use_search_objects_color");
+                            } else{
+                                this.useSearchObjectsColor = true;
+                            }
                         /*
                         this.groundPhotoExAmount = document.getLong("ground_photo_ex_amount") != null ?
                                 document.getLong("ground_photo_ex_amount").intValue() : 2;
@@ -184,19 +192,25 @@ public class GroundActivity extends AppCompatActivity {
                                 document.getBoolean("use_search_objects_color") : true;
 */
 
-                        // Строим последовательность упражнений согласно настройкам
-                        buildExerciseSequence();
+                            // Строим последовательность упражнений согласно настройкам
+                            buildExerciseSequence();
 
-                        // Запускаем последовательность
-                        startGroundingSequence();
+                            // Запускаем последовательность
+                            startGroundingSequence();
 
-                    } else {
-                        Log.e(TAG, "Failed to load user settings", task.getException());
-                        // Используем настройки по умолчанию если не удалось загрузить
-                        buildExerciseSequence();
-                        startGroundingSequence();
-                    }
-                });
+                        } else {
+                            Log.e(TAG, "Failed to load user settings", task.getException());
+                            // Используем настройки по умолчанию если не удалось загрузить
+                            buildExerciseSequence();
+                            startGroundingSequence();
+                        }
+                    });
+        }
+        else{
+            // Используем настройки по умолчанию
+            buildExerciseSequence();
+            startGroundingSequence();
+        }
     }
 
     /**

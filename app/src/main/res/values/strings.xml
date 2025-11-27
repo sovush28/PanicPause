@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name" translatable="false">PanicPause</string>
 
+    <string name="in_development">В разработке</string>
+
     <!--Вход-->
     <string name="welcome_to">Добро пожаловать в</string>
 
@@ -86,6 +88,12 @@
     <string name="whats_pa">Что такое паническая атака?</string>
     <string name="how_to_help_yourself">Как помочь себе?</string>
     <string name="whats_trigger">Что такое триггеры?</string>
+
+    <string name="not_enough_photos">На данный момент в приложении <b>недостаточно безопасных фото</b> для вас.
+        \n\nВы можете <b>отредактировать свой список триггеров</b> или запустить упражнения без фильтрации.
+    </string>
+    <string name="home_edit_triggers">Изменить список триггеров</string>
+    <string name="start_ground_with_default_settings">Запустить упражнения без моих настроек</string>
 
     <string name="whats_pa_text"><b>Паническая атака</b> – приступ очень сильной тревоги,
         который сопровождается учащённым сердцебиением, нехваткой воздуха, головокружением,
@@ -186,6 +194,7 @@
     <string name="tr_cheetahs">Гепарды</string>
     <string name="tr_cows">Коровы</string>
     <string name="tr_sheep">Овцы</string>
+    <string name="tr_goats">Козы</string>
     <string name="tr_fish">Рыбы</string>
     <string name="tr_seals">Тюлени</string>
     <string name="tr_sea_lions">Морские львы</string>

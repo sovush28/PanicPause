@@ -1,6 +1,8 @@
 package com.example.safespace;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -175,7 +177,23 @@ public class GroundPhotoFragment extends Fragment {
                                 }
                             }
 
-                            filterTriggerPhotos();
+                            // Check if we're using default settings first
+                            Intent intent = getActivity().getIntent();
+                            boolean useDefaultSettings = intent != null &&
+                                    intent.hasExtra("default_settings") &&
+                                    intent.getBooleanExtra("default_settings", false);
+
+                            if (useDefaultSettings) {
+                                // If using default settings, display photo immediately without filtering
+                                if (!photoList.isEmpty()) {
+                                    displayRandomPhoto();
+                                } else {
+                                    countThingsTV.setText(getString(R.string.photo_not_found));
+                                }
+                            } else {
+                                // Only filter if NOT using default settings
+                                filterTriggerPhotos();
+                            }
 
                             // After loading all photos, display a random one
                             if (!photoList.isEmpty()) {
@@ -201,45 +219,53 @@ public class GroundPhotoFragment extends Fragment {
             return;
         }
 
+        Intent intent = getActivity().getIntent();
+        if(intent!=null & intent.hasExtra("default_settings")){
+            if(intent.getBooleanExtra("default_settings", true)==true)
+                return;
+        }
+
         firestore.collection("users").document(user.getUid())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if(task.isSuccessful()&& task.getResult()!=null){
+                        if (task.isSuccessful() && task.getResult() != null) {
                             DocumentSnapshot document = task.getResult();
-                            if(document.exists()){
+                            if (document.exists()) {
                                 List<String> userTriggerList = (List<String>) document.get("triggers");
-                                if(userTriggerList!=null){ //если у юзера выбраны триггеры
-                                    /*
-                                    for(int i=0; i<photoList.size(); i++){ //проходимся по списку всех фото
-                                        PhotoData photoData = photoList.get(i); //берем каждое фото по отдельности
-                                        boolean photoOK = true;       // можно ли добавлять фото в подборку этому юзеру
-                                        for(int ti=0; ti<userTriggerList.size();ti++){  //проходимся по списку триггеров юзера
-                                            String trigger = userTriggerList.get(ti); //берем каждый триггер
-                                            if(photoData.tags.contains(trigger)){     //если он содержится в списке тегов взятого фото
-                                                photoOK=false;                        //это фото не пойдет, надо убрать
-                                                break;                                //прекращаем перебирать список триггеров тк дальше бесполезно
-                                            }
-                                        }
-                                        if(!photoOK){
-                                            photoList.remove(photoData);            //убираем фото из общего списка всех фото
-                                        }
-                                    }
-                                    */
-                                    removePhotosWTriggers(userTriggerList);
+                                if (userTriggerList != null && !userTriggerList.isEmpty()) {
+                                    // User has triggers, filter photos
+                                    removePhotosWithTriggers(userTriggerList);
                                 }
-
+                                // Whether we filtered or not, display a photo
+                                if (!photoList.isEmpty()) {
+                                    displayRandomPhoto();
+                                } else {
+                                    //countThingsTV.setText(getString(R.string.no_safe_photos));
+                                }
+                            } else {
+                                // User document doesn't exist, display any photo
+                                if (!photoList.isEmpty()) {
+                                    displayRandomPhoto();
+                                } else {
+                                    countThingsTV.setText(getString(R.string.photo_not_found));
+                                }
                             }
-                            else{
-                                //TODO log user document doesn't exist
+                        } else {
+                            // Error loading user document, display any photo as fallback
+                            if (!photoList.isEmpty()) {
+                                displayRandomPhoto();
+                            } else {
+                                countThingsTV.setText(getString(R.string.photo_not_found));
                             }
+                            Log.e("GroundPhotoFragment", "Error loading user triggers", task.getException());
                         }
                     }
                 });
     }
 
-    private void removePhotosWTriggers(List<String> userTriggerList){
+    private void removePhotosWithTriggers(List<String> userTriggerList){
         // Use iterator for safe removal during iteration
         Iterator<PhotoData> iterator = photoList.iterator();
 

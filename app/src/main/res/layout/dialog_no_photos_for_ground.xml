@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/custom_dialog_background"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:id="@+id/dialog_container"
+    >
+
+    <LinearLayout
+        android:layout_width="290dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dialog_bg_dark"
+        android:orientation="vertical"
+        android:paddingVertical="30dp"
+        android:paddingHorizontal="22dp"
+        android:id="@+id/dialog_content"
+        >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            style="@style/normalTextLight"
+            android:textSize="18sp"
+            android:text="@string/not_enough_photos"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            app:backgroundTint="@null"
+            android:background="@drawable/light_btn_shape"
+            style="@style/normalTextDark"
+            android:textStyle="bold"
+            android:text="@string/home_edit_triggers"
+            android:id="@+id/go_to_set_triggers_from_home_btn"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            app:backgroundTint="@null"
+            android:background="@drawable/et_light_border"
+            style="@style/normalTextLight"
+            android:textStyle="bold"
+            android:text="@string/start_ground_with_default_settings"
+            android:id="@+id/start_ground_with_default_settings_btn"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>
