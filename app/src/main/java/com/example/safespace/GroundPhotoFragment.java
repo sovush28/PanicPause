@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -16,11 +17,16 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.auth.User;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -50,6 +56,7 @@ public class GroundPhotoFragment extends Fragment {
     
     // Firebase and data
     private FirebaseFirestore firestore;
+    private FirebaseAuth mAuth;
     private List<PhotoData> photoList;
     private PhotoData currentPhoto;
     
@@ -83,6 +90,7 @@ public class GroundPhotoFragment extends Fragment {
 
         // Initialize Firebase Firestore
         firestore = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
         // Initialize photo list
         photoList = new ArrayList<>();
@@ -166,10 +174,12 @@ public class GroundPhotoFragment extends Fragment {
                                     e.printStackTrace();
                                 }
                             }
-                            
+
+                            filterTriggerPhotos();
+
                             // After loading all photos, display a random one
                             if (!photoList.isEmpty()) {
-                                displayRandomPhoto();
+                                //displayRandomPhoto(); //НЕ НУЖНО (иначе фото генерируется два раза - тут первый неотфильтррованный и позже второй после фильтрации)
                             } else {
                                 // No photos found, show error message
                                 countThingsTV.setText(getString(R.string.photo_not_found));
@@ -181,6 +191,84 @@ public class GroundPhotoFragment extends Fragment {
                         }
                     }
                 });
+    }
+
+    //removes the photos with current user's triggers tags from the photoList
+    private void filterTriggerPhotos(){
+        FirebaseUser user = mAuth.getCurrentUser();
+        if(user==null){
+            Toast.makeText(getActivity(), "User not found", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        firestore.collection("users").document(user.getUid())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()&& task.getResult()!=null){
+                            DocumentSnapshot document = task.getResult();
+                            if(document.exists()){
+                                List<String> userTriggerList = (List<String>) document.get("triggers");
+                                if(userTriggerList!=null){ //если у юзера выбраны триггеры
+                                    /*
+                                    for(int i=0; i<photoList.size(); i++){ //проходимся по списку всех фото
+                                        PhotoData photoData = photoList.get(i); //берем каждое фото по отдельности
+                                        boolean photoOK = true;       // можно ли добавлять фото в подборку этому юзеру
+                                        for(int ti=0; ti<userTriggerList.size();ti++){  //проходимся по списку триггеров юзера
+                                            String trigger = userTriggerList.get(ti); //берем каждый триггер
+                                            if(photoData.tags.contains(trigger)){     //если он содержится в списке тегов взятого фото
+                                                photoOK=false;                        //это фото не пойдет, надо убрать
+                                                break;                                //прекращаем перебирать список триггеров тк дальше бесполезно
+                                            }
+                                        }
+                                        if(!photoOK){
+                                            photoList.remove(photoData);            //убираем фото из общего списка всех фото
+                                        }
+                                    }
+                                    */
+                                    removePhotosWTriggers(userTriggerList);
+                                }
+
+                            }
+                            else{
+                                //TODO log user document doesn't exist
+                            }
+                        }
+                    }
+                });
+    }
+
+    private void removePhotosWTriggers(List<String> userTriggerList){
+        // Use iterator for safe removal during iteration
+        Iterator<PhotoData> iterator = photoList.iterator();
+
+        while (iterator.hasNext()) {
+            PhotoData photoData = iterator.next();
+            boolean containsTrigger = false;
+
+            // Check if this photo has ANY tag that matches ANY user trigger
+            for (String trigger : userTriggerList) {
+                if (photoData.tags.contains(trigger)) {
+                    containsTrigger = true;
+                    break; // No need to check other triggers for this photo
+                }
+            }
+
+            // Remove photo if it contains ANY matching trigger
+            if (containsTrigger) {
+                iterator.remove();
+            }
+        }
+
+        // After filtering, display a random photo
+        if (!photoList.isEmpty()) {
+            displayRandomPhoto();
+        } else {
+            // All photos were filtered out - show appropriate message
+            //countThingsTV.setText(getString(R.string.no_safe_photos));
+            // You might want to show a default image or handle this case differently
+        }
     }
 
     /**
@@ -231,9 +319,7 @@ public class GroundPhotoFragment extends Fragment {
     }
 
     /**
-     * Gets the number of photos loaded from Firestore.
-     * 
-     * @return The number of photos in the photo list
+     * Gets the number of photos loaded from Firestore
      */
     public int getPhotoCount() {
         return photoList.size();
