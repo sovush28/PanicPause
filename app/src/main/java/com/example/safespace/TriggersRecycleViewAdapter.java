@@ -336,13 +336,16 @@ public class TriggersRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVie
     public class TriggerCategoryViewHolder extends RecyclerView.ViewHolder{
         private TextView titleTV;
         private ImageView triangleIV;
-        private View categoryLayout;
+        private View categoryLayout, outerLayout;
+        private ImageButton plusBtn;
 
         public TriggerCategoryViewHolder(@NonNull View itemView){
             super(itemView);
             titleTV=itemView.findViewById(R.id.tr_category_title_tv);
             triangleIV=itemView.findViewById(R.id.tr_category_title_triangle_iv);
             categoryLayout=itemView.findViewById(R.id.tr_category_title_layout);
+            outerLayout=itemView.findViewById(R.id.tr_category_title_layout_outer);
+            plusBtn=itemView.findViewById(R.id.tr_plus_ib);
         }
 
         public void bind(TriggerItem triggerItem, int position){
@@ -369,11 +372,14 @@ public class TriggersRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVie
                 triangleIV.setRotation(0);
             }
 
+            // Update button state based on whether trigger is selected
+            updatePlusButtonBG(triggerItem.getImgTag());
+
             // Apply margins based on hierarchy level for visual indentation
-            ViewGroup.MarginLayoutParams params=(ViewGroup.MarginLayoutParams) categoryLayout.getLayoutParams();
+            ViewGroup.MarginLayoutParams params=(ViewGroup.MarginLayoutParams) outerLayout.getLayoutParams();
             int horizMargin=28+(triggerItem.getLevel()*18);
-            params.setMargins(dpToPx(horizMargin), dpToPx(18), dpToPx(28), 0);
-            categoryLayout.setLayoutParams(params);
+            params.setMargins(dpToPx(horizMargin), dpToPx(18), 0, 0);
+            outerLayout.setLayoutParams(params);
 
             // Set click listener for expand/collapse
             categoryLayout.setOnClickListener(v -> {
@@ -381,10 +387,31 @@ public class TriggersRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVie
                     listener.onCategoryClick(triggerItem, position);
                 }
             });
+            plusBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null) {
+                        // Pass whether the trigger is currently selected
+                        boolean isCurrentlySelected = isTriggerSelected(triggerItem.getImgTag());
+                        listener.onTriggerClick(triggerItem, plusBtn, isCurrentlySelected);
+                    }
+                }
+            });
         }
 
         private int dpToPx(int dp){
             return (int)(dp*itemView.getContext().getResources().getDisplayMetrics().density);
+        }
+
+        /** Update the plus button to show plus or checkmark based on selection state */
+        private void updatePlusButtonBG(String imgTag) {
+            if (isTriggerSelected(imgTag)) {
+                // Show checkmark for selected triggers
+                plusBtn.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.check_mark));
+            } else {
+                // Show plus for unselected triggers
+                plusBtn.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.plus));
+            }
         }
 
     }

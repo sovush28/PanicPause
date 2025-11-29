@@ -1,6 +1,7 @@
 package com.example.safespace;
 
 import static android.content.ContentValues.TAG;
+import static android.widget.Toast.LENGTH_SHORT;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -34,8 +35,7 @@ public class HomeFragment extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     Button panicBtn;
-
-    TextView whatsPATV, howHelpYourselfTV, whatsTriggerTV;
+    TextView historyTV, groundSettingsTV, whatsPATV, howHelpYourselfTV, whatsTriggerTV;
 
     // Data class to hold photo information from Firestore
     private static class PhotoData {
@@ -69,7 +69,28 @@ public class HomeFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
+        InitializeViews(view);
+        SetOnClickListeners();
+
+        return view;  // Возвращаем готовый экран
+    }
+
+    private void inDevelopmentToast(){
+        Toast.makeText(getActivity(), R.string.in_development, Toast.LENGTH_SHORT).show();
+    }
+
+    private void InitializeViews(View view){
         panicBtn = view.findViewById(R.id.panic_btn);
+
+        historyTV=view.findViewById(R.id.history_tv);
+        groundSettingsTV=view.findViewById(R.id.ground_settings_tv);
+
+        whatsPATV=view.findViewById(R.id.whats_pa_tv);
+        howHelpYourselfTV=view.findViewById(R.id.how_to_help_yourself_tv);
+        whatsTriggerTV=view.findViewById(R.id.whats_trigger_tv);
+    }
+
+    private void SetOnClickListeners(){
         panicBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,7 +111,22 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        whatsPATV=view.findViewById(R.id.whats_pa_tv);
+        historyTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inDevelopmentToast();
+                //TODO
+            }
+        });
+
+        groundSettingsTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inDevelopmentToast();
+                //TODO
+            }
+        });
+
         whatsPATV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,7 +134,6 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        howHelpYourselfTV=view.findViewById(R.id.how_to_help_yourself_tv);
         howHelpYourselfTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -106,18 +141,13 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        whatsTriggerTV=view.findViewById(R.id.whats_trigger_tv);
         whatsTriggerTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showWhatsTriggerDialog();
             }
         });
-
-        return view;  // Возвращаем готовый экран
     }
-
-    /////////////////////////// конец oncreate
 
     private void showNotEnoughPhotosDialog(){
         try{

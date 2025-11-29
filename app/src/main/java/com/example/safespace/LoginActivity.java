@@ -1,6 +1,7 @@
 package com.example.safespace;
 
 import static android.content.ContentValues.TAG;
+import static android.widget.Toast.LENGTH_SHORT;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -49,11 +50,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
 
-        emailET = (EditText) findViewById(R.id.login_email_et);
-        passwET = (EditText) findViewById(R.id.login_passw_et);
-        forgotPasswTV = (TextView) findViewById(R.id.forgot_passw_tv);
-        createAccTV = (TextView) findViewById(R.id.create_acc_tv);
-        logInBtn = (Button) findViewById(R.id.log_in_btn);
+        InitializeViews();
 
         logInBtn.setOnClickListener(this);
         forgotPasswTV.setOnClickListener(this);
@@ -64,8 +61,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if(intent.hasExtra("user_email")){
             String createdUserEmail=intent.getStringExtra("user_email");
             emailET.setText(createdUserEmail);
-            //String createdUserPassw=intent.getStringExtra("user_passw");
-            //passwET.setText(createdUserPassw);
         }
 
         // Инициализация Firebase
@@ -78,6 +73,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+
+    private void InitializeViews(){
+        emailET = (EditText) findViewById(R.id.login_email_et);
+        passwET = (EditText) findViewById(R.id.login_passw_et);
+        forgotPasswTV = (TextView) findViewById(R.id.forgot_passw_tv);
+        createAccTV = (TextView) findViewById(R.id.create_acc_tv);
+        logInBtn = (Button) findViewById(R.id.log_in_btn);
     }
 
     private void goToMainActivity() {
@@ -114,8 +117,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             finish();
         }
         else if (v.getId()==R.id.forgot_passw_tv) {
-            // TODO: Реализовать восстановление пароля
-
+            // TODO: восстановление пароля
+            Toast.makeText(LoginActivity.this, R.string.in_development, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -146,17 +149,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         String password = passwET.getText().toString().trim();
 
         // Валидация полей
-        if(email.isEmpty() && password.isEmpty()){
+        if(email.isEmpty() || password.isEmpty()){
             Toast.makeText(LoginActivity.this, R.string.enter_all, Toast.LENGTH_SHORT).show();
             emailET.requestFocus(); // Фокус на поле email
-            return;
-        } else if (email.isEmpty()) {
-            Toast.makeText(LoginActivity.this, R.string.enter_email, Toast.LENGTH_SHORT).show();
-            emailET.requestFocus();
-            return;
-        } else if(password.isEmpty()){
-            Toast.makeText(LoginActivity.this, R.string.enter_passw, Toast.LENGTH_SHORT).show();
-            passwET.requestFocus();
             return;
         } else if (password.length() < 8) {
             Toast.makeText(LoginActivity.this, R.string.passw_length, Toast.LENGTH_SHORT).show();

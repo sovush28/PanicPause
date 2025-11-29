@@ -1,6 +1,7 @@
 package com.example.safespace;
 
 import static android.content.ContentValues.TAG;
+import static android.widget.Toast.LENGTH_SHORT;
 
 import static java.security.AccessController.getContext;
 
@@ -10,6 +11,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -28,7 +31,8 @@ public class AccountSettingsActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     ImageButton backBtn;
-    Button tempSignOutBtn, tempDeleteAccBtn;
+    LinearLayout passwResetLayout, techSupportLayout;
+    TextView userEmailTV, signOutTV, deleteAccTV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,31 +40,15 @@ public class AccountSettingsActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_account_settings);
 
+        InitializeViews();
+        SetOnClickListeners();
+
         mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user= mAuth.getCurrentUser();
 
-        backBtn=findViewById(R.id.back_btn);
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-        tempSignOutBtn=findViewById(R.id.temp_sign_out_btn);
-        tempSignOutBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showSignOutConfirmationDialog();
-            }
-        });
-
-        /*tempDeleteAccBtn=findViewById(R.id.temp_delete_user_btn);
-        tempDeleteAccBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDeleteAccountConfirmationDialog();
-            }
-        });*/
+        if(user!=null && user.getEmail()!=null){
+            userEmailTV.setText(user.getEmail());
+        }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -71,6 +59,63 @@ public class AccountSettingsActivity extends AppCompatActivity {
 
     ///////
 
+    private void inDevelopmentToast(){
+        Toast.makeText(AccountSettingsActivity.this, R.string.in_development, Toast.LENGTH_SHORT).show();
+    }
+
+    private void InitializeViews(){
+        backBtn=findViewById(R.id.back_btn);
+
+        userEmailTV=findViewById(R.id.user_email_tv);
+
+        passwResetLayout=findViewById(R.id.go_to_passw_reset_layout);
+        techSupportLayout=findViewById(R.id.tech_support_layout);
+
+        signOutTV=findViewById(R.id.sign_out_tv);
+        deleteAccTV=findViewById(R.id.delete_acc_tv);
+    }
+
+    private void SetOnClickListeners(){
+        passwResetLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inDevelopmentToast();
+                //TODO
+            }
+        });
+
+        techSupportLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inDevelopmentToast();
+                //TODO
+            }
+        });
+
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        signOutTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSignOutConfirmationDialog();
+            }
+        });
+
+        deleteAccTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inDevelopmentToast();
+                //TODO
+                //showDeleteAccountConfirmationDialog();
+            }
+        });
+    }
+
     // ВЫХОД из аккаунта
     private void signOutUser() {
 
@@ -79,7 +124,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
             // Выходим из Firebase Auth
             mAuth.signOut();
 
-            Toast.makeText(AccountSettingsActivity.this, R.string.signout_success, Toast.LENGTH_SHORT).show();
+            Toast.makeText(AccountSettingsActivity.this, R.string.signout_success, LENGTH_SHORT).show();
 
             // Переходим на экран входа
             Intent intent = new Intent(this, LoginActivity.class);
@@ -94,7 +139,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
         }
         else{
             Toast.makeText(AccountSettingsActivity.this, "Пользователь не обнаружен",
-                    Toast.LENGTH_SHORT).show();
+                    LENGTH_SHORT).show();
         }
     }
 
@@ -111,8 +156,8 @@ public class AccountSettingsActivity extends AppCompatActivity {
                 @Override
                 public void onSignOutCancelled() {
                     // Пользователь отменил выход
-                    Toast.makeText(AccountSettingsActivity.this, "Выход отменен", Toast.LENGTH_SHORT).show();
-                    //TODO: тост убрать, тут он только для тестирования нужен думаю
+                    //Toast.makeText(AccountSettingsActivity.this, "Выход отменен", LENGTH_SHORT).show();
+                    dialog.dismiss();
                 }
             });
 

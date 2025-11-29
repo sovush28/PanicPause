@@ -3,28 +3,50 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingVertical="18dp"
-    android:paddingHorizontal="10dp"
+    android:layout_marginVertical="18dp"
+    android:layout_marginHorizontal="10dp"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:id="@+id/tr_child_layout"
     >
 
-    <TextView
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_gravity="start"
-        style="@style/normalTextDark"
-        android:textSize="16dp"
-        android:id="@+id/tr_child_title_tv"
-        />
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/plus"
-        android:layout_gravity="end"
-        android:id="@+id/tr_plus_ib"
-        />
+        android:orientation="vertical"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginHorizontal="10dp"
+            >
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="start"
+                style="@style/normalTextDark"
+                android:textSize="16dp"
+                android:id="@+id/tr_child_title_tv"
+                />
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/plus"
+                android:layout_gravity="end"
+                android:id="@+id/tr_plus_ib"
+                />
+        </LinearLayout>
+
+        <View
+            app:backgroundTint="@null"
+            android:background="@drawable/divider_main_shape"
+            android:backgroundTint="@color/colorLightGreen"
+            style="@style/MainDivider"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
+            />
+    </LinearLayout>
 
 </LinearLayout>

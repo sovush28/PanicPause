@@ -25,6 +25,7 @@
             android:id="@+id/delete_acc_warning_tv"
             style="@style/normalTextLight"
             android:textSize="18dp"
+            android:text="@string/delete_acc_warning"
             />
 
         <TextView

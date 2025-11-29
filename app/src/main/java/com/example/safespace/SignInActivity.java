@@ -38,7 +38,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     TextView logInTV;
     Button signInBtn;
     private FirebaseAuth mAuth;
-    //private FirebaseAuthHelper authHelper;
     private FirebaseFirestore db;
 
     @Override
@@ -47,11 +46,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_sign_in);
 
-        emailET=(EditText)findViewById(R.id.signin_email_et);
-        repeatPasswET=(EditText)findViewById(R.id.signin_repeat_passw_et);
-        passwET=(EditText)findViewById(R.id.signin_passw_et);
-        logInTV=(TextView)findViewById(R.id.to_login_tv);
-        signInBtn=(Button)findViewById(R.id.sign_in_btn);
+        InitializeViews();
 
         logInTV.setOnClickListener(this);
         signInBtn.setOnClickListener(this);
@@ -60,12 +55,19 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+
+    private void InitializeViews(){
+        emailET=(EditText)findViewById(R.id.signin_email_et);
+        repeatPasswET=(EditText)findViewById(R.id.signin_repeat_passw_et);
+        passwET=(EditText)findViewById(R.id.signin_passw_et);
+        logInTV=(TextView)findViewById(R.id.to_login_tv);
+        signInBtn=(Button)findViewById(R.id.sign_in_btn);
     }
 
     @Override
@@ -117,16 +119,11 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private void signInUser(){
         String email=emailET.getText().toString().trim();
         String password=passwET.getText().toString().trim();
+        String repeatPassw=repeatPasswET.getText().toString().trim();
 
         // валидация полей
-        if(email.isEmpty() && password.isEmpty()){
+        if(email.isEmpty() || password.isEmpty() || repeatPassw.isEmpty()){
             Toast.makeText(SignInActivity.this, R.string.enter_all, Toast.LENGTH_SHORT).show();
-            return;
-        } else if (email.isEmpty()) {
-            Toast.makeText(SignInActivity.this, R.string.enter_email, Toast.LENGTH_SHORT).show();
-            return;
-        } else if(password.isEmpty()){
-            Toast.makeText(SignInActivity.this, R.string.enter_passw, Toast.LENGTH_SHORT).show();
             return;
         } else if (password.length()<8) {
             Toast.makeText(SignInActivity.this, R.string.passw_length, Toast.LENGTH_SHORT).show();

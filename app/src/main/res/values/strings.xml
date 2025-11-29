@@ -106,7 +106,7 @@
     <string name="whats_trigger_text"><b>Три́ггер</b> —  сигнал, связанный каким-либо образом
         с определённым негативным опытом в жизни человека и вызывающий тяжёлые негативные эмоции.
         Например, для человека, пережившего автокатастрофу, триггером может стать вид салона машины.
-        SafeSpace также рекомендует заносить в “триггеры” объекты фобий.</string>
+        \n\nPanicPause также рекомендует заносить в “триггеры” объекты фобий.</string>
 
 
     <!--Как помочь себе-->
@@ -160,16 +160,15 @@
     <string name="profile">Профиль</string>
     <string name="set_triggers">Обозначить триггеры</string>
     <string name="favorites">Избранные</string>
-    <string name="account_settings">Учётная запись</string>
+    <string name="account">Учётная запись</string>
     <string name="app_info">О приложении</string>
-    <string name="first_time_welcome_msg1">Добро пожаловать в PanicPause! Давайте </string>
-    <string name="first_time_welcome_msg2_bold">настроим приложение под вас</string>
-    <string name="first_time_welcome_msg3"> приложение под вас</string>
+    <string name="first_time_welcome_msg">Добро пожаловать в PanicPause!
+        \nДавайте <b>настроим</b> приложение под вас</string>
 
 
     <!--Триггеры-->
     <string name="set_triggers_info1">В упражнениях приложения используются фотографии.
-        Настоятельно рекомендуем выбрать предметы (сущности, явления, животные, вещи и т. д.),
+        Настоятельно рекомендуем выбрать сущности (предметы, животные и т. д.),
         которые вам <b>неприятны</b>. Изображения с ними будут <b>исключены</b> из вашей подборки.</string>
     <string name="set_triggers_info2">Вы можете изменять ваш выбор \nв любое время</string>
 
@@ -211,15 +210,20 @@
 
 
     <!--Настройки учетной записи-->
-    <string name="sign_out">Выйти из учетной записи</string>
-    <string name="delete_account">Удалить учетную запись</string>
+    <string name="account_settings">Настройки учётной записи</string>
 
-    <string name="signout_delete_warning1">Вы уверены, что хотите </string>
-    <string name="signout_warning2_bold">выйти из учётной записи</string>
+    <string name="email_short">Эл. почта</string>
+    <string name="passw_reset"><u>Сброс пароля</u></string>
+    <string name="tech_support"><u>Техническая поддержка</u></string>
+
+    <string name="sign_out"><u><b>Выйти</b> из учетной записи</u></string>
+    <string name="delete_account"><u><b>Удалить учетную запись</b></u></string>
+
+    <string name="signout_warning">Вы уверены, что хотите <b>выйти из учётной записи</b>?</string>
     <string name="yes_sign_out">Да, выйти</string>
 
-    <string name="delete_acc_warning2_bold">удалить учётную запись</string>
-    <string name="action_cant_be_cancelled">Это действие нельзя отменить</string>
+    <string name="delete_acc_warning">Вы уверены, что хотите <b>удалить учётную запись</b>?</string>
+    <string name="action_cant_be_cancelled"><b><u>Это действие нельзя отменить</u></b></string>
     <string name="yes_delete_acc">Да, удалить</string>
 
     <string name="user_deleted">Учетная запись успешно удалена</string>

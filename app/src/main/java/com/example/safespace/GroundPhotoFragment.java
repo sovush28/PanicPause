@@ -65,7 +65,7 @@ public class GroundPhotoFragment extends Fragment {
     // Random number generator for selecting photos
     private Random random;
 
-    // Data class to hold photo information from Firestore
+    // класс для данных об изображениях из БД Firestore
     private static class PhotoData {
         String imgUrl;
         String word;
@@ -137,81 +137,69 @@ public class GroundPhotoFragment extends Fragment {
         });
     }
 
-    /**
-     * Loads photos from Firestore database.
-     * This method connects to the "images" collection and retrieves all documents.
-     */
+    // загружает данные о всех фото из Firestore в список photoList
     private void loadPhotoFromFirestore() {
-        // Show loading state
+        // отображение состояния загрузки
         countThingsTV.setText(getString(R.string.photo_loading));
         
-        // Query the "images" collection in Firestore
+        // запрос к коллекции "images"
         firestore.collection("images")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            // Clear existing photo list
+                            // очистка существующего списка
                             photoList.clear();
                             
-                            // Process each document in the collection
+                            // для каждого документа в коллекции
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 try {
-                                    // Extract data from the document
+                                    // взять данные из документа
                                     String imgUrl = document.getString("img_url");
                                     String word = document.getString("word");
-                                    
-                                    // Get tags array (convert to List<String>)
                                     List<String> tags = (List<String>) document.get("tags");
                                     
-                                    // Validate that all required fields are present
+                                    // убедиться что все поля есть
                                     if (imgUrl != null && word != null && tags != null) {
-                                        // Create PhotoData object and add to list
+                                        // создать объект класса PhotoData и добавить в список
                                         PhotoData photoData = new PhotoData(imgUrl, word, tags);
                                         photoList.add(photoData);
                                     }
                                 } catch (Exception e) {
-                                    // If there's an error processing a document, skip it
                                     e.printStackTrace();
                                 }
                             }
 
-                            // Check if we're using default settings first
+                            // запустил ли пользователь активность с настройками по умолчанию
                             Intent intent = getActivity().getIntent();
                             boolean useDefaultSettings = intent != null &&
                                     intent.hasExtra("default_settings") &&
                                     intent.getBooleanExtra("default_settings", false);
 
                             if (useDefaultSettings) {
-                                // If using default settings, display photo immediately without filtering
+                                // не фильтровать список фото
                                 if (!photoList.isEmpty()) {
                                     displayRandomPhoto();
                                 } else {
                                     countThingsTV.setText(getString(R.string.photo_not_found));
                                 }
                             } else {
-                                // Only filter if NOT using default settings
                                 filterTriggerPhotos();
                             }
 
-                            // After loading all photos, display a random one
-                            if (!photoList.isEmpty()) {
-                                //displayRandomPhoto(); //НЕ НУЖНО (иначе фото генерируется два раза - тут первый неотфильтррованный и позже второй после фильтрации)
-                            } else {
-                                // No photos found, show error message
+                            if (photoList.isEmpty()) {
                                 countThingsTV.setText(getString(R.string.photo_not_found));
                             }
                             
                         } else {
-                            // Error loading photos from Firestore
+                            // ошибка загрузки фото из БД
                             countThingsTV.setText(getString(R.string.photo_load_error));
                         }
                     }
                 });
     }
 
-    //removes the photos with current user's triggers tags from the photoList
     private void filterTriggerPhotos(){
         FirebaseUser user = mAuth.getCurrentUser();
         if(user==null){
@@ -235,17 +223,15 @@ public class GroundPhotoFragment extends Fragment {
                             if (document.exists()) {
                                 List<String> userTriggerList = (List<String>) document.get("triggers");
                                 if (userTriggerList != null && !userTriggerList.isEmpty()) {
-                                    // User has triggers, filter photos
+                                    // у пользователя выбраны триггеры, нужно отфильтровать список фото
                                     removePhotosWithTriggers(userTriggerList);
                                 }
-                                // Whether we filtered or not, display a photo
+                                // отображение фото
                                 if (!photoList.isEmpty()) {
                                     displayRandomPhoto();
-                                } else {
-                                    //countThingsTV.setText(getString(R.string.no_safe_photos));
                                 }
                             } else {
-                                // User document doesn't exist, display any photo
+                                // документа пользователя не существует
                                 if (!photoList.isEmpty()) {
                                     displayRandomPhoto();
                                 } else {
@@ -253,7 +239,7 @@ public class GroundPhotoFragment extends Fragment {
                                 }
                             }
                         } else {
-                            // Error loading user document, display any photo as fallback
+                            // ошибка загрузки документа пользователя
                             if (!photoList.isEmpty()) {
                                 displayRandomPhoto();
                             } else {
@@ -265,59 +251,51 @@ public class GroundPhotoFragment extends Fragment {
                 });
     }
 
+    // удаление объектов, содержащих теги-триггеры
     private void removePhotosWithTriggers(List<String> userTriggerList){
-        // Use iterator for safe removal during iteration
         Iterator<PhotoData> iterator = photoList.iterator();
 
         while (iterator.hasNext()) {
             PhotoData photoData = iterator.next();
             boolean containsTrigger = false;
 
-            // Check if this photo has ANY tag that matches ANY user trigger
+            // проверка, есть ли у этого фото какой-либо тег, который совпадает с каким-либо триггером пользователя
             for (String trigger : userTriggerList) {
                 if (photoData.tags.contains(trigger)) {
                     containsTrigger = true;
-                    break; // No need to check other triggers for this photo
+                    break;
                 }
             }
 
-            // Remove photo if it contains ANY matching trigger
+            // удаление фото из списка
             if (containsTrigger) {
                 iterator.remove();
             }
         }
 
-        // After filtering, display a random photo
+        // отображение случайного фото
         if (!photoList.isEmpty()) {
             displayRandomPhoto();
-        } else {
-            // All photos were filtered out - show appropriate message
-            //countThingsTV.setText(getString(R.string.no_safe_photos));
-            // You might want to show a default image or handle this case differently
         }
     }
 
-    /**
-     * Displays a randomly selected photo from the loaded photo list.
-     * This method selects a random photo and loads it into the ImageView.
-     */
+    // выбирает случайный объект из photoList и отображает соотв. фото в ImageView
     private void displayRandomPhoto() {
         if (photoList.isEmpty()) {
             countThingsTV.setText(getString(R.string.photo_not_found));
             return;
         }
         
-        // Select a random photo from the list
+        // случайное фото из списка
         int randomIndex = random.nextInt(photoList.size());
         currentPhoto = photoList.get(randomIndex);
         
-        // Update instruction text with the word to count
+        // обновление текста упражнения
         String instruction = getString(R.string.ground_count_img1) +
             " " + currentPhoto.word + " " + getString(R.string.ground_count_img2);
         countThingsTV.setText(instruction);
 
-        // Load the image using Glide library
-        // Glide handles image loading, caching, and error handling automatically
+        // загрузка изображения с помощью библиотеки Glide
         Glide.with(this)
                 .load(currentPhoto.imgUrl)
                 //.placeholder(R.drawable.placeholder_image) // Show placeholder while loading

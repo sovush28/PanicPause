@@ -67,12 +67,6 @@ public class SignOutDialogFragment extends DialogFragment {
     private void setupViews(View view) {
         Button signOutBtn = view.findViewById(R.id.yes_sign_out_btn);
         Button cancelBtn = view.findViewById(R.id.cancel_btn);
-        //TextView title = view.findViewById(R.id.dialog_title);
-        TextView messageTV = view.findViewById(R.id.signout_warning_tv);
-
-        // Устанавливаем текст
-        messageTV.setText(getString(R.string.signout_delete_warning1) + " " + getString(R.string.signout_warning2_bold) + "?");
-        //TODO: сделать вторую часть жирным текстом
 
         // Обработчик кнопки подтверждения
         signOutBtn.setOnClickListener(new View.OnClickListener() {

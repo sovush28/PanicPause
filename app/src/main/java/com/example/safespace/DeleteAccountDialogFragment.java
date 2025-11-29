@@ -50,10 +50,6 @@ public class DeleteAccountDialogFragment extends DialogFragment {
     private void setupViews(View view) {
         Button deleteBtn = view.findViewById(R.id.yes_delete_btn);
         Button cancelBtn = view.findViewById(R.id.cancel_btn);
-        TextView messageTV = view.findViewById(R.id.delete_acc_warning_tv);
-
-        messageTV.setText(getString(R.string.signout_delete_warning1) + " " + getString(R.string.delete_acc_warning2_bold) + "?");
-        //TODO: сделать вторую часть жирным текстом
 
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override

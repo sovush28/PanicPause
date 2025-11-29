@@ -28,6 +28,7 @@
             android:id="@+id/signout_warning_tv"
             style="@style/normalTextLight"
             android:textSize="18dp"
+            android:text="@string/signout_warning"
             />
 
         <Button

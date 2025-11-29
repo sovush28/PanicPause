@@ -150,9 +150,7 @@ public class GroundActivity extends AppCompatActivity {
     }
 
 
-    /**
-     * Загружает настройки пользователя из Firestore и запускает последовательность упражнений
-     */
+    // Загружает настройки пользователя из Firestore и запускает последовательность упражнений
     private void loadUserSettingsAndStartSequence(boolean useDefaultSettings) {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
@@ -167,7 +165,7 @@ public class GroundActivity extends AppCompatActivity {
                         if (task.isSuccessful() && task.getResult() != null) {
                             DocumentSnapshot document = task.getResult();
 
-                            // Получаем настройки пользователя, используя значения по умолчанию если данных нет
+                            // Получение настроек пользователя; использование значения по умолчанию, если данных нет
                             if(document.getLong("ground_photo_ex_amount") != null){
                                 this.groundPhotoExAmount = document.getLong("ground_photo_ex_amount").intValue();
                             } else{
@@ -192,22 +190,22 @@ public class GroundActivity extends AppCompatActivity {
                                 document.getBoolean("use_search_objects_color") : true;
 */
 
-                            // Строим последовательность упражнений согласно настройкам
+                            // Составление последовательности упражнений согласно настройкам
                             buildExerciseSequence();
 
-                            // Запускаем последовательность
+                            // Запуск последовательности
                             startGroundingSequence();
 
                         } else {
                             Log.e(TAG, "Failed to load user settings", task.getException());
-                            // Используем настройки по умолчанию если не удалось загрузить
+                            // Использование настроек по умолчанию, если не удалось загрузить
                             buildExerciseSequence();
                             startGroundingSequence();
                         }
                     });
         }
         else{
-            // Используем настройки по умолчанию
+            // Использование настроек по умолчанию (по указке пользователя из диалога)
             buildExerciseSequence();
             startGroundingSequence();
         }
@@ -288,17 +286,17 @@ public class GroundActivity extends AppCompatActivity {
      */
     private void createAndAddFragment(int index) {
         try {
-            // Проверяем, не создан ли уже фрагмент для этого индекса
+            // не создан ли уже фрагмент для этого индекса
             if (index < fragmentInstances.size() && fragmentInstances.get(index) != null) {
-                return; // Фрагмент уже создан
+                return; // уже создан
             }
 
             Fragment fragment = fragmentClasses.get(index).newInstance();
 
-            // Устанавливаем уникальный тег для каждого фрагмента
+            // уникальный тег для каждого фрагмента
             String tag = "exercise_fragment_" + index;
 
-            // Если фрагмент еще не добавлен в FragmentManager, добавляем его
+            // добавление фрагмента в FragmentManager, если ещё не добавлен
             if (fragmentManager.findFragmentByTag(tag) == null) {
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.add(R.id.fragment_container, fragment, tag);
@@ -307,7 +305,7 @@ public class GroundActivity extends AppCompatActivity {
                 fragmentManager.executePendingTransactions();
             }
 
-            // Добавляем в список, заполняя пропуски если нужно
+            // Добавление в список, заполняя пропуски если нужно
             while (fragmentInstances.size() <= index) {
                 fragmentInstances.add(null);
             }
@@ -365,7 +363,7 @@ public class GroundActivity extends AppCompatActivity {
         try {
             FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-            // Скрываем текущий фрагмент, если он существует
+            // Скрытие текущего фрагмента, если он существует
             if (currentFragment != null) {
                 transaction.hide(currentFragment);
 
@@ -377,23 +375,22 @@ public class GroundActivity extends AppCompatActivity {
                 /*if (currentFragment instanceof GroundMathFragment) {
                     ((GroundMathFragment) currentFragment).onFragmentPaused();
                 }*/
-                // Добавьте аналогичные вызовы для других типов фрагментов
             }
 
-            // Создаем фрагмент если он еще не создан
+            // Создание фрагмента, если еще не создан
             if (fragmentIndex >= fragmentInstances.size() || fragmentInstances.get(fragmentIndex) == null) {
                 createAndAddFragment(fragmentIndex);
             }
 
-            // Получаем целевой фрагмент
+            // Получение целевого фрагмента
             Fragment targetFragment = fragmentInstances.get(fragmentIndex);
 
-            // Показываем целевой фрагмент
+            // Отображение целевого фрагмента
             transaction.show(targetFragment);
             transaction.commit();
             fragmentManager.executePendingTransactions();
 
-            // Обновляем текущий фрагмент
+            // Обновление текущего фрагмента
             currentFragment = targetFragment;
             currentFragmentIndex = fragmentIndex;
 
@@ -405,7 +402,6 @@ public class GroundActivity extends AppCompatActivity {
             /*if (currentFragment instanceof GroundMathFragment) {
                 ((GroundMathFragment) currentFragment).onFragmentResumed();
             }*/
-            // Добавьте аналогичные вызовы для других типов фрагментов
 
             Log.d(TAG, "Showing fragment at index: " + fragmentIndex);
         }
@@ -419,7 +415,7 @@ public class GroundActivity extends AppCompatActivity {
             // Переход к следующему упражнению
             showFragment(currentFragmentIndex + 1);
         } else {
-            // Конец последовательности - сохраняем историю и закрываем
+            // Конец последовательности - сохранение истории и закрытие
             saveExerciseHistory();
             finish();
         }
@@ -427,7 +423,7 @@ public class GroundActivity extends AppCompatActivity {
 
     public void goToPreviousFragment() {
         if (currentFragmentIndex == 0) {
-            // На первом упражнении - закрываем активность
+            // На первом упражнении - закрытие активности
             finish();
         } else {
             // Переход к предыдущему упражнению
@@ -440,12 +436,12 @@ public class GroundActivity extends AppCompatActivity {
      * Вызывается из последнего фрагмента по нажатию "Повторить"
      */
     public void repeatGroundingSequence() {
-        // Останавливаем текущий фрагмент
+        // Остановка текущего фрагмента
         if (currentFragment instanceof GroundBreathFragment) {
             ((GroundBreathFragment) currentFragment).onFragmentPaused();
         }
 
-        // Очищаем все фрагменты
+        // Очистка всех фрагментов
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         for (Fragment fragment : fragmentInstances) {
             if (fragment != null) {
@@ -455,12 +451,12 @@ public class GroundActivity extends AppCompatActivity {
         transaction.commit();
         fragmentManager.executePendingTransactions();
 
-        // Очищаем списки
+        // Очистка списков
         fragmentInstances.clear();
         currentFragment = null;
         currentFragmentIndex = 0;
 
-        // Запускаем новую последовательность
+        // Запуск новой последовательности
         startGroundingSequence();
     }
 

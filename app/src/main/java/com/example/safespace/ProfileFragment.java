@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
@@ -15,7 +16,6 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class ProfileFragment extends Fragment{
 
-    private Button triggersButton;
     private FirebaseAuth mAuth;
     TextView currentEmailTV;
 
@@ -30,23 +30,46 @@ public class ProfileFragment extends Fragment{
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
 
-        currentEmailTV=view.findViewById(R.id.temp_user_email_tv);
+        InitializeViews(view);
+        SetOnClickListeners();
 
         if(user!=null && user.getEmail()!=null){
             currentEmailTV.setText(user.getEmail());
         }
 
-        accountSettingsTV=view.findViewById(R.id.acc_settings_tv);
+        return view;  // Возвращаем готовый экран
+    }
+
+    private void inDevelopmentToast(){
+        Toast.makeText(getActivity(), R.string.in_development, Toast.LENGTH_SHORT).show();
+    }
+
+    private void InitializeViews(View view){
+        currentEmailTV=view.findViewById(R.id.temp_user_email_tv);
+
+        favoritesTV=view.findViewById(R.id.favorites_tv);
+        accountSettingsTV=view.findViewById(R.id.go_to_acc_settings_tv);
+        setTriggersTV=view.findViewById(R.id.set_triggers_tv);
+        appInfoTV=view.findViewById(R.id.app_info_tv);
+    }
+
+    private void SetOnClickListeners(){
+        favoritesTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inDevelopmentToast();
+                //TODO
+            }
+        });
+
         accountSettingsTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), AccountSettingsActivity.class);
                 startActivity(intent);
-                //TODO плавный переход
             }
         });
 
-        setTriggersTV=view.findViewById(R.id.set_triggers_tv);
         setTriggersTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,6 +78,13 @@ public class ProfileFragment extends Fragment{
             }
         });
 
-        return view;  // Возвращаем готовый экран
+        appInfoTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inDevelopmentToast();
+                //TODO
+            }
+        });
     }
+
 }
