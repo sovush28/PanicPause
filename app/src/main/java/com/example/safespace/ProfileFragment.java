@@ -81,8 +81,10 @@ public class ProfileFragment extends Fragment{
         appInfoTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                inDevelopmentToast();
-                //TODO
+                //inDevelopmentToast();
+                Intent intent=new Intent(getActivity(), AppInfoActivity.class);
+                startActivity(intent);
+                getActivity().finish();
             }
         });
     }

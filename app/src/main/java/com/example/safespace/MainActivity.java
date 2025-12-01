@@ -1,5 +1,6 @@
 package com.example.safespace;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -57,6 +58,15 @@ public class MainActivity extends AppCompatActivity{
 
         setupViewPager();
         setupBottomNavigation();
+
+        Intent intent = getIntent();
+        boolean showProfile=false;
+        if(intent.hasExtra("go_to_profile")){
+            showProfile=intent.getBooleanExtra("go_to_profile", false);
+            if(showProfile){
+                viewPager.setCurrentItem(1); ////////
+            }
+        }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -124,6 +134,10 @@ public class MainActivity extends AppCompatActivity{
             // Если на профиле - возвращаем на главную
             viewPager.setCurrentItem(0, true);
         }
+    }
+
+    public void finishActivity(){
+        finish();
     }
 
 }
