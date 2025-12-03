@@ -1,4 +1,4 @@
-package com.example.safespace;
+package com.example.panicpause;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -373,7 +373,7 @@ public class TriggersRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVie
             }
 
             // Update button state based on whether trigger is selected
-            updatePlusButtonBG(triggerItem.getImgTag());
+            updatePlusButtonSrc(triggerItem.getImgTag());
 
             // Apply margins based on hierarchy level for visual indentation
             ViewGroup.MarginLayoutParams params=(ViewGroup.MarginLayoutParams) outerLayout.getLayoutParams();
@@ -403,14 +403,16 @@ public class TriggersRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVie
             return (int)(dp*itemView.getContext().getResources().getDisplayMetrics().density);
         }
 
-        /** Update the plus button to show plus or checkmark based on selection state */
-        private void updatePlusButtonBG(String imgTag) {
+        //Update the plus button to show plus or checkmark based on selection state
+        private void updatePlusButtonSrc(String imgTag) {
             if (isTriggerSelected(imgTag)) {
                 // Show checkmark for selected triggers
-                plusBtn.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.check_mark));
+                //plusBtn.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.check_mark));
+                plusBtn.setImageResource(R.drawable.check_mark);
             } else {
                 // Show plus for unselected triggers
-                plusBtn.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.plus));
+                //plusBtn.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.plus));
+                plusBtn.setImageResource(R.drawable.plus);
             }
         }
 
@@ -445,7 +447,7 @@ public class TriggersRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVie
             }
 
             // Update button state based on whether trigger is selected
-            updatePlusButtonBG(triggerItem.getImgTag());
+            updatePlusButtonSrc(triggerItem.getImgTag());
 
             // Apply margins based on hierarchy level for visual indentation
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) triggerLayout.getLayoutParams();
@@ -467,14 +469,16 @@ public class TriggersRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVie
             return (int) (dp * itemView.getContext().getResources().getDisplayMetrics().density);
         }
 
-        /** Update the plus button to show plus or checkmark based on selection state */
-        private void updatePlusButtonBG(String imgTag) {
+        //Update the plus button to show plus or checkmark based on selection state
+        private void updatePlusButtonSrc(String imgTag) {
             if (isTriggerSelected(imgTag)) {
                 // Show checkmark for selected triggers
-                plusBtn.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.check_mark));
+                //plusBtn.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.check_mark));
+                plusBtn.setImageResource(R.drawable.check_mark);
             } else {
                 // Show plus for unselected triggers
-                plusBtn.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.plus));
+                //plusBtn.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.plus));
+                plusBtn.setImageResource(R.drawable.plus);
             }
         }
 

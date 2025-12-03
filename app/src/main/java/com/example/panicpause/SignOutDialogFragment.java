@@ -1,4 +1,4 @@
-package com.example.safespace;
+package com.example.panicpause;
 
 import android.app.Dialog;
 import android.graphics.Color;
@@ -7,9 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

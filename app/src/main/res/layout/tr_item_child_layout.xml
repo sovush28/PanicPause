@@ -19,22 +19,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:gravity="center_vertical"
             android:layout_marginHorizontal="10dp"
             >
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_gravity="start"
                 style="@style/normalTextDark"
-                android:textSize="16dp"
+                android:textSize="16sp"
                 android:id="@+id/tr_child_title_tv"
                 />
             <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/plus"
-                android:layout_gravity="end"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:scaleType="center"
+                android:src="@drawable/plus"
+                android:background="@color/colorBeige"
                 android:id="@+id/tr_plus_ib"
                 />
         </LinearLayout>

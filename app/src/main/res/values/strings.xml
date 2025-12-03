@@ -31,29 +31,6 @@
     <string name="reset_passw">Сбросить пароль</string>
     <string name="cancel">Отмена</string>
 
-    <!--<string name="code_from_mail">Код из письма</string>
-    <string name="get_code">Получить код</string>
-
-    <string name="code_sent">На указанный адрес был отправлен пятизначный код</string>
-    <string name="code_sending_error">Ошибка отправки кода: </string>
-
-    <string name="email_subject">Код подтверждения SafeSpace</string>
-    <string name="email_body"> - ваш код подтверждения для создания учетной записи в Safespace</string>
-    <string-array name="email_body_end">
-        <item>С уважением,</item>
-        <item>команда Safespace</item>
-    </string-array>
-        <string name="enter_code">Введите пятизначный код подтверждения</string>-->
-
-    <!--<string name="email_verification_needed">Необходимо подтвердить email перед входом. Перейдите по ссылке из полученного письма</string>
-    <string name="email_not_verified">Email не подтвержден</string>
-    <string name="send_ver_link_again">Отправить письмо с подтверждением повторно на </string>
-    <string name="send">Отправить</string>
-    <string name="seconds">с.</string>
-
-    <string name="ver_link_sent">Письмо с подтверждением отправлено на </string>
-    <string name="email_sending_error">Ошибка отправки письма: </string>-->
-
 
     <string name="enter_all">Заполните поля</string>
     <string name="enter_email">Введите пароль</string>

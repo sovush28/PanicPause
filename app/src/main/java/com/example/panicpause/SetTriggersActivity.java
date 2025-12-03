@@ -1,6 +1,5 @@
-package com.example.safespace;
+package com.example.panicpause;
 
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -121,7 +120,7 @@ public class SetTriggersActivity extends AppCompatActivity implements TriggersRe
 
     }
 
-    /** Load user's selected triggers from their Firestore document */
+    // Load user's selected triggers from their Firestore document
     private void LoadUserTriggers(FirebaseUser user) {
         db.collection("users").document(user.getUid())
                 .get()
@@ -150,7 +149,7 @@ public class SetTriggersActivity extends AppCompatActivity implements TriggersRe
                 });
     }
 
-    /** Create user document if it doesn't exist */
+    // Create user document if it doesn't exist
     private void CreateUserDocument(FirebaseUser user) {
         db.collection("users").document(user.getUid())
                 .set(new java.util.HashMap<String, Object>() {{
@@ -188,7 +187,7 @@ public class SetTriggersActivity extends AppCompatActivity implements TriggersRe
         }
     }
 
-    /** Add a trigger to user's triggers array in Firestore */
+    // Add a trigger to user's triggers array in Firestore
     private void AddTriggerToUser(FirebaseUser user, String triggerTag) {
         db.collection("users").document(user.getUid())
                 .update("triggers", FieldValue.arrayUnion(triggerTag))
@@ -203,7 +202,7 @@ public class SetTriggersActivity extends AppCompatActivity implements TriggersRe
                 });
     }
 
-    /** Remove a trigger from user's triggers array in Firestore */
+    //Remove a trigger from user's triggers array in Firestore
     private void RemoveTriggerFromUser(FirebaseUser user, String triggerTag) {
         db.collection("users").document(user.getUid())
                 .update("triggers", FieldValue.arrayRemove(triggerTag))

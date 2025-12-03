@@ -1,4 +1,4 @@
-package com.example.safespace;
+package com.example.panicpause;
 
 import android.app.Dialog;
 import android.graphics.Color;

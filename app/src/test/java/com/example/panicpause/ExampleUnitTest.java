@@ -1,4 +1,4 @@
-package com.example.safespace;
+package com.example.panicpause;
 
 import org.junit.Test;
 

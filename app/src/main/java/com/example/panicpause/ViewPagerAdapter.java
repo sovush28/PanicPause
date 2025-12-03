@@ -1,4 +1,4 @@
-package com.example.safespace;
+package com.example.panicpause;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;

@@ -10,7 +10,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_hugtest_round"
         android:supportsRtl="true"
-        android:theme="@style/Base.Theme.SafeSpace"
+        android:theme="@style/Base.Theme.PanicPause"
         tools:targetApi="31">
         <activity
             android:name=".AppInfoActivity"

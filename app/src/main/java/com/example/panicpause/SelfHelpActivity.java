@@ -1,4 +1,4 @@
-package com.example.safespace;
+package com.example.panicpause;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -7,8 +7,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.RotateAnimation;
 import android.view.animation.Transformation;
 import android.widget.ImageButton;
 import android.widget.ImageView;

@@ -1,10 +1,8 @@
-package com.example.safespace;
+package com.example.panicpause;
 
 import static android.content.ContentValues.TAG;
 
-import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;

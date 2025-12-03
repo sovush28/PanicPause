@@ -9,11 +9,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.safespace"
+    namespace = "com.example.panicpause"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.safespace"
+        applicationId = "com.example.panicpause"
         minSdk = 29
         targetSdk = 35
         versionCode = 1

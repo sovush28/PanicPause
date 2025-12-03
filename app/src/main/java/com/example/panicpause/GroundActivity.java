@@ -1,12 +1,10 @@
-package com.example.safespace;
+package com.example.panicpause;
 
 import static android.content.ContentValues.TAG;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -211,13 +209,7 @@ public class GroundActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Строит последовательность упражнений на основе настроек пользователя
-     * - Дыхание всегда первое и последнее (breathRepeatAmount раз)
-     * - Упражнения с фото: количество = groundPhotoExAmount
-     * - Математика: если useMath = true
-     * - Поиск цвета: если useSearchObjectsColor = true
-     */
+    //Строит последовательность упражнений на основе настроек пользователя
     private void buildExerciseSequence() {
         fragmentClasses.clear();
         fragmentInstances.clear();
@@ -255,9 +247,7 @@ public class GroundActivity extends AppCompatActivity {
         Log.d(TAG, "Built exercise sequence with " + fragmentClasses.size() + " exercises");
     }
 
-    /**
-     * Создает и сохраняет все фрагменты заранее с уникальными тегами
-     */
+    //Создает и сохраняет все фрагменты заранее с уникальными тегами
     private void startGroundingSequence() {
         fragmentInstances.clear();
         try {
@@ -270,20 +260,9 @@ public class GroundActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.e(TAG, "Error creating fragment instances", e);
         }
-        /*fragmentInstances.clear();
-        try {
-            for (int i = 0; i < fragmentClasses.size(); i++) {
-                createAndAddFragment(i);
-            }
-            showFragment(0);
-        } catch (Exception e) {
-            Log.e(TAG, "Error creating fragment instances", e);
-        }*/
     }
 
-    /**
-     * Создает один фрагмент и добавляет его в список с уникальным тегом
-     */
+    //Создает один фрагмент и добавляет его в список с уникальным тегом
     private void createAndAddFragment(int index) {
         try {
             // не создан ли уже фрагмент для этого индекса
@@ -311,34 +290,14 @@ public class GroundActivity extends AppCompatActivity {
             }
             fragmentInstances.set(index, fragment);
 
-            /*
-            Fragment fragment = fragmentClasses.get(index).newInstance();
-
-            // Устанавливаем уникальный тег для каждого фрагмента
-            String tag = "exercise_fragment_" + index;
-
-            // Если фрагмент еще не добавлен в FragmentManager, добавляем его
-            if (fragmentManager.findFragmentByTag(tag) == null) {
-                FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.add(R.id.fragment_container, fragment, tag);
-                transaction.hide(fragment); // Сначала скрываем
-                transaction.commit();
-                fragmentManager.executePendingTransactions();
-            }
-
-            fragmentInstances.add(fragment);
-*/
-
         }
         catch (Exception e) {
             Log.e(TAG, "Error creating fragment at index " + index, e);
         }
     }
 
-    /**
-     * Создает экземпляры всех фрагментов и сохраняет их в список
-     * (предотвращает пересоздание фрагментов при навигации)
-     */
+/*
+    //Создает экземпляры всех фрагментов и сохраняет их в список (предотвращает пересоздание фрагментов при навигации)
     private void createFragmentInstances() {
         try {
             for (Class<? extends Fragment> fragmentClass : fragmentClasses) {
@@ -349,11 +308,9 @@ public class GroundActivity extends AppCompatActivity {
             Log.e(TAG, "Error creating fragment instances", e);
         }
     }
+*/
 
-    /**
-     * Показывает фрагмент по указанному индексу
-     * @param fragmentIndex индекс фрагмента в последовательности
-     */
+    //Показывает фрагмент по указанному индексу в последовательности
     private void showFragment(int fragmentIndex) {
         if (fragmentIndex < 0 || fragmentIndex >= fragmentClasses.size()) {
             Log.e(TAG, "Invalid fragment index: " + fragmentIndex);
@@ -431,10 +388,8 @@ public class GroundActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Перезапускает всю последовательность упражнений
-     * Вызывается из последнего фрагмента по нажатию "Повторить"
-     */
+    //Перезапускает всю последовательность упражнений
+    //вызывается из последнего фрагмента по нажатию "Повторить"
     public void repeatGroundingSequence() {
         // Остановка текущего фрагмента
         if (currentFragment instanceof GroundBreathFragment) {
@@ -460,10 +415,7 @@ public class GroundActivity extends AppCompatActivity {
         startGroundingSequence();
     }
 
-    /**
-     * Сохраняет историю выполнения упражнений в Firestore
-     * метод будет расширен когда добавим функционал истории
-     */
+    //Сохраняет историю выполнения упражнений в Firestore
     private void saveExerciseHistory() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null)
@@ -475,13 +427,6 @@ public class GroundActivity extends AppCompatActivity {
     }
 
 
-
-    /**
-     * Gets the current fragment index.
-     * This can be useful for fragments to know their position in the sequence.
-     * 
-     * @return The current fragment index (0-5)
-     */
     public int getCurrentFragmentIndex() {
         return currentFragmentIndex;
     }

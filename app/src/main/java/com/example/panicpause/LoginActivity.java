@@ -1,12 +1,9 @@
-package com.example.safespace;
+package com.example.panicpause;
 
 import static android.content.ContentValues.TAG;
-import static android.widget.Toast.LENGTH_SHORT;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,7 +13,6 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -39,7 +35,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private FirebaseFirestore db;
 
     // Для показа прогресса в build.gradle (module:app) dependencies добавить:
-    //    implementation 'com.github.ybq:Android-SpinKit:1.4.0'
+    // implementation 'com.github.ybq:Android-SpinKit:1.4.0'
     // далее отмечено так /////////////////////
 
     //private LoadingDialog loadingDialog; //////////////////
@@ -66,7 +62,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         // Инициализация Firebase
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        //loadingDialog = new LoadingDialog(this); ///////////////////////////
+        //loadingDialog = new LoadingDialog(this); //////////////////////
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -202,120 +198,4 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     }
                 });
     }
-
-    // Диалог для повторной отправки верификационного письма
-    /*private void showResendVerificationDialog(String email) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.email_not_verified))
-                .setMessage(getString(R.string.send_ver_link_again) + email + "?")
-                .setCancelable(true); // если false, то тогда пользователь не сможет закрыть диалог нажав "назад"
-
-        // Создаем диалог
-        AlertDialog verDialog = builder.create();
-
-        // Устанавливаем кнопки после создания диалога
-        verDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.send), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Эта кнопка будет заменена, поэтому обработчик здесь не нужен
-            }
-        });
-
-        verDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.cancel), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        // Показываем диалог
-        verDialog.show();
-
-        // Получаем ссылку на кнопку "Отправить" и настраиваем обратный отсчет
-        Button sendButton = verDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-        startCountdown(sendButton, email, verDialog);
-
-    }
-
-    // Метод для запуска обратного отсчета
-    private void startCountdown(Button button, String email, AlertDialog dialog) {
-        // Блокируем кнопку сразу
-        button.setEnabled(false);
-
-        final int[] countdownTime = {60}; // 60 секунд обратного отсчета
-
-        // Создаем таймер для обновления текста кнопки каждую секунду
-        CountDownTimer countDownTimer = new CountDownTimer(60000, 1000) { // 60 секунд, интервал 1 секунда
-            @Override
-            public void onTick(long millisUntilFinished) {
-                // Обновляем текст кнопки
-                countdownTime[0]--;
-                String buttonText = getString(R.string.send) + " (" + countdownTime[0] + " " + getString(R.string.seconds) + ")";
-                button.setText(buttonText);
-            }
-
-            @Override
-            public void onFinish() {
-                // Восстанавливаем кнопку
-                button.setEnabled(true);
-                button.setText(getString(R.string.send)); // Возвращаем оригинальный текст
-
-                // Устанавливаем новый обработчик для отправки письма
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        sendEmailVerification(email);
-                        dialog.dismiss(); // Закрываем диалог после отправки
-                    }
-                });
-            }
-        };
-
-        // Запускаем таймер
-        countDownTimer.start();
-
-        // Устанавливаем первоначальный текст
-        String initialText = getString(R.string.send) + " (" + countdownTime[0] + " " + getString(R.string.seconds) + ")";
-        button.setText(initialText);
-    }*/
-
-    // Метод для отправки верификационного письма
-    /*private void sendEmailVerification(String email) {
-        // временный вход для отправки письма
-        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, "temporary_password")
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Отправляем письмо верификации
-                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                            if (user != null) {
-                                user.sendEmailVerification()
-                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful()) {
-                                                    Toast.makeText(LoginActivity.this,
-                                                            getString(R.string.ver_link_sent) + user.getEmail(),
-                                                            Toast.LENGTH_SHORT).show();
-                                                } else {
-                                                    Toast.makeText(LoginActivity.this,
-                                                            getString(R.string.email_sending_error) + task.getException().getMessage(),
-                                                            Toast.LENGTH_LONG).show();
-                                                }
-                                                // Выход из временного аккаунта
-                                                FirebaseAuth.getInstance().signOut();
-                                            }
-                                        });
-                            }
-                        } else {
-                            Toast.makeText(LoginActivity.this,
-                                    getString(R.string.login_error),
-                                    Toast.LENGTH_LONG).show();
-                            //"Для повторной отправки войдите в аккаунт"
-                        }
-                    }
-                });
-    }*/
-
 }

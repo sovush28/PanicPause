@@ -1,7 +1,4 @@
-package com.example.safespace;
-
-import static android.content.ContentValues.TAG;
-import static android.widget.Toast.LENGTH_SHORT;
+package com.example.panicpause;
 
 import android.content.Intent;
 import android.os.Bundle;
