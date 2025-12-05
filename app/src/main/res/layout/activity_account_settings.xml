@@ -42,58 +42,108 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginHorizontal="12dp"
-            >
+            android:orientation="vertical"
+            android:id="@+id/logged_in_as_guest_layout">
             <TextView
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_marginHorizontal="12dp"
                 style="@style/normalTextDark"
-                android:textStyle="bold"
-                android:text="@string/email_short"
+                android:text="@string/logged_in_as_guest_text"
                 />
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/normalTextDark"
-                android:id="@+id/user_email_tv"
+                android:orientation="horizontal"
+                android:layout_marginTop="20dp"
+                android:layout_marginHorizontal="12dp"
+                android:id="@+id/go_to_login_signin_layout"
+                >
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    style="@style/normalTextDark"
+                    android:textStyle="bold"
+                    android:text="@string/go_to_login_signin"
+                    />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/big_arrow_right"
+                    android:layout_marginEnd="10dp"
+                    />
+            </LinearLayout>
+            <View
+                app:backgroundTint="@null"
+                android:background="@drawable/divider_main_shape"
+                style="@style/MainDivider"
+                android:layout_marginVertical="20dp"
                 />
         </LinearLayout>
-        <View
-            app:backgroundTint="@null"
-            android:background="@drawable/divider_main_shape"
-            style="@style/MainDivider"
-            android:layout_marginVertical="20dp"
-            />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginHorizontal="12dp"
-            android:id="@+id/go_to_passw_reset_layout"
-            >
-            <TextView
-                android:layout_width="0dp"
+            android:orientation="vertical"
+            android:id="@+id/email_passw_reset_layout">
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                style="@style/normalTextDark"
-                android:textStyle="bold"
-                android:text="@string/passw_reset"
+                android:orientation="horizontal"
+                android:layout_marginHorizontal="12dp"
+                android:id="@+id/email_layout"
+                >
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    style="@style/normalTextDark"
+                    android:textStyle="bold"
+                    android:text="@string/email_short"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/normalTextDark"
+                    android:id="@+id/user_email_tv"
+                    />
+            </LinearLayout>
+            <View
+                app:backgroundTint="@null"
+                android:background="@drawable/divider_main_shape"
+                style="@style/MainDivider"
+                android:layout_marginVertical="20dp"
                 />
-            <ImageView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/big_arrow_right"
-                android:layout_marginEnd="10dp"
+                android:orientation="horizontal"
+                android:layout_marginHorizontal="12dp"
+                android:id="@+id/go_to_passw_reset_layout"
+                >
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    style="@style/normalTextDark"
+                    android:textStyle="bold"
+                    android:text="@string/passw_reset"
+                    />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/big_arrow_right"
+                    android:layout_marginEnd="10dp"
+                    />
+            </LinearLayout>
+            <View
+                app:backgroundTint="@null"
+                android:background="@drawable/divider_main_shape"
+                style="@style/MainDivider"
+                android:layout_marginVertical="20dp"
                 />
         </LinearLayout>
-        <View
-            app:backgroundTint="@null"
-            android:background="@drawable/divider_main_shape"
-            style="@style/MainDivider"
-            android:layout_marginVertical="20dp"
-            />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -125,6 +175,7 @@
         android:orientation="vertical"
         android:layout_marginHorizontal="28dp"
         android:layout_marginBottom="85dp"
+        android:id="@+id/sign_out_delete_acc_layout"
         >
         <TextView
             android:layout_width="match_parent"

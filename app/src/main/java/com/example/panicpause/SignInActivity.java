@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,13 +33,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
+public class SignInActivity extends AppCompatActivity {
 
+    ImageView backIV;
     EditText emailET, passwET, repeatPasswET;
     TextView logInTV;
-    Button signInBtn;
+    Button signInBtn, logInAsGuestBtn;
+    LinearLayout guestBtnLayout;
+
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
+
+    private boolean fromAccSettings = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +53,26 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_sign_in);
 
         InitializeViews();
+        SetOnClickListeners();
 
+        /*
+        backIV.setOnClickListener(this);
         logInTV.setOnClickListener(this);
         signInBtn.setOnClickListener(this);
+        logInAsGuestBtn.setOnClickListener(this);
+*/
+
+        Intent intent= getIntent();
+        if(intent.hasExtra("from_acc_settings")){
+            fromAccSettings = intent.getBooleanExtra("from_acc_settings", false);
+            if(fromAccSettings){
+                ShowBackHideGuest();
+            } else {
+                HideBackBtnShowGuest();
+            }
+        } else{
+            HideBackBtnShowGuest();
+        }
 
         // Initialize Firebase
         mAuth = FirebaseAuth.getInstance();
@@ -61,14 +85,73 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         });
     }
 
-    private void InitializeViews(){
-        emailET=(EditText)findViewById(R.id.signin_email_et);
-        repeatPasswET=(EditText)findViewById(R.id.signin_repeat_passw_et);
-        passwET=(EditText)findViewById(R.id.signin_passw_et);
-        logInTV=(TextView)findViewById(R.id.to_login_tv);
-        signInBtn=(Button)findViewById(R.id.sign_in_btn);
+    private void HideBackBtnShowGuest(){
+        backIV.setVisibility(View.GONE);
+        guestBtnLayout.setVisibility(View.VISIBLE);
     }
 
+    private void ShowBackHideGuest(){
+        backIV.setVisibility(View.VISIBLE);
+        guestBtnLayout.setVisibility(View.GONE);
+    }
+
+    private void InitializeViews(){
+        backIV=findViewById(R.id.back_iv);
+        emailET=findViewById(R.id.signin_email_et);
+        repeatPasswET=findViewById(R.id.signin_repeat_passw_et);
+        passwET=findViewById(R.id.signin_passw_et);
+        logInTV=findViewById(R.id.to_login_tv);
+        signInBtn=findViewById(R.id.sign_in_btn);
+        guestBtnLayout.findViewById(R.id.guest_btn_layout);
+        logInAsGuestBtn=findViewById(R.id.log_in_as_guest_btn);
+    }
+
+    private void SetOnClickListeners(){
+        backIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        signInBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String passw=passwET.getText().toString();
+                String passwRepeat=repeatPasswET.getText().toString();
+                if(!passw.trim().equals(passwRepeat.trim())) {
+                    Toast.makeText(SignInActivity.this, getString(R.string.passws_not_same),Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                signInUser();
+            }
+        });
+
+        logInTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(SignInActivity.this, LoginActivity.class);
+                if(fromAccSettings){
+                    intent.putExtra("from_acc_settings", true);
+                }
+                startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out); // Плавное появление/исчезание
+                finish();
+            }
+        });
+
+        logInAsGuestBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(SignInActivity.this, MainActivity.class);
+                startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out); // Плавное появление/исчезание
+                finish();
+            }
+        });
+    }
+
+/*
     @Override
     public void onClick(View v){
         if(v.getId()==R.id.to_login_tv){
@@ -86,9 +169,11 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             }
             signInUser();
         }
+        else if(v.getId()==R.id.back_iv){
+            finish();
+        }
     }
-
-    ///
+*/
 
     private String getErrorMessage(Exception exception) {
 
@@ -103,7 +188,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             return getString(R.string.email_not_found);
         } else if (errorMessage.contains("badly formatted")) {
             return getString(R.string.invalid_email_error);
-        } else if (errorMessage.contains("network error")) {
+        } else if (errorMessage.contains("failed to connect") && errorMessage.contains("network")) {
             return getString(R.string.network_error);
         } else if (errorMessage.contains("email address is already") ||
                 errorMessage.contains("The email address is already in use")) {

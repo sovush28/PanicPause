@@ -3,6 +3,7 @@ package com.example.panicpause;
 import static android.widget.Toast.LENGTH_SHORT;
 
 import android.content.Intent;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,7 +25,9 @@ public class AccountSettingsActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     ImageButton backBtn;
-    LinearLayout passwResetLayout, techSupportLayout;
+    LinearLayout guestMsgLayout, goToLogInSignInLayout,
+            emailPasswResetLayout, passwResetLayout,
+            techSupportLayout, signOutDeleteAccLayout;
     TextView userEmailTV, signOutTV, deleteAccTV;
 
     @Override
@@ -40,7 +43,18 @@ public class AccountSettingsActivity extends AppCompatActivity {
         FirebaseUser user= mAuth.getCurrentUser();
 
         if(user!=null && user.getEmail()!=null){
+            //авторизованный
+            guestMsgLayout.setVisibility(View.GONE);
+            emailPasswResetLayout.setVisibility(View.VISIBLE);
+            signOutDeleteAccLayout.setVisibility(View.VISIBLE);
+
             userEmailTV.setText(user.getEmail());
+        }
+        else{
+            //гость
+            guestMsgLayout.setVisibility(View.VISIBLE);
+            emailPasswResetLayout.setVisibility(View.GONE);
+            signOutDeleteAccLayout.setVisibility(View.GONE);
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -59,16 +73,33 @@ public class AccountSettingsActivity extends AppCompatActivity {
     private void InitializeViews(){
         backBtn=findViewById(R.id.back_btn);
 
+        guestMsgLayout=findViewById(R.id.logged_in_as_guest_layout);
+        goToLogInSignInLayout=findViewById(R.id.go_to_login_signin_layout);
+
+        emailPasswResetLayout=findViewById(R.id.email_passw_reset_layout);
         userEmailTV=findViewById(R.id.user_email_tv);
 
         passwResetLayout=findViewById(R.id.go_to_passw_reset_layout);
         techSupportLayout=findViewById(R.id.tech_support_layout);
 
+        signOutDeleteAccLayout=findViewById(R.id.sign_out_delete_acc_layout);
         signOutTV=findViewById(R.id.sign_out_tv);
         deleteAccTV=findViewById(R.id.delete_acc_tv);
     }
 
     private void SetOnClickListeners(){
+        goToLogInSignInLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // go to sign in activity with intent Extra
+                Intent intent=new Intent(AccountSettingsActivity.this, SignInActivity.class);
+                intent.putExtra("from_acc_settings", true);
+                startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out); // Плавное появление/исчезание
+                finish();
+            }
+        });
+
         passwResetLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

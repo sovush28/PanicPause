@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,14 +27,18 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivity extends AppCompatActivity {
 
+    ImageButton backBtn;
     EditText emailET, passwET;
     TextView forgotPasswTV, createAccTV;
-    Button logInBtn;
+    Button logInBtn, logInAsGuestBtn;
+    LinearLayout guestBtnLayout;
 
     private FirebaseAuth mAuth; //Declare an instance of FirebaseAuth
     private FirebaseFirestore db;
+
+    private boolean fromAccSettings=false;
 
     // Для показа прогресса в build.gradle (module:app) dependencies добавить:
     // implementation 'com.github.ybq:Android-SpinKit:1.4.0'
@@ -47,16 +53,27 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
 
         InitializeViews();
-
-        logInBtn.setOnClickListener(this);
-        forgotPasswTV.setOnClickListener(this);
-        createAccTV.setOnClickListener(this);
+        SetOnClickListeners();
 
         //если перебросило сюда после регистрации то подгружается логин
+        /*
         Intent intent=getIntent();
         if(intent.hasExtra("user_email")){
             String createdUserEmail=intent.getStringExtra("user_email");
             emailET.setText(createdUserEmail);
+        }
+        */
+
+        Intent intent= getIntent();
+        if(intent.hasExtra("from_acc_settings")){
+            fromAccSettings = intent.getBooleanExtra("from_acc_settings", false);
+            if(fromAccSettings){
+                ShowBackHideGuest();
+            } else {
+                HideBackBtnShowGuest();
+            }
+        } else{
+            HideBackBtnShowGuest();
         }
 
         // Инициализация Firebase
@@ -71,12 +88,72 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         });
     }
 
+    private void HideBackBtnShowGuest(){
+        backBtn.setVisibility(View.GONE);
+        guestBtnLayout.setVisibility(View.VISIBLE);
+    }
+
+    private void ShowBackHideGuest(){
+        backBtn.setVisibility(View.VISIBLE);
+        guestBtnLayout.setVisibility(View.GONE);
+    }
+
     private void InitializeViews(){
-        emailET = (EditText) findViewById(R.id.login_email_et);
-        passwET = (EditText) findViewById(R.id.login_passw_et);
-        forgotPasswTV = (TextView) findViewById(R.id.forgot_passw_tv);
-        createAccTV = (TextView) findViewById(R.id.create_acc_tv);
-        logInBtn = (Button) findViewById(R.id.log_in_btn);
+        backBtn = findViewById(R.id.back_btn);
+        emailET = findViewById(R.id.login_email_et);
+        passwET = findViewById(R.id.login_passw_et);
+        forgotPasswTV = findViewById(R.id.forgot_passw_tv);
+        createAccTV = findViewById(R.id.create_acc_tv);
+        logInBtn = findViewById(R.id.log_in_btn);
+        logInAsGuestBtn=findViewById(R.id.log_in_as_guest_btn);
+        guestBtnLayout.findViewById(R.id.guest_btn_layout);
+    }
+
+    private void SetOnClickListeners(){
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        forgotPasswTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: восстановление пароля
+                Toast.makeText(LoginActivity.this, R.string.in_development, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        logInBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LogInUser();
+            }
+        });
+
+        logInAsGuestBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out); // Плавное появление/исчезание
+                finish();
+            }
+        });
+
+        createAccTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(LoginActivity.this, SignInActivity.class);
+                if(fromAccSettings){
+                    intent.putExtra("from_acc_settings", true);
+                }
+                startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out); // Плавное появление/исчезание
+                finish();
+            }
+        });
     }
 
     private void goToMainActivity() {
@@ -101,6 +178,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         checkCurrentUser();
     }
 
+/*
     @Override
     public void onClick(View v){
         if(v.getId()==R.id.log_in_btn){
@@ -116,7 +194,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             // TODO: восстановление пароля
             Toast.makeText(LoginActivity.this, R.string.in_development, Toast.LENGTH_SHORT).show();
         }
+        else if (v.getId()==R.id.back_btn) {
+            finish();
+        }
     }
+*/
 
     private String getErrorMessage(Exception exception) {
 
@@ -131,7 +213,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             return getString(R.string.email_not_found);
         } else if (errorMessage.contains("badly formatted")) {
             return getString(R.string.invalid_email_error);
-        } else if (errorMessage.contains("network error")) {
+        } else if (errorMessage.contains("failed to connect") && errorMessage.contains("network")) {
             return getString(R.string.network_error);
         } else if(errorMessage.contains("auth credential is incorrect")){
             return getString(R.string.invalid_auth_data);

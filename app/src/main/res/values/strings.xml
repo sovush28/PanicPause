@@ -9,7 +9,7 @@
     <string name="log_in_page">Вход</string>
     <string name="email">Электронная почта</string>
     <string name="password">Пароль</string>
-    <string name="forgot_passw"><u>Забыли пароль?</u></string>
+    <string name="forgot_passw"><b><u>Забыли пароль?</u></b></string>
     <string name="log_in">Войти</string>
     <string name="log_in_underline"><u>Войти</u></string>
     <string name="frst_time_here">Впервые в PanicPause?</string>
@@ -24,6 +24,8 @@
     <string name="passws_not_same">Пароли не совпадают</string>
     <string name="has_signed_in">Уже есть учётная запись?</string>
 
+    <string name="or">или:</string>
+    <string name="log_in_as_guest">Войти как гость</string>
 
     <!--Сброс пароля-->
     <string name="passw_reset_page">Восстановление пароля</string>
@@ -208,6 +210,14 @@
 
     <string name="acc_deletion_error">Ошибка удаления аккаунта: </string>
     <string name="user_isnt_signed_in">Пользователь не авторизован</string>
+
+    <string name="logged_in_as_guest_text"><b>Сейчас вы вошли как гость.</b> Это значит, что все ваши данные
+        (настройки, история, избранные и т. д.) сохраняются только <b>локально</b> на вашем устройстве,
+        и при удалении приложения будут безвозвратно утеряны. \nЧтобы это предотвратить, вы можете
+        создать <b>учётную запись</b> - тогда ваши данные будут храниться на сервере,
+        и вы сможете получить к ним доступ в любой момент, войдя в неё в приложении  с любого устройства.
+    </string>
+    <string name="go_to_login_signin"><b><u>Войти/Зарегистрироваться</u></b></string>
 
 
     <!--О приложении-->

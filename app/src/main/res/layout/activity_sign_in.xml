@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -10,159 +10,206 @@
     android:orientation="vertical"
     >
 
-    <!--android:layout_marginTop="130dp"
-     app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"-->
+
     <LinearLayout
-        android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="48dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="150dp"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         >
 
-        <TextView
-            style="@style/normalTextLight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/welcome_to"
-            android:textSize="24dp" />
 
-        <TextView
-            style="@style/PanicPauseTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textColor="@color/colorBeige" />
-
-        <TextView
-            style="@style/normalTextLight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/sign_in_page" />
-
-        <EditText
-            android:id="@+id/signin_email_et"
-            android:hint="@string/email"
+        <LinearLayout
+            android:id="@+id/linearLayout3"
             android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginTop="45dp"
-            android:background="@drawable/et_light_border"
-            android:textColor="@color/colorBeige"
-            android:textColorHint="@color/colorTransparentBeige"
-            />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:passwordToggleEnabled="true"
-            android:layout_marginTop="30dp"
-            android:textColorHint="@color/colorTransparentBeige"
-            app:passwordToggleTint="@color/colorTransparentBeige"
-            app:hintEnabled="false"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="48dp"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
             >
-<!--    app:hintEnabled="false" - убирает анимацию хинта при фокусе  -->
-            <com.google.android.material.textfield.TextInputEditText
+
+            <TextView
+                style="@style/normalTextLight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/welcome_to"
+                android:textSize="24dp" />
+
+            <TextView
+                style="@style/PanicPauseTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name"
+                android:textColor="@color/colorBeige" />
+
+            <TextView
+                style="@style/normalTextLight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/sign_in_page" />
+
+            <EditText
+                android:id="@+id/signin_email_et"
+                android:hint="@string/email"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
+                android:layout_marginTop="45dp"
                 android:background="@drawable/et_light_border"
-                android:hint="@string/create_passw"
                 android:textColor="@color/colorBeige"
                 android:textColorHint="@color/colorTransparentBeige"
-                android:textCursorDrawable="@null"
-                android:inputType="textPassword"
+                />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:passwordToggleEnabled="true"
+                android:layout_marginTop="30dp"
+                android:textColorHint="@color/colorTransparentBeige"
+                app:passwordToggleTint="@color/colorTransparentBeige"
+                app:hintEnabled="false"
+                >
+                <!--    app:hintEnabled="false" - убирает анимацию хинта при фокусе  -->
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@drawable/et_light_border"
+                    android:hint="@string/create_passw"
+                    android:textColor="@color/colorBeige"
+                    android:textColorHint="@color/colorTransparentBeige"
+                    android:textCursorDrawable="@null"
+                    android:inputType="textPassword"
+                    android:id="@+id/signin_passw_et"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+            <!--
+            <EditText
                 android:id="@+id/signin_passw_et"
-                />
-        </com.google.android.material.textfield.TextInputLayout>
-        <!--
-        <EditText
-            android:id="@+id/signin_passw_et"
-            android:hint="@string/create_passw"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/et_light_border"
-            android:textColor="@color/colorBeige"
-            android:textColorHint="@color/colorTransparentBeige"/>
-        -->
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:passwordToggleEnabled="true"
-            android:layout_marginTop="30dp"
-            android:textColorHint="@color/colorTransparentBeige"
-            app:passwordToggleTint="@color/colorTransparentBeige"
-            app:hintEnabled="false"
-            >
-<!--    app:hintEnabled="false" - убирает анимацию хинта при фокусе  -->
-            <com.google.android.material.textfield.TextInputEditText
+                android:hint="@string/create_passw"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
+                android:layout_marginTop="30dp"
                 android:background="@drawable/et_light_border"
+                android:textColor="@color/colorBeige"
+                android:textColorHint="@color/colorTransparentBeige"/>
+            -->
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:passwordToggleEnabled="true"
+                android:layout_marginTop="30dp"
+                android:textColorHint="@color/colorTransparentBeige"
+                app:passwordToggleTint="@color/colorTransparentBeige"
+                app:hintEnabled="false"
+                >
+                <!--    app:hintEnabled="false" - убирает анимацию хинта при фокусе  -->
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@drawable/et_light_border"
+                    android:hint="@string/repeat_passw"
+                    android:textColor="@color/colorBeige"
+                    android:textColorHint="@color/colorTransparentBeige"
+                    android:textCursorDrawable="@null"
+                    android:inputType="textPassword"
+                    android:id="@+id/signin_repeat_passw_et"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+            <!--
+            <EditText
+                android:id="@+id/signin_repeat_passw_et"
                 android:hint="@string/repeat_passw"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/et_light_border"
                 android:textColor="@color/colorBeige"
                 android:textColorHint="@color/colorTransparentBeige"
-                android:textCursorDrawable="@null"
-                android:inputType="textPassword"
-                android:id="@+id/signin_repeat_passw_et"
                 />
-        </com.google.android.material.textfield.TextInputLayout>
-        <!--
-        <EditText
-            android:id="@+id/signin_repeat_passw_et"
-            android:hint="@string/repeat_passw"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/et_light_border"
-            android:textColor="@color/colorBeige"
-            android:textColorHint="@color/colorTransparentBeige"
-            />
--->
-        <Button
-            android:id="@+id/sign_in_btn"
-            style="@style/normalTextDark"
+    -->
+            <Button
+                android:id="@+id/sign_in_btn"
+                style="@style/normalTextDark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="@string/create_acc"
+                app:backgroundTint="@null"
+                android:background="@drawable/light_btn_shape"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/guest_btn_layout"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="12dp"
+                    style="@style/normalTextLight"
+                    android:text="@string/or"
+                    />
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:backgroundTint="@null"
+                    android:background="@drawable/et_light_border"
+                    style="@style/normalTextLight"
+                    android:textStyle="bold"
+                    android:text="@string/log_in_as_guest"
+                    android:id="@+id/log_in_as_guest_btn"
+                    />
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+        <!--    app:layout_constraintTop_toBottomOf="@+id/linearLayout3"-->
+        <LinearLayout
+            android:id="@+id/linearLayout4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:text="@string/create_acc"
-            android:textAlignment="center"
-            app:backgroundTint="@null"
-            android:background="@drawable/light_btn_shape"/>
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="40dp"
+            >
+
+            <TextView
+                style="@style/normalTextLight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/has_signed_in" />
+
+            <TextView
+                android:id="@+id/to_login_tv"
+                style="@style/normalTextLight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="@string/log_in_underline" />
+        </LinearLayout>
+
 
     </LinearLayout>
 
-<!--    app:layout_constraintTop_toBottomOf="@+id/linearLayout3"-->
-    <LinearLayout
-        android:id="@+id/linearLayout4"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="bottom"
-        android:gravity="center"
-        android:layout_marginTop="100dp"
-        >
 
-        <TextView
-            style="@style/normalTextLight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/has_signed_in" />
+    <ImageView
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/big_arrow_right"
+        android:scaleType="center"
+        android:rotation="180"
+        android:layout_marginTop="40dp"
+        android:layout_marginStart="30dp"
+        app:tint="@color/colorBeige"
+        android:id="@+id/back_iv"
+        />
 
-        <TextView
-            android:id="@+id/to_login_tv"
-            style="@style/normalTextLight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:text="@string/log_in_underline" />
-    </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

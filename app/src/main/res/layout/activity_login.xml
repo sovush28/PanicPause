@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -11,131 +11,176 @@
     >
 
     <LinearLayout
-        android:id="@+id/center_login_linlayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginHorizontal="50dp"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="150dp"
-        android:layout_marginEnd="48dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        >
 
-        <TextView
-            style="@style/normalTextDark"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:alpha="216"
-            android:text="@string/welcome_to"
-            android:textSize="24dp" />
 
-        <TextView
-            style="@style/PanicPauseTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name" />
-
-        <TextView
-            style="@style/normalTextGreen"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/log_in_page" />
-
-        <EditText
-            android:id="@+id/login_email_et"
+        <LinearLayout
+            android:id="@+id/center_login_linlayout"
             android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginTop="45dp"
-            android:autofillHints="emailAddress"
-            android:background="@drawable/et_dark_border"
-            android:hint="@string/email"
-            android:textColor="@color/colorDarkBlueish"
-            android:textCursorDrawable="@null"
-            />
-<!--Setting the android:textCursorDrawable attribute to @null should result in the use of android:textColor as the cursor color.-->
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="50dp"
+            android:orientation="vertical"
+            android:gravity="center_vertical">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:passwordToggleEnabled="true"
-            android:layout_marginTop="30dp"
-            android:textColorHint="#A49E96"
-            app:passwordToggleTint="#A49E96"
-            app:hintEnabled="false"
-            >
-<!--        app:hintEnabled="false" - убирает анимацию хинта при фокусе  -->
-            <com.google.android.material.textfield.TextInputEditText
+            <TextView
+                style="@style/normalTextDark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:alpha="216"
+                android:text="@string/welcome_to"
+                android:textSize="24dp" />
+
+            <TextView
+                style="@style/PanicPauseTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name" />
+
+            <TextView
+                style="@style/normalTextGreen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/log_in_page" />
+
+            <EditText
+                android:id="@+id/login_email_et"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
+                android:layout_marginTop="45dp"
+                android:autofillHints="emailAddress"
+                android:background="@drawable/et_dark_border"
+                android:hint="@string/email"
+                android:textColor="@color/colorDarkBlueish"
+                android:textCursorDrawable="@null"
+                />
+            <!--Setting the android:textCursorDrawable attribute to @null should result in the use of android:textColor as the cursor color.-->
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:passwordToggleEnabled="true"
+                android:layout_marginTop="30dp"
+                android:textColorHint="#A49E96"
+                app:passwordToggleTint="#A49E96"
+                app:hintEnabled="false"
+                >
+                <!--        app:hintEnabled="false" - убирает анимацию хинта при фокусе  -->
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@drawable/et_dark_border"
+                    android:hint="@string/password"
+                    android:textColor="@color/colorDarkBlueish"
+                    android:textCursorDrawable="@null"
+                    android:inputType="textPassword"
+                    android:id="@+id/login_passw_et"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--<EditText
+                android:id="@+id/login_passw_et"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginTop="30dp"
+                android:autofillHints="password"
                 android:background="@drawable/et_dark_border"
                 android:hint="@string/password"
                 android:textColor="@color/colorDarkBlueish"
                 android:textCursorDrawable="@null"
                 android:inputType="textPassword"
-                android:id="@+id/login_passw_et"
+                />-->
+
+            <TextView
+                android:id="@+id/forgot_passw_tv"
+                style="@style/normalTextGreen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="20dp"
+                android:text="@string/forgot_passw"
                 />
-        </com.google.android.material.textfield.TextInputLayout>
 
-        <!--<EditText
-            android:id="@+id/login_passw_et"
+            <Button
+                android:id="@+id/log_in_btn"
+                style="@style/normalTextLight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_shape"
+                android:text="@string/log_in"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/guest_btn_layout">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="12dp"
+                    style="@style/normalTextGreen"
+                    android:text="@string/or"
+                    />
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:backgroundTint="@null"
+                    android:background="@drawable/outlined_btn_shape"
+                    style="@style/normalTextGreen"
+                    android:textStyle="bold"
+                    android:text="@string/log_in_as_guest"
+                    android:id="@+id/log_in_as_guest_btn"
+                    />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginTop="30dp"
-            android:autofillHints="password"
-            android:background="@drawable/et_dark_border"
-            android:hint="@string/password"
-            android:textColor="@color/colorDarkBlueish"
-            android:textCursorDrawable="@null"
-            android:inputType="textPassword"
-            />-->
-
-        <TextView
-            android:id="@+id/forgot_passw_tv"
-            style="@style/normalTextGreen"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="20dp"
-            android:text="@string/forgot_passw"
-            />
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="40dp"
+            >
 
-        <Button
-            android:id="@+id/log_in_btn"
-            style="@style/normalTextLight"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/btn_shape"
-            android:text="@string/log_in"
-            android:textStyle="bold" />
+            <TextView
+                style="@style/normalTextGreen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/frst_time_here" />
+
+            <TextView
+                android:id="@+id/create_acc_tv"
+                style="@style/normalTextDark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="@string/create_acc_underline" />
+        </LinearLayout>
+
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/center_login_linlayout"
-        android:layout_marginTop="150dp">
 
-        <TextView
-            style="@style/normalTextGreen"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/frst_time_here" />
+    <ImageButton
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/back_arrow_icon"
+        android:scaleType="center"
+        android:layout_marginTop="40dp"
+        android:layout_marginStart="30dp"
+        android:id="@+id/back_btn"
+        android:contentDescription="Back Button"
+        />
 
-        <TextView
-            android:id="@+id/create_acc_tv"
-            style="@style/normalTextDark"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:text="@string/create_acc_underline" />
-    </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>
