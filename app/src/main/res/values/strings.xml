@@ -144,6 +144,8 @@
     <string name="first_time_welcome_msg">Добро пожаловать в PanicPause!
         \nДавайте <b>настроим</b> приложение под вас</string>
 
+    <string name="guest">Гость</string>
+
 
     <!--Триггеры-->
     <string name="set_triggers_info1">В упражнениях приложения используются фотографии.

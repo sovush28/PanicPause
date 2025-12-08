@@ -1,0 +1,307 @@
+[
+  {
+    "tags": [
+      "animal",
+      "bunny"
+    ],
+    "word": "кроликов",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/michael-myers-FvuisLAN-rA-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "capybara"
+    ],
+    "word": "капибар",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/caroline-badran-bt09Cs3UthM-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "capybara"
+    ],
+    "word": "капибар",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/osmar-do-canto-s0yAJwf2-k8-unsplash.jpg"
+  },
+  {
+    "word": "кошек",
+    "tags": [
+      "animal",
+      "cat",
+      "human",
+      "man"
+    ],
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/ignat-kushanrev-ku6WfsQ-ZkI-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "cat"
+    ],
+    "word": "кошек",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/winston-chen-OC0x3su9Uhs-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "cheetah"
+    ],
+    "word": "гепардов",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/gurth-bramall--bLBNjRZIIY-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "cow"
+    ],
+    "word": "коров",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/michaela-rimakova-BrROrS89NDY-unsplash.jpg"
+  },
+  {
+    "word": "ягоды черники",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/serghei-savchiuc-Mbz_syZ04B4-unsplash.jpg",
+    "tags": [
+      "food",
+      "dessert",
+      "berry",
+      "strawberry",
+      "blueberry"
+    ]
+  },
+  {
+    "tags": [
+      "animal",
+      "bird",
+      "duck"
+    ],
+    "word": "утят",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/colleen-snyman-Od7qot03Xog-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "fish"
+    ],
+    "word": "рыб",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/chris-wang-OLtj5Yyq_Ak-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "fish"
+    ],
+    "word": "рыб",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/kumiko-shimizu-PYKAnSKSRmg-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "fish"
+    ],
+    "word": "полосатых рыб",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/ray-aucott-N608DF9lq94-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "goat"
+    ],
+    "word": "козлят",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/aja-island-CY1NVUsZoLE-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "guinea pig"
+    ],
+    "word": "морских свинок",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/garrett-hayes-NQX5yF3d-6Q-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "guinea pig"
+    ],
+    "word": "морских свинок",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/rafaela-benigna-colXmiG85pU-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "bird"
+    ],
+    "word": "птиц",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/pourya-gohari-fpXywpJV1Yo-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "cat"
+    ],
+    "word": "котят",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/the-lucky-neko-2JcixB1Ky3I-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "cat"
+    ],
+    "word": "котят",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/the-lucky-neko-MEQFUHzCtAo-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "cat"
+    ],
+    "word": "котят",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/emmanual-thomas-8p6JGBsN_EU-unsplash.jpg"
+  },
+  {
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/vladan-raznatovic-8pQGjcP5zg4-unsplash.jpg",
+    "tags": [
+      "animal",
+      "cat"
+    ],
+    "word": "котят"
+  },
+  {
+    "tags": [
+      "animal",
+      "otter"
+    ],
+    "word": "выдр",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/jim-be_lZTsLXIs-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "otter"
+    ],
+    "word": "выдр",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/steve-payne-Mtv6qoAlTkM-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "bird",
+      "owl"
+    ],
+    "word": "сов",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/alex-devera-bXo9vi6l8hE-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "bird",
+      "parrot"
+    ],
+    "word": "попугаев",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/xuqing-jia-UhsPvSrAsVY-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "bird",
+      "parrot"
+    ],
+    "word": "попугаев",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/michael-PmEVznJGcc0-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "bird",
+      "parrot"
+    ],
+    "word": "попугаев",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/rajendra-chozhan-govindaraj-hChL2kSiRC0-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "bird",
+      "pigeon"
+    ],
+    "word": "голубей",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/didssph-J2aTNPqvrNY-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "bird",
+      "pigeon"
+    ],
+    "word": "голубей",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/gaf-clickz-eWqN1YLZ_KQ-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "bird",
+      "pigeon"
+    ],
+    "word": "голубей",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/karyna-panchenko-pZAcmHShDMs-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "bird",
+      "pigeon"
+    ],
+    "word": "голубей",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/kevin-wang-sQt9Dwf6EXY-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "dog"
+    ],
+    "word": "щенят",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/jametlene-reskp-VDrErQEF9e4-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "raccoon"
+    ],
+    "word": "енотов",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/fr0ggy5-MZrt80_mD7M-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "sea lion"
+    ],
+    "word": "морских львов",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/mana5280-fEaXC_7QDlU-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "seal"
+    ],
+    "word": "тюленей",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/nicola-terry-vA3v2drTt1I-unsplash.jpg"
+  },
+  {
+    "tags": [
+      "animal",
+      "sheep"
+    ],
+    "word": "овец",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/jotaka-9QaNiNq6SW8-unsplash.jpg"
+  },
+  {
+    "word": "кусочки помидоров",
+    "img_url": "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/dan-gold-4KrROxtfh6s-unsplash.jpg",
+    "tags": [
+      "food",
+      "tomato",
+      "porridge",
+      "egg",
+      "vegetable"
+    ]
+  }
+]

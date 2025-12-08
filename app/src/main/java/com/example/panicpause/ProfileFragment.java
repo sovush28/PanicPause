@@ -35,6 +35,9 @@ public class ProfileFragment extends Fragment{
         if(user!=null && user.getEmail()!=null){
             currentEmailTV.setText(user.getEmail());
         }
+        else{
+            currentEmailTV.setText(getString(R.string.guest));
+        }
 
         return view;  // Возвращаем готовый экран
     }
@@ -45,7 +48,6 @@ public class ProfileFragment extends Fragment{
 
     private void InitializeViews(View view){
         currentEmailTV=view.findViewById(R.id.temp_user_email_tv);
-
         favoritesTV=view.findViewById(R.id.favorites_tv);
         accountSettingsTV=view.findViewById(R.id.go_to_acc_settings_tv);
         setTriggersTV=view.findViewById(R.id.set_triggers_tv);
@@ -80,7 +82,6 @@ public class ProfileFragment extends Fragment{
         appInfoTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //inDevelopmentToast();
                 Intent intent=new Intent(getActivity(), AppInfoActivity.class);
                 startActivity(intent);
                 getActivity().finish();

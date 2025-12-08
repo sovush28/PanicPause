@@ -47,9 +47,6 @@ public class HomeFragment extends Fragment {
         }
     }
     private List<PhotoData> photoList = new ArrayList<>();
-    //int countSafePhotos = 0;
-    //int countAllPhotos = 0, countUnsafePhotos = 0;
-    //boolean areTherePhotosToShow = true;
 
     // Interface for async photo check callback
     interface PhotoCheckCallback {
@@ -156,7 +153,7 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    /** Asynchronously check if there are enough photos for grounding exercises */
+    // Asynchronously check if there are enough photos for grounding exercises
     private void checkIfEnoughPhotos(PhotoCheckCallback callback) {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user == null) {
@@ -220,7 +217,7 @@ public class HomeFragment extends Fragment {
                 });
     }
 
-    /** Load and filter photos based on user triggers */
+    // Load and filter photos based on user triggers
     private void loadAndFilterPhotos(List<String> userTriggerList, int requiredCount, PhotoCheckCallback callback) {
         db.collection("images")
                 .get()
@@ -260,6 +257,57 @@ public class HomeFragment extends Fragment {
                     }
                 });
     }
+
+    private void removeUnsafePhotos(List<String> userTriggerList){
+        Iterator<HomeFragment.PhotoData> iterator = photoList.iterator();
+
+        while (iterator.hasNext()) {
+            HomeFragment.PhotoData photoData = iterator.next();
+            boolean containsTrigger = false;
+
+            // Check if this photo has ANY tag that matches ANY user trigger
+            for (String trigger : userTriggerList) {
+                if (photoData.tags.contains(trigger)) {
+                    containsTrigger = true;
+                    break; // No need to check other triggers for this photo
+                }
+            }
+
+            // Remove photo if it contains ANY matching trigger
+            if (containsTrigger) {
+                iterator.remove();
+            }
+        }
+    }
+
+    private void showWhatsPADialog(){
+        try{
+            WhatsPADialogFragment dialog=new WhatsPADialogFragment();
+            dialog.show(getActivity().getSupportFragmentManager(), "whats_pa_dialog");
+        }
+        catch(IllegalStateException ex){
+            // Обработка случая, когда Activity уничтожается
+            Log.e("Dialog", "Cannot show dialog - activity state invalid");
+        }
+    }
+
+    private void showWhatsTriggerDialog(){
+        try{
+            WhatsTriggerDialogFragment dialog=new WhatsTriggerDialogFragment();
+            dialog.show(getActivity().getSupportFragmentManager(), "whats_trigger_dialog");
+        }
+        catch(IllegalStateException ex){
+            // Обработка случая, когда Activity уничтожается
+            Log.e("Dialog", "Cannot show dialog - activity state invalid");
+        }
+    }
+
+    private void goToSelfHelpActivity(){
+        Intent intent = new Intent(getActivity(), SelfHelpActivity.class);
+        startActivity(intent);
+    }
+
+    ////////
 
     // removed due to asynchronous issues
     /*
@@ -340,55 +388,4 @@ public class HomeFragment extends Fragment {
     }
     */
 
-    private void removeUnsafePhotos(List<String> userTriggerList){
-        Iterator<HomeFragment.PhotoData> iterator = photoList.iterator();
-
-        while (iterator.hasNext()) {
-            HomeFragment.PhotoData photoData = iterator.next();
-            boolean containsTrigger = false;
-
-            // Check if this photo has ANY tag that matches ANY user trigger
-            for (String trigger : userTriggerList) {
-                if (photoData.tags.contains(trigger)) {
-                    containsTrigger = true;
-                    break; // No need to check other triggers for this photo
-                }
-            }
-
-            // Remove photo if it contains ANY matching trigger
-            if (containsTrigger) {
-                iterator.remove();
-            }
-        }
-    }
-
-    private void showWhatsPADialog(){
-        try{
-            WhatsPADialogFragment dialog=new WhatsPADialogFragment();
-            dialog.show(getActivity().getSupportFragmentManager(), "whats_pa_dialog");
-        }
-        catch(IllegalStateException ex){
-            // Обработка случая, когда Activity уничтожается
-            Log.e("Dialog", "Cannot show dialog - activity state invalid");
-        }
-    }
-
-    private void showWhatsTriggerDialog(){
-        try{
-            WhatsTriggerDialogFragment dialog=new WhatsTriggerDialogFragment();
-            dialog.show(getActivity().getSupportFragmentManager(), "whats_trigger_dialog");
-        }
-        catch(IllegalStateException ex){
-            // Обработка случая, когда Activity уничтожается
-            Log.e("Dialog", "Cannot show dialog - activity state invalid");
-        }
-    }
-
-    private void goToSelfHelpActivity(){
-        Intent intent = new Intent(getActivity(), SelfHelpActivity.class);
-        startActivity(intent);
-        //TODO плавный переход
-    }
-
-    ////////
 }

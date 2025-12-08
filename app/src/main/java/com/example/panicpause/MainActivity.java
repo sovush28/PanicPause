@@ -20,34 +20,11 @@ public class MainActivity extends AppCompatActivity{
     private ViewPager2 viewPager;
     private BottomNavigationView bottomNavigationV;
 
-    //private FirebaseAuth mAuth;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-
-        //// Initialize Firebase Auth
-        //mAuth = FirebaseAuth.getInstance();
-        ////If a user has signed in successfully you can get their account data at any point with the getCurrentUser method.
-        /*
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            // Name, email address, and profile photo Url
-            String name = user.getDisplayName();
-            String email = user.getEmail();
-            Uri photoUrl = user.getPhotoUrl();
-
-            // Check if user's email is verified
-            boolean emailVerified = user.isEmailVerified();
-
-            // The user's ID, unique to the Firebase project. Do NOT use this value to
-            // authenticate with your backend server, if you have one. Use
-            // FirebaseUser.getIdToken() instead.
-            String uid = user.getUid();
-        }
-        */
 
         viewPager = findViewById(R.id.view_pager);
         bottomNavigationV = findViewById(R.id.bottom_navigation);
@@ -83,7 +60,7 @@ public class MainActivity extends AppCompatActivity{
         ViewPagerAdapter adapter = new ViewPagerAdapter(this);
         viewPager.setAdapter(adapter);
 
-        // Отключаем свайпы если нужно
+        // отключение свайпов
         // viewPager.setUserInputEnabled(false);
 
         // Слушатель изменения страницы для синхронизации с BottomNavigationV
@@ -130,10 +107,6 @@ public class MainActivity extends AppCompatActivity{
             // Если на профиле - возвращаем на главную
             viewPager.setCurrentItem(0, true);
         }
-    }
-
-    public void finishActivity(){
-        finish();
     }
 
 }

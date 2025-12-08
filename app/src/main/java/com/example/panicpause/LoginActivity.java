@@ -106,7 +106,7 @@ public class LoginActivity extends AppCompatActivity {
         createAccTV = findViewById(R.id.create_acc_tv);
         logInBtn = findViewById(R.id.log_in_btn);
         logInAsGuestBtn=findViewById(R.id.log_in_as_guest_btn);
-        guestBtnLayout.findViewById(R.id.guest_btn_layout);
+        guestBtnLayout=findViewById(R.id.guest_btn_layout);
     }
 
     private void SetOnClickListeners(){

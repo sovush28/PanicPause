@@ -102,7 +102,7 @@ public class SignInActivity extends AppCompatActivity {
         passwET=findViewById(R.id.signin_passw_et);
         logInTV=findViewById(R.id.to_login_tv);
         signInBtn=findViewById(R.id.sign_in_btn);
-        guestBtnLayout.findViewById(R.id.guest_btn_layout);
+        guestBtnLayout=findViewById(R.id.guest_btn_layout);
         logInAsGuestBtn=findViewById(R.id.log_in_as_guest_btn);
     }
 

@@ -71,4 +71,6 @@ dependencies {
     //библиотека glide для загрузки изображений из интернета
     implementation (libs.glide)
 
+    implementation ("com.squareup.okhttp3:okhttp:4.12.0")
+
 }

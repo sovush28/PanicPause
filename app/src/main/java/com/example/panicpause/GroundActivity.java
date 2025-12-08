@@ -50,18 +50,8 @@ public class GroundActivity extends AppCompatActivity {
 
     // Список классов фрагментов в правильном порядке
     private List<Class<? extends Fragment>> fragmentClasses = new ArrayList<>();
-    
-    // Array of fragment classes in the correct order
-    /*private Class<? extends Fragment>[] fragmentClasses = new Class[]{
-        GroundBreathFragment.class,
-        GroundPhotoFragment.class,
-        GroundMathFragment.class,
-        GroundCountColorFragment.class,
-        GroundPhotoFragment.class,
-        GroundBreathFragment.class
-    };*/
 
-    // Настройки пользователя из Firestore
+    // Настройки пользователя
     private int groundPhotoExAmount = 2;
     private boolean useMath = true;
     private boolean useSearchObjectsColor = true;
@@ -71,7 +61,7 @@ public class GroundActivity extends AppCompatActivity {
 
     // Ключи для сохранения состояния
     private static final String KEY_CURRENT_INDEX = "current_fragment_index";
-    private static final String KEY_FRAGMENT_TAGS = "fragment_tags";
+    //private static final String KEY_FRAGMENT_TAGS = "fragment_tags";
 
     // Текущий активный фрагмент
     private Fragment currentFragment = null;
@@ -114,18 +104,14 @@ public class GroundActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Сохраняем текущее состояние при повороте экрана/изменении конфигурации
-     */
+    //Сохраняем текущее состояние при повороте экрана/изменении конфигурации
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(KEY_CURRENT_INDEX, currentFragmentIndex);
     }
 
-    /**
-     * Пытается восстановить ранее созданные фрагменты
-     */
+    //Пытается восстановить ранее созданные фрагменты
     private void restoreFragments() {
         fragmentInstances.clear();
 
@@ -179,14 +165,6 @@ public class GroundActivity extends AppCompatActivity {
                             } else{
                                 this.useSearchObjectsColor = true;
                             }
-                        /*
-                        this.groundPhotoExAmount = document.getLong("ground_photo_ex_amount") != null ?
-                                document.getLong("ground_photo_ex_amount").intValue() : 2;
-                        this.useMath = document.getBoolean("use_math") != null ?
-                                document.getBoolean("use_math") : true;
-                        this.useSearchObjectsColor = document.getBoolean("use_search_objects_color") != null ?
-                                document.getBoolean("use_search_objects_color") : true;
-*/
 
                             // Составление последовательности упражнений согласно настройкам
                             buildExerciseSequence();
@@ -295,20 +273,6 @@ public class GroundActivity extends AppCompatActivity {
             Log.e(TAG, "Error creating fragment at index " + index, e);
         }
     }
-
-/*
-    //Создает экземпляры всех фрагментов и сохраняет их в список (предотвращает пересоздание фрагментов при навигации)
-    private void createFragmentInstances() {
-        try {
-            for (Class<? extends Fragment> fragmentClass : fragmentClasses) {
-                Fragment fragment = fragmentClass.newInstance();
-                fragmentInstances.add(fragment);
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error creating fragment instances", e);
-        }
-    }
-*/
 
     //Показывает фрагмент по указанному индексу в последовательности
     private void showFragment(int fragmentIndex) {
@@ -421,7 +385,7 @@ public class GroundActivity extends AppCompatActivity {
         if (currentUser == null)
             return;
 
-        // TODO: Реализовать сохранение истории упражнений (данных о пройденных упражнениях)
+        // TODO: Реализовать сохранение истории упражнений (данных о пройденных упражнениях: какие изображения пройдены и в какое время)
 
         Log.d(TAG, "Saving exercise history for user: " + currentUser.getUid());
     }

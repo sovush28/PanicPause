@@ -1,0 +1,200 @@
+[
+  {
+    "img_tag": "animal",
+    "str_res": "tr_animals",
+    "parent_tag": "",
+    "is_parent": true
+  },
+  {
+    "img_tag": "berry",
+    "is_parent": true,
+    "parent_tag": "food",
+    "str_res": "tr_berries"
+  },
+  {
+    "img_tag": "bird",
+    "is_parent": true,
+    "parent_tag": "animal",
+    "str_res": "tr_birds"
+  },
+  {
+    "img_tag": "blueberry",
+    "is_parent": false,
+    "parent_tag": "berry",
+    "str_res": "tr_blueberries"
+  },
+  {
+    "img_tag": "bunny",
+    "is_parent": false,
+    "parent_tag": "animal",
+    "str_res": "tr_bunnies"
+  },
+  {
+    "img_tag": "capybara",
+    "is_parent": false,
+    "parent_tag": "animal",
+    "str_res": "tr_capybaras"
+  },
+  {
+    "img_tag": "cat",
+    "is_parent": false,
+    "parent_tag": "animal",
+    "str_res": "tr_cats"
+  },
+  {
+    "img_tag": "cheetah",
+    "is_parent": false,
+    "parent_tag": "animal",
+    "str_res": "tr_cheetahs"
+  },
+  {
+    "img_tag": "child",
+    "is_parent": false,
+    "parent_tag": "human",
+    "str_res": "tr_children"
+  },
+  {
+    "img_tag": "cow",
+    "is_parent": false,
+    "parent_tag": "animal",
+    "str_res": "tr_cows"
+  },
+  {
+    "img_tag": "dessert",
+    "is_parent": false,
+    "parent_tag": "food",
+    "str_res": "tr_desserts"
+  },
+  {
+    "img_tag": "dog",
+    "is_parent": false,
+    "parent_tag": "animal",
+    "str_res": "tr_dogs"
+  },
+  {
+    "img_tag": "duck",
+    "is_parent": false,
+    "parent_tag": "bird",
+    "str_res": "tr_ducks"
+  },
+  {
+    "img_tag": "egg",
+    "is_parent": false,
+    "parent_tag": "food",
+    "str_res": "tr_eggs"
+  },
+  {
+    "img_tag": "fish",
+    "is_parent": false,
+    "parent_tag": "animal",
+    "str_res": "tr_fish"
+  },
+  {
+    "img_tag": "food",
+    "is_parent": true,
+    "parent_tag": "",
+    "str_res": "tr_food"
+  },
+  {
+    "img_tag": "goat",
+    "is_parent": false,
+    "parent_tag": "animal",
+    "str_res": "tr_goats"
+  },
+  {
+    "img_tag": "guinea pig",
+    "is_parent": false,
+    "parent_tag": "animal",
+    "str_res": "tr_guinea_pigs"
+  },
+  {
+    "img_tag": "human",
+    "is_parent": true,
+    "parent_tag": "",
+    "str_res": "tr_people"
+  },
+  {
+    "img_tag": "man",
+    "is_parent": false,
+    "parent_tag": "human",
+    "str_res": "tr_men"
+  },
+  {
+    "img_tag": "otter",
+    "is_parent": false,
+    "parent_tag": "animal",
+    "str_res": "tr_otters"
+  },
+  {
+    "img_tag": "owl",
+    "is_parent": false,
+    "parent_tag": "bird",
+    "str_res": "tr_owls"
+  },
+  {
+    "img_tag": "parrot",
+    "is_parent": false,
+    "parent_tag": "bird",
+    "str_res": "tr_parrots"
+  },
+  {
+    "img_tag": "pigeon",
+    "is_parent": false,
+    "str_res": "tr_pigeons",
+    "parent_tag": "bird"
+  },
+  {
+    "img_tag": "porridge",
+    "is_parent": false,
+    "parent_tag": "food",
+    "str_res": "tr_porridges"
+  },
+  {
+    "img_tag": "raccoon",
+    "is_parent": false,
+    "parent_tag": "animal",
+    "str_res": "tr_raccoons"
+  },
+  {
+    "img_tag": "sea lion",
+    "is_parent": false,
+    "parent_tag": "animal",
+    "str_res": "tr_sea_lions"
+  },
+  {
+    "img_tag": "seal",
+    "is_parent": false,
+    "parent_tag": "animal",
+    "str_res": "tr_seals"
+  },
+  {
+    "img_tag": "sheep",
+    "is_parent": false,
+    "parent_tag": "animal",
+    "str_res": "tr_sheep"
+  },
+  {
+    "img_tag": "strawberry",
+    "is_parent": false,
+    "parent_tag": "berry",
+    "str_res": "tr_strawberries"
+  },
+  {
+    "img_tag": "tomato",
+    "is_parent": false,
+    "parent_tag": "vegetable",
+    "str_res": "tr_tomatoes"
+  },
+  {
+    "img_tag": "vegetable",
+    "is_parent": true,
+    "parent_tag": "food",
+    "str_res": "tr_vegetables"
+  },
+  {
+    "img_tag": "woman",
+    "is_parent": false,
+    "parent_tag": "human",
+    "str_res": "tr_women"
+  }
+]
