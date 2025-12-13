@@ -8,7 +8,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -47,31 +46,32 @@ public class TriggersRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVie
         buildDisplayedItemsList(); //initial display list with only root items
     }
 
-    /** Set the user's selected triggers and update UI */
+    // Set the user's selected triggers and update UI
     public void setUserSelectedTriggers(Set<String> triggers) {
         this.userSelectedTriggers = triggers != null ? triggers : new HashSet<>();
         notifyDataSetChanged(); // Refresh all items to update plus/checkmark states
     }
 
-    /** Check if a trigger is currently selected */
+    // Check if a trigger is currently selected
     private boolean isTriggerSelected(String imgTag) {
         return userSelectedTriggers.contains(imgTag);
     }
 
-    /** Add a trigger to selected set */
+    /*
+    // Add a trigger to selected set
     public void addSelectedTrigger(String imgTag) {
         userSelectedTriggers.add(imgTag);
         // Find and update the specific item if possible, otherwise refresh all
         notifyDataSetChanged();
     }
 
-    /** Remove a trigger from selected set */
+    // Remove a trigger from selected set
     public void removeSelectedTrigger(String imgTag) {
         userSelectedTriggers.remove(imgTag);
         // Find and update the specific item if possible, otherwise refresh all
         notifyDataSetChanged();
     }
-
+*/
 
     // Build initial display list with only root items (level 0)
     // Only show items without parents (root categories)
@@ -182,12 +182,6 @@ public class TriggersRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVie
         }
         notifyItemChanged(position);
 
-        /*int removeCount=countVisibleChildren(triggerCategory.getImgTag());
-        if (removeCount > 0) {
-            displayedItems.subList(position + 1, position + 1 + removeCount).clear();
-            notifyItemRangeRemoved(position + 1, removeCount);
-        }
-        notifyItemChanged(position); // Update triangle rotation*/
     }
 
     // Calculate visible children count based on current displayed items
@@ -266,25 +260,6 @@ public class TriggersRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVie
         }
         return children;
     }
-
-    // Count all visible children (for collapse operation)
-    /*private int countVisibleChildren(String parentTag) {
-        if (parentTag == null)
-            return 0;
-
-        int count = 0;
-        for (TriggerItem item : allItems) {
-            String itemParent = item.getParentTag();
-            if (itemParent != null && itemParent.equals(parentTag)) {
-                count++;
-                // Recursively count expanded subcategories
-                if (item.isParent() && item.isExpanded()) {
-                    count += countVisibleChildren(item.getImgTag());
-                }
-            }
-        }
-        return count;
-    }*/
 
     // Update all items (e.g., when loading from Firestore)
     public void updateItems(List<TriggerItem> newItems) {

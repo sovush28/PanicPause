@@ -51,4 +51,21 @@
     <!--and then <View style="@style/Divider.Horizontal"/>-->
 
 
+    <style name="SwitchGreen.Control">
+        <item name="colorControlActivated">@color/colorSoftGreen</item>
+        <item name="colorSwitchThumbNormal">@color/colorSoftGreen</item>
+    </style>
+
+    <style name="BrandedSwitch.control" parent="Theme.AppCompat.Light">
+        <!-- active thumb & track color (30% transparency) -->
+        <item name="colorControlActivated">#e6e600</item>
+        <item name="colorSwitchThumbNormal">#cc0000</item>
+    </style>
+
+    <style name="BrandedSwitch" parent="Base.Theme.PanicPause">
+        <item name="colorAccent">#39ac39</item>
+        <item name="trackColorInactive">@color/colorLightGreen</item>
+    </style>
+
+
 </resources>

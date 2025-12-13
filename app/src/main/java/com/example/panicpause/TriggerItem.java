@@ -1,9 +1,15 @@
 package com.example.panicpause;
 
-import com.google.firebase.firestore.PropertyName;
+//import com.google.firebase.firestore.PropertyName;
 
 // Model class to represent each trigger item in the hierarchy
 public class TriggerItem {
+    private String imgTag;      // trigger name (cat, dog, bird, etc)
+    private boolean isParent;   // is this trigger also a name of a group of triggers (eg bird - true)
+    private String parentTag;   // name of the parent trigger; if the highest in the hierarchy then ""
+    private String strRes;      // name of the string in the strings.xml (for display)
+
+    /*
     // Use @PropertyName to map Firestore field names to Java field names
     @PropertyName("img_tag")
     private String imgTag;  // trigger name (cat, dog, bird, etc)
@@ -13,6 +19,7 @@ public class TriggerItem {
     private String parentTag;   // name of the parent trigger; if the highest in the hierarchy then ""
     @PropertyName("str_res")
     private String strRes;      // name of the string in the strings.xml (for display)
+*/
 
     private boolean isExpanded;    // track if category is expanded
     private int level;     // Hierarchy level (0=root, 1=subcategory, 2=sub-subcategory)
@@ -30,6 +37,8 @@ public class TriggerItem {
         this.isExpanded = false;
         this.level = -1; // Will be calculated based on parent hierarchy
     }
+
+    /*
     @PropertyName("img_tag")
     public String getImgTag() {
         return imgTag;
@@ -64,7 +73,19 @@ public class TriggerItem {
     @PropertyName("str_res")
     public void setStrRes(String strRes) {
         this.strRes = strRes;
-    }
+    }*/
+
+    public String getImgTag() { return imgTag; }
+    public void setImgTag(String imgTag) { this.imgTag = imgTag; }
+
+    public boolean isParent() { return isParent; }
+    public void setParent(boolean parent) { isParent = parent; }
+
+    public String getParentTag() { return parentTag; }
+    public void setParentTag(String parentTag) { this.parentTag = parentTag; }
+
+    public String getStrRes() { return strRes; }
+    public void setStrRes(String strRes) { this.strRes = strRes; }
 
     public boolean isExpanded() {
         return isExpanded;

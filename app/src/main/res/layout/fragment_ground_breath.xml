@@ -52,7 +52,6 @@
                 android:background="@drawable/breath_square_start_shape"
                 android:layout_gravity="center"
                 />
-<!--            com.example.safespace.AnimatedSquareView-->
 
             <LinearLayout
                 android:layout_width="match_parent"

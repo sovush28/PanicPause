@@ -44,6 +44,8 @@ public class SignInActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
+    private DataManager dataManager;
+
     private boolean fromAccSettings = false;
 
     @Override
@@ -52,15 +54,13 @@ public class SignInActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_sign_in);
 
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
+        dataManager=new DataManager(this);
+
         InitializeViews();
         SetOnClickListeners();
-
-        /*
-        backIV.setOnClickListener(this);
-        logInTV.setOnClickListener(this);
-        signInBtn.setOnClickListener(this);
-        logInAsGuestBtn.setOnClickListener(this);
-*/
 
         Intent intent= getIntent();
         if(intent.hasExtra("from_acc_settings")){
@@ -73,10 +73,6 @@ public class SignInActivity extends AppCompatActivity {
         } else{
             HideBackBtnShowGuest();
         }
-
-        // Initialize Firebase
-        mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -143,6 +139,7 @@ public class SignInActivity extends AppCompatActivity {
         logInAsGuestBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dataManager.markOnboardingCompleted();
                 Intent intent=new Intent(SignInActivity.this, MainActivity.class);
                 startActivity(intent);
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out); // Плавное появление/исчезание
@@ -151,7 +148,7 @@ public class SignInActivity extends AppCompatActivity {
         });
     }
 
-/*
+    /*
     @Override
     public void onClick(View v){
         if(v.getId()==R.id.to_login_tv){
@@ -232,13 +229,21 @@ public class SignInActivity extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
 
                             if(user!=null){
-                                saveUserToFirestore(user);
+                                //saveUserToFirestore(user);
+
+                                dataManager.saveUserSetting("email", user.getEmail());
 
                                 Toast.makeText(SignInActivity.this,
                                         getString(R.string.signin_success),
                                         Toast.LENGTH_SHORT).show();
 
-                                goToLoginActivity();
+                                // DataManager автоматически создаст документ в Firestore, если его нет
+                                //dataManager.handleUserLogin(SignInActivity.this::goToLoginActivity);
+                                dataManager.handleUserLogin(() -> {
+                                    dataManager.markOnboardingCompleted();
+                                    goToMainActivity();
+                                });
+
                             }
                             else{
                                 Log.w(TAG, "Failed to save user to Firestore");
@@ -364,57 +369,14 @@ public class SignInActivity extends AppCompatActivity {
 
     /////
 
-    ////
-
-    private void goToLoginActivity(){
-        Intent intent = new Intent(SignInActivity.this,LoginActivity.class);
-        intent.putExtra("user_email", emailET.getText().toString().trim());
-        //intent.putExtra("user_passw", passwET.getText().toString().trim());
+    private void goToMainActivity(){
+        Intent intent = new Intent(SignInActivity.this,MainActivity.class);
         startActivity(intent);
-
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         finish();
     }
 
     /////
-
-    /*private void sendEmailVerification(FirebaseUser user) {
-        user.sendEmailVerification()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-                            // Письмо отправлено успешно
-                            Log.d(TAG, "Verification email sent to: " + user.getEmail());
-
-                            mAuth.signOut();
-
-                            Toast.makeText(SignInActivity.this,
-                                    getString(R.string.ver_link_sent) + user.getEmail(),
-                                    Toast.LENGTH_LONG).show();
-
-                            goToLoginActivity();
-                        }
-                        else{
-                            // Ошибка отправки письма
-                            Log.w(TAG, "Failed to send verification email", task.getException());
-
-                            // Все равно выходим и переходим на вход, но с предупреждением
-                            mAuth.signOut();
-
-                            Toast.makeText(SignInActivity.this,
-                                    "Аккаунт создан, но не удалось отправить письмо подтверждения. " +
-                                            "Вы можете запросить его повторно на странице входа.",
-                                    Toast.LENGTH_LONG).show();
-
-                            goToLoginActivity();
-                        }
-
-                    }
-                });
-
-    }*/
-
 
     // Обработчик кнопки "Назад"
     /*@Override

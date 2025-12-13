@@ -3,7 +3,6 @@ package com.example.panicpause;
 import static android.widget.Toast.LENGTH_SHORT;
 
 import android.content.Intent;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,6 +23,7 @@ import com.google.firebase.auth.FirebaseUser;
 public class AccountSettingsActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
+    private DataManager dataManager;
     ImageButton backBtn;
     LinearLayout guestMsgLayout, goToLogInSignInLayout,
             emailPasswResetLayout, passwResetLayout,
@@ -39,7 +39,9 @@ public class AccountSettingsActivity extends AppCompatActivity {
         InitializeViews();
         SetOnClickListeners();
 
+        dataManager=new DataManager(this);
         mAuth = FirebaseAuth.getInstance();
+        /*
         FirebaseUser user= mAuth.getCurrentUser();
 
         if(user!=null && user.getEmail()!=null){
@@ -56,6 +58,9 @@ public class AccountSettingsActivity extends AppCompatActivity {
             emailPasswResetLayout.setVisibility(View.GONE);
             signOutDeleteAccLayout.setVisibility(View.GONE);
         }
+*/
+
+        updateUI();
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -65,6 +70,28 @@ public class AccountSettingsActivity extends AppCompatActivity {
     }
 
     ///////
+
+    private void updateUI() {
+        if (dataManager.isGuest()) {
+            // Гость
+            guestMsgLayout.setVisibility(View.VISIBLE);
+            emailPasswResetLayout.setVisibility(View.GONE);
+            signOutDeleteAccLayout.setVisibility(View.GONE);
+        } else {
+            // Авторизованный
+            guestMsgLayout.setVisibility(View.GONE);
+            emailPasswResetLayout.setVisibility(View.VISIBLE);
+            signOutDeleteAccLayout.setVisibility(View.VISIBLE);
+
+            FirebaseUser user = mAuth.getCurrentUser();
+            if (user != null && user.getEmail() != null) {
+                userEmailTV.setText(user.getEmail());
+            } /*else {
+                userEmailTV.setText(R.string.unknown_user);
+            }*/
+        }
+    }
+
 
     private void inDevelopmentToast(){
         Toast.makeText(AccountSettingsActivity.this, R.string.in_development, Toast.LENGTH_SHORT).show();
@@ -140,16 +167,24 @@ public class AccountSettingsActivity extends AppCompatActivity {
         });
     }
 
-    // ВЫХОД из аккаунта
+    // выход из аккаунта
     private void signOutUser() {
-
         FirebaseUser user = mAuth.getCurrentUser();
         if(user!=null){
-            // Выходим из Firebase Auth
+            // Выход из Firebase Auth
             mAuth.signOut();
+
+            // Обновление локального состояния через DataManager
+            dataManager.handleUserLogout();
 
             Toast.makeText(AccountSettingsActivity.this, R.string.signout_success, LENGTH_SHORT).show();
 
+            // Перезапуск активности для обновления UI
+            Intent intent = getIntent();
+            finish();
+            startActivity(intent);
+
+            /*
             // Переходим на экран входа
             Intent intent = new Intent(this, LoginActivity.class);
 
@@ -160,6 +195,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
 
             // Завершаем текущую активность
             finish();
+*/
         }
         else{
             Toast.makeText(AccountSettingsActivity.this, "Пользователь не обнаружен",
@@ -241,7 +277,6 @@ public class AccountSettingsActivity extends AppCompatActivity {
         }
     }*/
 
-
     /*private void showDeleteAccountConfirmationDialog() {
         DeleteAccountDialogFragment dialog = new DeleteAccountDialogFragment();
         dialog.setOnDeleteAccountListener(new DeleteAccountDialogFragment.OnDeleteAccountListener() {
@@ -263,7 +298,6 @@ public class AccountSettingsActivity extends AppCompatActivity {
             dialog.show(getParentFragmentManager(), "delete_account_dialog");
         }
     }*/
-
 
 
 }

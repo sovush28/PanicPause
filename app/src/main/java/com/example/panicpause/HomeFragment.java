@@ -28,11 +28,15 @@ import java.util.List;
 
 // Фрагмент - "мини-активность", которая может быть частью экрана
 public class HomeFragment extends Fragment {
-
-    private FirebaseAuth mAuth;
-    private FirebaseFirestore db;
+    private static final String TAG = "HomeFragment";
     Button panicBtn;
     TextView historyTV, groundSettingsTV, whatsPATV, howHelpYourselfTV, whatsTriggerTV;
+
+    private DataManager dataManager;
+
+    /*
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
 
     // Data class to hold photo information from Firestore
     private static class PhotoData {
@@ -52,6 +56,7 @@ public class HomeFragment extends Fragment {
     interface PhotoCheckCallback {
         void onResult(boolean enoughPhotos);
     }
+*/
 
     // метод создает внешний вид фрагмента
     @Override
@@ -60,8 +65,10 @@ public class HomeFragment extends Fragment {
         // "Надуваем" макет из XML-файла fragment_home.xml
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
+        //mAuth = FirebaseAuth.getInstance();
+        //db = FirebaseFirestore.getInstance();
+
+        dataManager=new DataManager(requireContext());
 
         InitializeViews(view);
         SetOnClickListeners();
@@ -88,6 +95,9 @@ public class HomeFragment extends Fragment {
         panicBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                checkIfEnoughPhotos();
+
+                /*
                 // Check if there are enough photos asynchronously
                 checkIfEnoughPhotos(new PhotoCheckCallback() {
                     @Override
@@ -102,6 +112,7 @@ public class HomeFragment extends Fragment {
                         }
                     }
                 });
+                */
             }
         });
 
@@ -143,6 +154,47 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    private void checkIfEnoughPhotos(){
+        try {
+            // 1. Получаем настройки пользователя
+            int requiredCount = dataManager.getGroundPhotoExAmount(); // ← нужно добавить метод в DataManager
+            List<String> userTriggers = dataManager.getTriggers();     // ← нужно добавить метод в DataManager
+
+            // 2. Загружаем все фото локально
+            List<DataManager.PhotoData> allPhotos = dataManager.getLocalImagesList();
+
+            // 3. Фильтруем, если есть триггеры
+            List<DataManager.PhotoData> safePhotos = new ArrayList<>(allPhotos);
+            if (userTriggers != null && !userTriggers.isEmpty()) {
+                Iterator<DataManager.PhotoData> iterator = safePhotos.iterator();
+                while (iterator.hasNext()) {
+                    DataManager.PhotoData photo = iterator.next();
+                    for (String trigger : userTriggers) {
+                        if (photo.tags.contains(trigger)) {
+                            iterator.remove();
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // 4. Проверяем количество
+            if (safePhotos.size() >= requiredCount) {
+                Intent intent = new Intent(getActivity(), GroundActivity.class);
+                intent.putExtra("default_settings", false);
+                startActivity(intent);
+            } else {
+                showNotEnoughPhotosDialog();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error checking photos", e);
+            // На всякий случай — разрешаем вход, если что-то пошло не так
+            Intent intent = new Intent(getActivity(), GroundActivity.class);
+            intent.putExtra("default_settings", true);
+            startActivity(intent);
+        }
+    }
+
     private void showNotEnoughPhotosDialog(){
         try{
             NotEnoughPhotosDialogFragment dialog = new NotEnoughPhotosDialogFragment();
@@ -153,6 +205,8 @@ public class HomeFragment extends Fragment {
         }
     }
 
+
+    /*
     // Asynchronously check if there are enough photos for grounding exercises
     private void checkIfEnoughPhotos(PhotoCheckCallback callback) {
         FirebaseUser user = mAuth.getCurrentUser();
@@ -279,6 +333,7 @@ public class HomeFragment extends Fragment {
             }
         }
     }
+    */
 
     private void showWhatsPADialog(){
         try{

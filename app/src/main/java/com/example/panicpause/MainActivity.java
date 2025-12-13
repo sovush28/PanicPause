@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity{
 
     private ViewPager2 viewPager;
     private BottomNavigationView bottomNavigationV;
+    private DataManager dataManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +32,10 @@ public class MainActivity extends AppCompatActivity{
 
         setupViewPager();
         setupBottomNavigation();
+
+        dataManager=new DataManager(this);
+        // Инициализируем контент (фото + JSON)
+        dataManager.initializeContent(this::onContentReady);
 
         Intent intent = getIntent();
         boolean showProfile=false;
@@ -54,6 +59,18 @@ public class MainActivity extends AppCompatActivity{
             v.setPadding(0, 0, 0, systemBars.bottom);
             return insets;
         });
+    }
+
+    private void onContentReady() {
+        if (dataManager.isOnboardingCompleted()) {
+            // Пользователь уже прошёл онбординг — показываем главное меню
+            viewPager.setCurrentItem(0);
+        } else {
+            // Первый запуск — показываем выбор: гость или вход
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish(); // чтобы нельзя было вернуться назад
+        }
     }
 
     private void setupViewPager() {

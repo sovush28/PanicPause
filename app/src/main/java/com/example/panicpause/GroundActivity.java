@@ -1,10 +1,9 @@
 package com.example.panicpause;
 
-import static android.content.ContentValues.TAG;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,6 +37,7 @@ import java.util.List;
  * and manages the exercise sequence flow.
  */
 public class GroundActivity extends AppCompatActivity {
+    private static final String TAG = "GroundActivity";
 
     // Менеджер фрагментов для работы с экранами
     private FragmentManager fragmentManager;
@@ -51,6 +51,9 @@ public class GroundActivity extends AppCompatActivity {
     // Список классов фрагментов в правильном порядке
     private List<Class<? extends Fragment>> fragmentClasses = new ArrayList<>();
 
+    private DataManager dataManager;
+
+    /*
     // Настройки пользователя
     private int groundPhotoExAmount = 2;
     private boolean useMath = true;
@@ -65,6 +68,7 @@ public class GroundActivity extends AppCompatActivity {
 
     // Текущий активный фрагмент
     private Fragment currentFragment = null;
+*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,13 +76,18 @@ public class GroundActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_ground);
 
+        /*
         // Инициализация Firebase
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+*/
 
-        // Initialize fragment manager
+        dataManager=new DataManager(this);
         fragmentManager = getSupportFragmentManager();
 
+        buildAndStartGroundSequence();
+
+        /*
         // Восстанавливаем состояние если активность была пересоздана
         if (savedInstanceState != null) {
             currentFragmentIndex = savedInstanceState.getInt(KEY_CURRENT_INDEX, 0);
@@ -95,6 +104,7 @@ public class GroundActivity extends AppCompatActivity {
                 loadUserSettingsAndStartSequence(true);
             }
         }
+*/
 
         // Handle system window insets (for edge-to-edge display)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -104,6 +114,12 @@ public class GroundActivity extends AppCompatActivity {
         });
     }
 
+    private void buildAndStartGroundSequence(){
+        buildExerciseSequence();
+        startGroundingSequence();
+    }
+
+    /*
     //Сохраняем текущее состояние при повороте экрана/изменении конфигурации
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -132,8 +148,9 @@ public class GroundActivity extends AppCompatActivity {
             showFragment(currentFragmentIndex);
         }
     }
+*/
 
-
+    /*
     // Загружает настройки пользователя из Firestore и запускает последовательность упражнений
     private void loadUserSettingsAndStartSequence(boolean useDefaultSettings) {
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -186,14 +203,19 @@ public class GroundActivity extends AppCompatActivity {
             startGroundingSequence();
         }
     }
+*/
 
     //Строит последовательность упражнений на основе настроек пользователя
     private void buildExerciseSequence() {
         fragmentClasses.clear();
-        fragmentInstances.clear();
+        //fragmentInstances.clear();
 
         // 1. Первое упражнение - дыхание
         fragmentClasses.add(GroundBreathFragment.class);
+
+        boolean useMath=dataManager.getUseMath();
+        boolean useSearchObjectsColor=dataManager.getUseSearchObjectsColor();
+        int groundPhotoExAmount=dataManager.getGroundPhotoExAmount();
 
         if(!useMath && !useSearchObjectsColor){
             // 2. Упражнения с фотографиями
@@ -227,19 +249,23 @@ public class GroundActivity extends AppCompatActivity {
 
     //Создает и сохраняет все фрагменты заранее с уникальными тегами
     private void startGroundingSequence() {
-        fragmentInstances.clear();
         try {
             // Создаем только первый фрагмент, остальные будут создаваться по мере необходимости
             // Это предотвращает одновременный запуск всех таймеров и анимаций
             if (!fragmentClasses.isEmpty()) {
-                createAndAddFragment(0);
+                //createAndAddFragment(0);
                 showFragment(0);
+            }
+            else{
+                Toast.makeText(this, "Ошибка: нет упражнений", Toast.LENGTH_SHORT).show();
+                finish();
             }
         } catch (Exception e) {
             Log.e(TAG, "Error creating fragment instances", e);
         }
     }
 
+    /*
     //Создает один фрагмент и добавляет его в список с уникальным тегом
     private void createAndAddFragment(int index) {
         try {
@@ -273,6 +299,7 @@ public class GroundActivity extends AppCompatActivity {
             Log.e(TAG, "Error creating fragment at index " + index, e);
         }
     }
+*/
 
     //Показывает фрагмент по указанному индексу в последовательности
     private void showFragment(int fragmentIndex) {
@@ -282,8 +309,17 @@ public class GroundActivity extends AppCompatActivity {
         }
 
         try {
+            Fragment currentFragment = fragmentClasses.get(fragmentIndex).newInstance();
+
             FragmentTransaction transaction = fragmentManager.beginTransaction();
 
+            transaction.replace(R.id.fragment_container, currentFragment);
+            transaction.commit();
+            fragmentManager.executePendingTransactions();
+
+            currentFragmentIndex=fragmentIndex;
+
+            /*
             // Скрытие текущего фрагмента, если он существует
             if (currentFragment != null) {
                 transaction.hide(currentFragment);
@@ -293,9 +329,7 @@ public class GroundActivity extends AppCompatActivity {
                 if (currentFragment instanceof GroundBreathFragment) {
                     ((GroundBreathFragment) currentFragment).onFragmentPaused();
                 }
-                /*if (currentFragment instanceof GroundMathFragment) {
-                    ((GroundMathFragment) currentFragment).onFragmentPaused();
-                }*/
+
             }
 
             // Создание фрагмента, если еще не создан
@@ -320,14 +354,13 @@ public class GroundActivity extends AppCompatActivity {
             if (targetFragment instanceof GroundBreathFragment) {
                 ((GroundBreathFragment) targetFragment).onFragmentResumed();
             }
-            /*if (currentFragment instanceof GroundMathFragment) {
-                ((GroundMathFragment) currentFragment).onFragmentResumed();
-            }*/
+*/
 
             Log.d(TAG, "Showing fragment at index: " + fragmentIndex);
         }
         catch (Exception e) {
-            Log.e(TAG, "Error showing fragment", e);
+            Log.e(TAG, "Error showing fragment at index"+fragmentIndex, e);
+            finish();
         }
     }
 
@@ -336,6 +369,7 @@ public class GroundActivity extends AppCompatActivity {
             // Переход к следующему упражнению
             showFragment(currentFragmentIndex + 1);
         } else {
+            Log.d(TAG, "Grounding sequence completed");
             // Конец последовательности - сохранение истории и закрытие
             saveExerciseHistory();
             finish();
@@ -355,6 +389,13 @@ public class GroundActivity extends AppCompatActivity {
     //Перезапускает всю последовательность упражнений
     //вызывается из последнего фрагмента по нажатию "Повторить"
     public void repeatGroundingSequence() {
+        saveExerciseHistory();
+
+        currentFragmentIndex=0;
+        //startGroundingSequence();
+        buildAndStartGroundSequence();
+
+        /*
         // Остановка текущего фрагмента
         if (currentFragment instanceof GroundBreathFragment) {
             ((GroundBreathFragment) currentFragment).onFragmentPaused();
@@ -377,17 +418,20 @@ public class GroundActivity extends AppCompatActivity {
 
         // Запуск новой последовательности
         startGroundingSequence();
+        */
     }
 
     //Сохраняет историю выполнения упражнений в Firestore
     private void saveExerciseHistory() {
+        /*
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null)
             return;
+        */
 
         // TODO: Реализовать сохранение истории упражнений (данных о пройденных упражнениях: какие изображения пройдены и в какое время)
 
-        Log.d(TAG, "Saving exercise history for user: " + currentUser.getUid());
+        //Log.d(TAG, "Saving exercise history for user: " + currentUser.getUid());
     }
 
 
@@ -404,6 +448,7 @@ public class GroundActivity extends AppCompatActivity {
         return fragmentClasses.size();
     }
 
+    /*
     @Override
     protected void onPause() {
         super.onPause();
@@ -421,5 +466,6 @@ public class GroundActivity extends AppCompatActivity {
             ((GroundBreathFragment) currentFragment).onFragmentResumed();
         }
     }
+*/
 
 }

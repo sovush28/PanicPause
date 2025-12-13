@@ -87,6 +87,31 @@
         Например, для человека, пережившего автокатастрофу, триггером может стать вид салона машины.
         \n\nPanicPause также рекомендует заносить в “триггеры” объекты фобий.</string>
 
+    
+    <!--Настройки Заземления-->
+    <string name="ground_settings">Настроки Заземления</string>
+
+    <string name="square_breathing_title">Дыхание по квадрату</string>
+    <string name="sq_breathing_setting1">Кнопка Дальше появляется после</string>
+    <string name="sq_breathing_setting2">повторов</string>
+
+    <string name="count_photo_title">Счёт предметов на изображении</string>
+    <string name="count_photo_ex_amount">Количество упражнений</string>
+    <string name="not_enough_safe_photos">В приложении недостаточно безопасных фото</string>
+    <string name="count_photo_only_faves">Использовать только избранные</string>
+    <string name="not_enough_faves">Недостаточно избранных</string>
+
+    <string name="math_title">Математические примеры</string>
+    <string name="include_math">Включать математические примеры</string>
+
+    <string name="count_color_title">Поиск предметов вокруг себя</string>
+    <string name="include_count_color">Включать поиск предметов вокруг</string>
+
+    <string name="auto_ground_on_launch">Автоматически запускать Заземление при входе в приложение</string>
+
+    <string name="reset_settings">Сбросить настройки</string>
+    <string name="reset_settings_question">Вы уверены, что хотите <b>сбросить настройки?</b></string>
+
 
     <!--Как помочь себе-->
     <string name="how_to_help_yourself_during_pa">Как помочь себе\nпережить панику?</string>

@@ -17,13 +17,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import okhttp3.Call;
@@ -52,7 +56,7 @@ public class DataManager {
     private static final String KEY_USER_ID = "user_id";
     private static final String KEY_IS_GUEST = "is_guest";
     private static final String KEY_LAST_MODIFIED_LOCAL = "last_modified_local";
-    //TODO add last_modified field to firestore users
+    private static final String KEY_ONBOARDING_COMPLETED = "onboarding_completed";
 
     // Поля пользователя (сохраняются как строки/числа/булевы)
     private static final String KEY_TRIGGERS = "triggers";
@@ -86,7 +90,161 @@ public class DataManager {
         photosDir.mkdirs();
     }
 
-    //region === 1. Инициализация контента ===
+    public static class PhotoData{
+        public final String imgUrl;
+        public final String word;
+        public final List<String> tags;
+
+        public PhotoData(String imgUrl, String word, List<String> tags) {
+            this.imgUrl = imgUrl;
+            this.word = word;
+            this.tags = tags;
+        }
+    }
+
+    //Загружает список изображений из локального файла images.json
+    public List<PhotoData> getLocalImagesList(){
+        List<PhotoData> photos = new ArrayList<>();
+        File imagesFile=new File(context.getFilesDir(), "content/images.json");
+
+        if(!imagesFile.exists()){
+            Log.w(TAG, "Local images.json not found");
+            return photos;
+        }
+        try (FileInputStream fis = new FileInputStream(imagesFile);
+             ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = fis.read(buffer)) != -1) {
+                bos.write(buffer, 0, length);
+            }
+            String json = bos.toString("UTF-8");
+            JSONArray array = new JSONArray(json);
+
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject obj = array.getJSONObject(i);
+                String imgUrl = obj.optString("img_url", null);
+                String word = obj.optString("word", null);
+                JSONArray tagsArray = obj.optJSONArray("tags");
+                List<String> tags = new ArrayList<>();
+                if (tagsArray != null) {
+                    for (int j = 0; j < tagsArray.length(); j++) {
+                        tags.add(tagsArray.getString(j));
+                    }
+                }
+                if (imgUrl != null && word != null) {
+                    photos.add(new PhotoData(imgUrl, word, tags));
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error loading images.json", e);
+        }
+        return photos;
+    }
+
+    //Загружает список триггеров из локального файла tags.json
+    public List<TriggerItem> getLocalTagsList(){
+        List<TriggerItem> tags = new ArrayList<>();
+        File tagsFile = new File(context.getFilesDir(), "content/tags.json");
+
+        if (!tagsFile.exists()) {
+            Log.w(TAG, "Local tags.json not found");
+            return tags;
+        }
+
+        try (FileInputStream fis = new FileInputStream(tagsFile);
+             ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = fis.read(buffer)) != -1) {
+                bos.write(buffer, 0, length);
+            }
+            String json = bos.toString("UTF-8");
+            JSONArray array = new JSONArray(json);
+
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject obj = array.getJSONObject(i);
+                String imgTag = obj.optString("img_tag", null);
+                Boolean isParent = obj.optBoolean("is_parent", false);
+                String parentTag = obj.optString("parent_tag", "");
+                String strRes = obj.optString("str_res", "");
+
+                if (imgTag != null) {
+                    tags.add(new TriggerItem(imgTag, isParent, parentTag, strRes));
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error loading tags.json", e);
+        }
+        return tags;
+    }
+
+    //Сохраняет список триггеров пользователя
+    public void saveTriggers(List<String> triggers) {
+        saveUserSetting(KEY_TRIGGERS, triggers);
+    }
+
+    public int getGroundPhotoExAmount() {
+        return prefs.getInt(KEY_GROUND_PHOTO_AMOUNT, 2);
+    }
+
+    public boolean getUseMath() {
+        return prefs.getBoolean(KEY_USE_MATH, true);
+    }
+
+    public boolean getUseSearchObjectsColor() {
+        return prefs.getBoolean(KEY_USE_COLOR_SEARCH, true);
+    }
+
+    public int getBreathRepeatAmount() {
+        return prefs.getInt(KEY_BREATH_REPEAT, 1);
+    }
+
+    public boolean getUseFavesOnly() {
+        return prefs.getBoolean(KEY_USE_FAVES_ONLY, false);
+    }
+
+    public boolean getGroundOnLaunch() {
+        return prefs.getBoolean(KEY_GROUND_ON_LAUNCH, false);
+    }
+
+    public List<String> getTriggers() {
+        try {
+            String json = prefs.getString(KEY_TRIGGERS, "[]");
+            JSONArray array = new JSONArray(json);
+            List<String> list = new ArrayList<>();
+            for (int i = 0; i < array.length(); i++) {
+                list.add(array.getString(i));
+            }
+            return list;
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
+    }
+
+    public List<String> getFaves() {
+        try {
+            String json = prefs.getString(KEY_FAVES, "[]");
+            JSONArray array = new JSONArray(json);
+            List<String> list = new ArrayList<>();
+            for (int i = 0; i < array.length(); i++) {
+                list.add(array.getString(i));
+            }
+            return list;
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
+    }
+
+    public boolean isOnboardingCompleted() {
+        return prefs.getBoolean(KEY_ONBOARDING_COMPLETED, false);
+    }
+
+    public void markOnboardingCompleted() {
+        prefs.edit().putBoolean(KEY_ONBOARDING_COMPLETED, true).apply();
+    }
+
+    // 1. Инициализация контента
 
     /**
      * Запускает инициализацию контента.
@@ -430,16 +588,23 @@ public class DataManager {
     }
 
     private void syncUserSettingsToFirestore(long lastModified) {
-        if (!isNetworkAvailable()) return;
+        if (!isNetworkAvailable()){
+            //onComplete.run();
+            return;
+        }
 
         String userId = getUserId();
-        if (isGuest()) return;
+        if (isGuest())
+            return;
 
-        JSONObject data = new JSONObject();
+        //JSONObject data = new JSONObject();
+        Map<String, Object> data = new HashMap<>();
         try {
             data.put("email", prefs.getString("email", ""));
-            data.put("triggers", new JSONArray(prefs.getString(KEY_TRIGGERS, "[]")));
-            data.put("faves", new JSONArray(prefs.getString(KEY_FAVES, "[]")));
+            /*data.put("triggers", new JSONArray(prefs.getString(KEY_TRIGGERS, "[]")));
+            data.put("faves", new JSONArray(prefs.getString(KEY_FAVES, "[]")));*/
+            data.put("triggers", convertJsonStringToList(prefs.getString(KEY_TRIGGERS, "[]")));
+            data.put("faves", convertJsonStringToList(prefs.getString(KEY_FAVES, "[]")));
             data.put("breath_repeat_amount", prefs.getInt(KEY_BREATH_REPEAT, 1));
             data.put("use_math", prefs.getBoolean(KEY_USE_MATH, true));
             data.put("use_search_objects_color", prefs.getBoolean(KEY_USE_COLOR_SEARCH, true));
@@ -449,7 +614,7 @@ public class DataManager {
             data.put("last_modified", lastModified);
 
             db.collection("users").document(userId).set(data);
-        } catch (JSONException e) {
+        } catch (Exception e) {
             Log.e(TAG, "Ошибка сериализации настроек", e);
         }
     }
@@ -460,12 +625,15 @@ public class DataManager {
             return;
         }
 
-        JSONObject data = new JSONObject();
+        //JSONObject data = new JSONObject();
+        Map<String, Object> data = new HashMap<>();
         try {
             // Собираем все текущие настройки
             data.put("email", prefs.getString("email", ""));
-            data.put("triggers", new JSONArray(prefs.getString(KEY_TRIGGERS, "[]")));
-            data.put("faves", new JSONArray(prefs.getString(KEY_FAVES, "[]")));
+            /*data.put("triggers", new JSONArray(prefs.getString(KEY_TRIGGERS, "[]")));
+            data.put("faves", new JSONArray(prefs.getString(KEY_FAVES, "[]")));*/
+            data.put("triggers", convertJsonStringToList(prefs.getString(KEY_TRIGGERS, "[]")));
+            data.put("faves", convertJsonStringToList(prefs.getString(KEY_FAVES, "[]")));
             data.put("breath_repeat_amount", prefs.getInt(KEY_BREATH_REPEAT, 1));
             data.put("use_math", prefs.getBoolean(KEY_USE_MATH, true));
             data.put("use_search_objects_color", prefs.getBoolean(KEY_USE_COLOR_SEARCH, true));
@@ -480,7 +648,7 @@ public class DataManager {
                         Log.w(TAG, "Не удалось сохранить настройки в Firestore", e);
                         onComplete.run(); // всё равно завершаем
                     });
-        } catch (JSONException e) {
+        } catch (Exception e) {
             Log.e(TAG, "Ошибка при сохранении настроек", e);
             onComplete.run();
         }
@@ -490,8 +658,20 @@ public class DataManager {
         SharedPreferences.Editor editor = prefs.edit();
 
         editor.putString("email", snapshot.getString("email"));
-        editor.putString(KEY_TRIGGERS, snapshot.getString("triggers"));
-        editor.putString(KEY_FAVES, snapshot.getString("faves"));
+
+        //editor.putString(KEY_TRIGGERS, snapshot.getString("triggers"));
+        //editor.putString(KEY_FAVES, snapshot.getString("faves"));
+
+        // triggers — List<String>
+        @SuppressWarnings("unchecked")
+        List<String> triggers = (List<String>) snapshot.get("triggers");
+        editor.putString(KEY_TRIGGERS, triggers != null ? new JSONArray(triggers).toString() : "[]");
+
+        // faves — List<String>
+        @SuppressWarnings("unchecked")
+        List<String> faves = (List<String>) snapshot.get("faves");
+        editor.putString(KEY_FAVES, faves != null ? new JSONArray(faves).toString() : "[]");
+
         editor.putInt(KEY_BREATH_REPEAT, snapshot.getLong("breath_repeat_amount").intValue());
         editor.putBoolean(KEY_USE_MATH, snapshot.getBoolean("use_math"));
         editor.putBoolean(KEY_USE_COLOR_SEARCH, snapshot.getBoolean("use_search_objects_color"));
@@ -502,9 +682,9 @@ public class DataManager {
         editor.apply();
     }
 
-    //region === Вспомогательные методы ===
+    // === Вспомогательные методы ===
 
-    private String getFilenameFromUrl(String url) {
+    public static String getFilenameFromUrl(String url) {
         if (url == null || url.isEmpty()) return null;
         try {
             return new File(Uri.parse(url).getPath()).getName();
@@ -520,5 +700,17 @@ public class DataManager {
         return true; // полагаемся на onFailure Firebase
     }
 
+    private List<String> convertJsonStringToList(String jsonString) {
+        try {
+            JSONArray array = new JSONArray(jsonString);
+            List<String> list = new ArrayList<>();
+            for (int i = 0; i < array.length(); i++) {
+                list.add(array.getString(i));
+            }
+            return list;
+        } catch (Exception e) {
+            return new ArrayList<>(); // возвращаем пустой список при ошибке
+        }
+    }
 
 }

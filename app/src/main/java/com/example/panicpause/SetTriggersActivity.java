@@ -12,13 +12,6 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -26,15 +19,19 @@ import java.util.Set;
 
 public class SetTriggersActivity extends AppCompatActivity implements TriggersRecycleViewAdapter.OnTriggerClickListener{
 
+    /*
     FirebaseAuth mAuth;
     FirebaseFirestore db;
+*/
 
     ImageButton backBtn;
     RecyclerView triggersListRV;
     TriggersRecycleViewAdapter triggersAdapter;
 
-    List<TriggerItem> allTriggerItems=new ArrayList<>();
-    Set<String> userTriggers = new HashSet<>(); // user's selected triggers
+    private List<TriggerItem> allTriggerItems=new ArrayList<>();
+    private Set<String> userTriggers = new HashSet<>(); // user's selected triggers
+
+    private DataManager dataManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,19 +39,29 @@ public class SetTriggersActivity extends AppCompatActivity implements TriggersRe
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_set_triggers);
 
+        /*
         mAuth=FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
+*/
+
+        dataManager = new DataManager(this);
 
         InitializeViews();
 
         SetupRecyclerView();
 
-        // Load both triggers data and user's selected triggers
+        // Загружаем триггеры из локального файла
+        LoadTriggersFromLocal();
+        // Загружаем выбранные триггеры из локального хранилища
+        LoadUserTriggers();
+
+        /*// Load both triggers data and user's selected triggers
         LoadTriggersFromFirestore(); //triggers data
         if (user != null) {
             LoadUserTriggers(user); //user's selected triggers
         }
+*/
 
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,6 +91,44 @@ public class SetTriggersActivity extends AppCompatActivity implements TriggersRe
         triggersListRV.setAdapter(triggersAdapter);
     }
 
+    // Load trigger hierarchy from the local file (tags.json)
+    private void LoadTriggersFromLocal() {
+        allTriggerItems = dataManager.getLocalTagsList();
+        triggersAdapter.updateItems(allTriggerItems);
+    }
+
+    // Load user's selected triggers from local storage
+    private void LoadUserTriggers() {
+        userTriggers = new HashSet<>(dataManager.getTriggers());
+        triggersAdapter.setUserSelectedTriggers(userTriggers);
+    }
+
+    // Handle category expand/collapse clicks
+    @Override
+    public void onCategoryClick(TriggerItem category, int position) {
+        triggersAdapter.toggleCategory(position);
+    }
+
+    // Handle trigger plus/minus button clicks
+    @Override
+    public void onTriggerClick(TriggerItem trigger, ImageButton plusButton, boolean isCurrentlySelected) {
+        if (isCurrentlySelected) {
+            // Remove trigger
+            userTriggers.remove(trigger.getImgTag());
+        } else {
+            // Add trigger
+            userTriggers.add(trigger.getImgTag());
+        }
+
+        // Update adapter and save locally
+        triggersAdapter.setUserSelectedTriggers(userTriggers);
+
+        // Сохраняем в локальное хранилище (и синхронизируем в Firestore, если пользователь не гость)
+        dataManager.saveTriggers(new ArrayList<>(userTriggers));
+    }
+
+
+    /*
     // Load trigger hierarchy from Firestore
     private void LoadTriggersFromFirestore(){
         db = FirebaseFirestore.getInstance();
@@ -216,6 +261,7 @@ public class SetTriggersActivity extends AppCompatActivity implements TriggersRe
                     // TODO: Show error message to user
                 });
     }
+    */
 
     // ChangeDrawablePlusOrCheckMark method is handled by adapter
     // SetChosenTriggersDrawables method is handled by LoadUserTriggers
@@ -331,11 +377,8 @@ public class SetTriggersActivity extends AppCompatActivity implements TriggersRe
 
 
 
-
-
-
 /*
-package com.example.safespace;
+package com.example.panicpause;
 
 import android.graphics.Typeface;
 import android.os.Bundle;

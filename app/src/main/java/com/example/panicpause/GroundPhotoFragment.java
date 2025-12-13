@@ -25,6 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -53,28 +54,34 @@ public class GroundPhotoFragment extends Fragment {
     private TextView countThingsTV;
     private Button nextBtn;
     ImageButton backBtn;
-    
+
+    private DataManager dataManager;
+    private List<DataManager.PhotoData> photoList;
+    private DataManager.PhotoData currentPhoto;
+
+    /*
     // Firebase and data
     private FirebaseFirestore firestore;
     private FirebaseAuth mAuth;
     private List<PhotoData> photoList;
     private PhotoData currentPhoto;
-    
-    // Random number generator for selecting photos
-    private Random random;
 
     // класс для данных об изображениях из БД Firestore
     private static class PhotoData {
         String imgUrl;
         String word;
         List<String> tags;
-        
+
         PhotoData(String imgUrl, String word, List<String> tags) {
             this.imgUrl = imgUrl;
             this.word = word;
             this.tags = tags;
         }
     }
+    */
+
+    // Random number generator for selecting photos
+    private Random random;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -82,29 +89,36 @@ public class GroundPhotoFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_ground_photo, container, false);
 
-        // Initialize UI elements
-        backBtn = view.findViewById(R.id.back_btn);
-        photoIV = view.findViewById(R.id.photo_iv);
-        countThingsTV = view.findViewById(R.id.count_things_tv);
-        nextBtn = view.findViewById(R.id.next_btn);
+        InitializeViews(view);
 
+        dataManager = new DataManager(requireContext());
+        photoList = new ArrayList<>();
+        random = new Random();
+
+        /*
         // Initialize Firebase Firestore
         firestore = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
-
-        // Initialize photo list
-        photoList = new ArrayList<>();
-
-        // Initialize random number generator
-        random = new Random();
+        */
         
         // Set up button click listeners
         setupButtonListeners();
 
+        loadLocalPhotos();
+
+        /*
         // Load photos from Firestore
         loadPhotoFromFirestore();
+*/
 
         return view;
+    }
+
+    private void InitializeViews(View view){
+        backBtn = view.findViewById(R.id.back_btn);
+        photoIV = view.findViewById(R.id.photo_iv);
+        countThingsTV = view.findViewById(R.id.count_things_tv);
+        nextBtn = view.findViewById(R.id.next_btn);
     }
 
     /**
@@ -135,6 +149,61 @@ public class GroundPhotoFragment extends Fragment {
         });
     }
 
+    private void loadLocalPhotos() {
+        countThingsTV.setText(getString(R.string.photo_loading));
+
+        // Загружаем ВСЕ фото
+        List<DataManager.PhotoData> allPhotos = dataManager.getLocalImagesList();
+        photoList = new ArrayList<>(allPhotos);
+
+        // Фильтруем по триггерам
+        List<String> triggers = dataManager.getTriggers();
+        if (triggers != null && !triggers.isEmpty()) {
+            Iterator<DataManager.PhotoData> it = photoList.iterator();
+            while (it.hasNext()) {
+                DataManager.PhotoData photo = it.next();
+                for (String trigger : triggers) {
+                    if (photo.tags.contains(trigger)) {
+                        it.remove();
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (photoList.isEmpty()) {
+            countThingsTV.setText(getString(R.string.photo_not_found));
+        } else {
+            displayRandomPhoto();
+        }
+    }
+
+    private void displayRandomPhoto() {
+        int index = random.nextInt(photoList.size());
+        currentPhoto = photoList.get(index);
+
+        String instruction = getString(R.string.ground_count_img1) +
+                " " + currentPhoto.word + " " + getString(R.string.ground_count_img2);
+        countThingsTV.setText(instruction);
+
+        // Получаем локальный путь к фото
+        String filename = DataManager.getFilenameFromUrl(currentPhoto.imgUrl);
+        File photoFile = new File(requireContext().getFilesDir(), "photos/" + filename);
+
+        if (photoFile.exists()) {
+            // Загружаем локальный файл через Glide
+            Glide.with(this)
+                    .load(photoFile)
+                    .into(photoIV);
+        } else {
+            // Резерв: попробуем загрузить по URL (если интернет есть)
+            Glide.with(this)
+                    .load(currentPhoto.imgUrl)
+                    .into(photoIV);
+        }
+    }
+
+    /*
     // загружает данные о всех фото из Firestore в список photoList
     private void loadPhotoFromFirestore() {
         // отображение состояния загрузки
@@ -308,32 +377,34 @@ public class GroundPhotoFragment extends Fragment {
                 //.error(R.drawable.error_image) // Show error image if loading fails
                 .into(photoIV);
         */
-    }
+    //}
 
     /**
      * Gets the current photo data.
      * This can be useful for debugging or if other parts of the app need this information.
      * 
      * @return The current PhotoData object, or null if no photo is loaded
-     */
+     *//*
     public PhotoData getCurrentPhoto() {
         return currentPhoto;
     }
-
+    */
     /**
      * Gets the number of photos loaded from Firestore
      */
+    /*
     public int getPhotoCount() {
         return photoList.size();
     }
-
+    */
     /**
      * Reloads a new random photo.
      * This method can be called if the user wants to see a different photo.
      */
+    /*
     public void loadNewRandomPhoto() {
         if (!photoList.isEmpty()) {
             displayRandomPhoto();
         }
-    }
+    }*/
 }

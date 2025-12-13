@@ -51,7 +51,7 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 
     // Importing the Firebase BoM (Bill of Materials)
-    implementation(platform("com.google.firebase:firebase-bom:34.2.0"))
+    implementation (platform("com.google.firebase:firebase-bom:33.1.0"))
 
     implementation (libs.material.v100)
 
@@ -61,7 +61,7 @@ dependencies {
 
     // from FireBase: When using the BoM, don't specify versions in Firebase dependencies
 
-    implementation("com.google.firebase:firebase-analytics")
+    implementation(libs.firebase.analytics)
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
 
@@ -71,6 +71,6 @@ dependencies {
     //библиотека glide для загрузки изображений из интернета
     implementation (libs.glide)
 
-    implementation ("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation (libs.okhttp)
 
 }

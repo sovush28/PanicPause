@@ -14,11 +14,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class ProfileFragment extends Fragment{
+    TextView  currentEmailTV, favoritesTV, setTriggersTV, accountSettingsTV, appInfoTV;
 
     private FirebaseAuth mAuth;
-    TextView currentEmailTV;
-
-    TextView favoritesTV, setTriggersTV, accountSettingsTV, appInfoTV;
+    private DataManager dataManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -26,24 +25,42 @@ public class ProfileFragment extends Fragment{
         // "Надуваем" макет из XML-файла fragment_profile.xml
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
-
         InitializeViews(view);
         SetOnClickListeners();
 
-        if(user!=null && user.getEmail()!=null){
-            currentEmailTV.setText(user.getEmail());
-        }
-        else{
-            currentEmailTV.setText(getString(R.string.guest));
-        }
+        dataManager=new DataManager(requireContext());
+        mAuth = FirebaseAuth.getInstance();
+
+        updateCurrentEmailTV();
 
         return view;  // Возвращаем готовый экран
     }
 
     private void inDevelopmentToast(){
         Toast.makeText(getActivity(), R.string.in_development, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        updateCurrentEmailTV();
+    }
+
+    private void updateCurrentEmailTV(){
+        if(dataManager.isGuest()){
+            currentEmailTV.setText(getString(R.string.guest));
+        }
+        else{
+            FirebaseUser user = mAuth.getCurrentUser();
+            if(user != null && user.getEmail() != null){
+                currentEmailTV.setText(user.getEmail());
+            }
+            else{
+                currentEmailTV.setText(getString(R.string.guest));
+            }
+        }
+        //юид для отладки
+        //currentEmailTV.setText(dataManager.getUserId());
     }
 
     private void InitializeViews(View view){

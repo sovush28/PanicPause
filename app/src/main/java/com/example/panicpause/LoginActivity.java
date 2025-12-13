@@ -27,6 +27,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/*
+После входа/регистрации вызывается dataManager.handleUserLogin().
+Все переходы в MainActivity — только после завершения синхронизации.
+Гость — просто закрытие активности (локальные данные уже управляются DataManager).
+ */
+
 public class LoginActivity extends AppCompatActivity {
 
     ImageButton backBtn;
@@ -36,7 +42,9 @@ public class LoginActivity extends AppCompatActivity {
     LinearLayout guestBtnLayout;
 
     private FirebaseAuth mAuth; //Declare an instance of FirebaseAuth
-    private FirebaseFirestore db;
+    private DataManager dataManager;
+
+    //private FirebaseFirestore db;
 
     private boolean fromAccSettings=false;
 
@@ -52,17 +60,14 @@ public class LoginActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
 
+        // Инициализация Firebase
+        mAuth = FirebaseAuth.getInstance();
+        //db = FirebaseFirestore.getInstance();
+        dataManager=new DataManager(this);
+        //loadingDialog = new LoadingDialog(this); //////////////////////
+
         InitializeViews();
         SetOnClickListeners();
-
-        //если перебросило сюда после регистрации то подгружается логин
-        /*
-        Intent intent=getIntent();
-        if(intent.hasExtra("user_email")){
-            String createdUserEmail=intent.getStringExtra("user_email");
-            emailET.setText(createdUserEmail);
-        }
-        */
 
         Intent intent= getIntent();
         if(intent.hasExtra("from_acc_settings")){
@@ -75,11 +80,6 @@ public class LoginActivity extends AppCompatActivity {
         } else{
             HideBackBtnShowGuest();
         }
-
-        // Инициализация Firebase
-        mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
-        //loadingDialog = new LoadingDialog(this); //////////////////////
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -135,6 +135,7 @@ public class LoginActivity extends AppCompatActivity {
         logInAsGuestBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dataManager.markOnboardingCompleted();
                 Intent intent=new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out); // Плавное появление/исчезание
@@ -159,26 +160,26 @@ public class LoginActivity extends AppCompatActivity {
     private void goToMainActivity() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
-
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         finish(); // чтобы пользователь не вернулся сюда нажав назад
     }
 
-    private void checkCurrentUser() {
+    //убрано тк DataManager сам управляет состоянием
+    /*private void checkCurrentUser() {
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             goToMainActivity();
         }
-    }
+    }*/
 
     @Override
     public void onStart() {
         super.onStart();
-        checkCurrentUser();
+        //checkCurrentUser();
     }
 
-/*
+    /*
     @Override
     public void onClick(View v){
         if(v.getId()==R.id.log_in_btn){
@@ -256,10 +257,17 @@ public class LoginActivity extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
 
                             if (user != null) {
+                                dataManager.saveUserSetting("email", user.getEmail());
+
                                 Toast.makeText(LoginActivity.this, R.string.login_success, Toast.LENGTH_SHORT).show();
 
-                                // перенести вошедшего юзера на главную, подгрузив его данные
-                                goToMainActivity();
+                                //dataManager.handleUserLogin(LoginActivity.this::goToMainActivity);
+                                dataManager.handleUserLogin(() -> {
+                                    dataManager.markOnboardingCompleted();
+                                    goToMainActivity();
+                                });
+
+                                //goToMainActivity();
                             }
                             else{
                                 String errorMessage = getErrorMessage(task.getException());

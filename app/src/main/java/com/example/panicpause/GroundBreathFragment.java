@@ -160,11 +160,20 @@ public class GroundBreathFragment extends Fragment {
     private void updateButtonVisibility() {
         if (getActivity() instanceof GroundActivity) {
             GroundActivity activity = (GroundActivity) getActivity();
+            if (activity.isLastFragment()) {
+                repeatBtn.setVisibility(View.VISIBLE);
+                nextBtn.setText(getString(R.string.end));
+            } else {
+                repeatBtn.setVisibility(View.GONE);
+                nextBtn.setText(getString(R.string.next));
+            }
+        }
+        /*if (getActivity() instanceof GroundActivity) {
+            GroundActivity activity = (GroundActivity) getActivity();
             boolean isLast = activity.isLastFragment();
 
             Log.d(TAG, "Updating button visibility - isLast: " + isLast + ", currentIndex: " +
                     activity.getCurrentFragmentIndex() + ", total: " + activity.getTotalExercisesCount());
-
 
             if (isLast) {
                 repeatBtn.setVisibility(View.VISIBLE);
@@ -173,7 +182,7 @@ public class GroundBreathFragment extends Fragment {
                 repeatBtn.setVisibility(View.GONE);
                 nextBtn.setText(getString(R.string.next));
             }
-        }
+        }*/
     }
 
     public void onFragmentResumed(){
@@ -217,7 +226,7 @@ public class GroundBreathFragment extends Fragment {
         startCountdown();
         
         // Start the square animation for this phase
-        //animateSquare();
+        //TODO animation of drawing the square
     }
 
     /**
@@ -254,7 +263,7 @@ public class GroundBreathFragment extends Fragment {
                         currentPhase = 0;
                         startPhase(currentPhase);
 
-                        //TODO nextBtn.visibility=visible
+                        //TODO nextBtn.visibility=visible depending on ground_breath_repeat_amount
 
                         // All phases completed
                         //onBreathingExerciseCompleted();

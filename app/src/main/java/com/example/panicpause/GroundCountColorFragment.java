@@ -28,8 +28,7 @@ public class GroundCountColorFragment extends Fragment {
 
     // UI elements
     private TextView colorText;
-    private Button anotherColorBtn;
-    private Button nextBtn;
+    private Button anotherColorBtn, nextBtn;
     ImageButton backBtn;
     
     // Color names from strings.xml
