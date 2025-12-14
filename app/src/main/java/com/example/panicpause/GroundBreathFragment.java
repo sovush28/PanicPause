@@ -1,7 +1,7 @@
 package com.example.panicpause;
 
-import static android.content.ContentValues.TAG;
-
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 /**
@@ -33,15 +34,13 @@ import androidx.fragment.app.Fragment;
 public class GroundBreathFragment extends Fragment {
 
     // UI elements
-    //private ImageButton backBtn;
     private Button nextBtn, repeatBtn;
     private ImageButton backBtn;
     private TextView instructionText, countdownText;
 
-    ValueAnimator animator;
-
-    //private AnimatedSquareView squareView;
-    private View squareView;
+    ValueAnimator squareAnimator;
+    private AnimatedSquareView squareView;
+    //private View squareView;
     private Handler handler;
     private Runnable countdownRunnable;
     
@@ -74,6 +73,16 @@ public class GroundBreathFragment extends Fragment {
         // Start the breathing exercise
         startBreathingExercise();
 
+        squareAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (currentPhase == 3) {
+                    // Если последний этап - начинаем анимацию заново
+                    startSquareAnimation();
+                }
+            }
+        });
+
         return view;
     }
 
@@ -90,11 +99,6 @@ public class GroundBreathFragment extends Fragment {
         };
     }
 
-    /**
-     * Initializes all the UI elements from the layout.
-     * 
-     * @param view The root view of the fragment
-     */
     private void initializeViews(View view) {
         backBtn = view.findViewById(R.id.back_btn);
         nextBtn = view.findViewById(R.id.next_btn);
@@ -117,9 +121,6 @@ public class GroundBreathFragment extends Fragment {
         }*/
     }
 
-    /**
-     * Sets up click listeners for all buttons.
-     */
     private void setupButtonListeners() {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -203,7 +204,11 @@ public class GroundBreathFragment extends Fragment {
     private void startBreathingExercise() {
         // Reset the current phase
         currentPhase = 0;
-        
+
+        // Сбрасываем анимацию
+        if (squareAnimator != null) {
+            squareAnimator.cancel();
+        }
         // Set initial square color (light)
         //squareView.setBackgroundColor(LIGHT_COLOR);
         
@@ -224,9 +229,9 @@ public class GroundBreathFragment extends Fragment {
         
         // Start the countdown for this phase
         startCountdown();
-        
+
         // Start the square animation for this phase
-        //TODO animation of drawing the square
+        startSquareAnimation();
     }
 
     /**
@@ -260,13 +265,12 @@ public class GroundBreathFragment extends Fragment {
                         // Move to next phase
                         startPhase(currentPhase + 1);
                     } else {
+                        // All phases completed - restart from beginning
                         currentPhase = 0;
                         startPhase(currentPhase);
 
                         //TODO nextBtn.visibility=visible depending on ground_breath_repeat_amount
 
-                        // All phases completed
-                        //onBreathingExerciseCompleted();
                     }
                 }
             }
@@ -277,9 +281,44 @@ public class GroundBreathFragment extends Fragment {
     }
 
     /**
+     * Starts the square animation for the current phase.
+     */
+    private void startSquareAnimation() {
+        // Останавливаем предыдущую анимацию
+        if (squareAnimator != null) {
+            squareAnimator.cancel();
+        }
+
+        // Создаем новую анимацию
+        squareAnimator = ValueAnimator.ofFloat(0f, 1f);
+        squareAnimator.setDuration(ANIMATION_DURATION);
+
+        // Рассчитываем прогресс для текущего этапа
+        float startProgress = currentPhase * 0.25f;
+        float endProgress = startProgress + 0.25f;
+
+        squareAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(@NonNull ValueAnimator animation) {
+                float animatedValue = (Float) animation.getAnimatedValue();
+                // Вычисляем общий прогресс анимации
+                float progress = startProgress + animatedValue * 0.25f;
+                // Устанавливаем прогресс для квадрата
+                squareView.setProgress(progress);
+            }
+        });
+
+        // Запускаем анимацию
+        squareAnimator.start();
+    }
+/*
+
+    */
+/**
      * Animates the square for the current phase.
      * Each phase animates one side of the square becoming darker.
-     */
+     *//*
+
     private void animateSquare() {
         // Cancel any existing animation
         if (animator != null) {
@@ -299,7 +338,8 @@ public class GroundBreathFragment extends Fragment {
 
         // Create a value animator that will change the background color
         // We'll animate from light color to dark color over 4 seconds
-        /*squareAnimator = ObjectAnimator.ofArgb(squareView, "backgroundColor", LIGHT_COLOR, DARK_COLOR);
+        */
+/*squareAnimator = ObjectAnimator.ofArgb(squareView, "backgroundColor", LIGHT_COLOR, DARK_COLOR);
         squareAnimator.setDuration(ANIMATION_DURATION);
         
         // Add animation listener to handle completion
@@ -309,18 +349,21 @@ public class GroundBreathFragment extends Fragment {
                 // Animation completed, but we don't need to do anything here
                 // The countdown will handle moving to the next phase
             }
-        });*/
+        });*//*
+
         
         // Start the animation
         animator.start();
     }
 
-    /**
+    */
+/**
      * Checks if this is the last breathing exercise in the sequence.
      * The last breathing exercise is the 6th fragment (index 5).
      * 
      * @return true if this is the last breathing exercise, false otherwise
-     */
+     *//*
+
     private boolean isLastBreathingExercise() {
         if (getActivity() instanceof GroundActivity) {
             GroundActivity activity = (GroundActivity) getActivity();
@@ -328,6 +371,7 @@ public class GroundBreathFragment extends Fragment {
         }
         return false;
     }
+*/
 
     @Override
     public void onDestroyView() {
