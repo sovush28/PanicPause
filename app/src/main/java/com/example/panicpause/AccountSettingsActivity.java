@@ -41,24 +41,6 @@ public class AccountSettingsActivity extends AppCompatActivity {
 
         dataManager=new DataManager(this);
         mAuth = FirebaseAuth.getInstance();
-        /*
-        FirebaseUser user= mAuth.getCurrentUser();
-
-        if(user!=null && user.getEmail()!=null){
-            //авторизованный
-            guestMsgLayout.setVisibility(View.GONE);
-            emailPasswResetLayout.setVisibility(View.VISIBLE);
-            signOutDeleteAccLayout.setVisibility(View.VISIBLE);
-
-            userEmailTV.setText(user.getEmail());
-        }
-        else{
-            //гость
-            guestMsgLayout.setVisibility(View.VISIBLE);
-            emailPasswResetLayout.setVisibility(View.GONE);
-            signOutDeleteAccLayout.setVisibility(View.GONE);
-        }
-*/
 
         updateUI();
 

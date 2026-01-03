@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_gravity="center"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+android:background="@drawable/custom_dialog_background"
+android:orientation="vertical"
+android:gravity="center"
+android:id="@+id/dialog_container"
+    >
+
+<LinearLayout
+    android:layout_width="290dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_bg_dark"
+    android:orientation="vertical"
+    android:paddingVertical="30dp"
+    android:paddingHorizontal="22dp"
+    android:id="@+id/dialog_content"
+    >
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        style="@style/normalTextLight"
+        android:textSize="18sp"
+        android:text="@string/no_ex_except_breath_warning"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        app:backgroundTint="@null"
+        android:background="@drawable/light_btn_shape"
+        style="@style/normalTextDark"
+        android:textStyle="bold"
+        android:text="@string/yes"
+        android:id="@+id/yes_close_ground_settings_btn"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        app:backgroundTint="@null"
+        android:background="@drawable/et_light_border"
+        style="@style/normalTextLight"
+        android:textStyle="bold"
+        android:text="@string/no_edit_settings"
+        android:id="@+id/no_stay_in_ground_settings_btn"
+        />
+
+</LinearLayout>
+
+</LinearLayout>

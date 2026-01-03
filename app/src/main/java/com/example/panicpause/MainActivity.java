@@ -38,11 +38,11 @@ public class MainActivity extends AppCompatActivity{
         dataManager.initializeContent(this::onContentReady);
 
         Intent intent = getIntent();
-        boolean showProfile=false;
-        if(intent.hasExtra("go_to_profile")){
-            showProfile=intent.getBooleanExtra("go_to_profile", false);
-            if(showProfile){
-                viewPager.setCurrentItem(1); ////////
+        if (intent != null) {
+            if (intent.getBooleanExtra("go_to_profile", false)) {
+                viewPager.post(() -> viewPager.setCurrentItem(1, false));
+            } else if (intent.getBooleanExtra("go_to_home", false)) {
+                viewPager.post(() -> viewPager.setCurrentItem(0, false));
             }
         }
 
@@ -59,6 +59,24 @@ public class MainActivity extends AppCompatActivity{
             v.setPadding(0, 0, 0, systemBars.bottom);
             return insets;
         });
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent); // важно: обновить текущий intent
+
+        if (intent.getBooleanExtra("go_to_profile", false)) {
+            // Переключиться на ProfileFragment
+            viewPager.setCurrentItem(1, false); // false = без анимации
+        }
+        else if (intent.getBooleanExtra("go_to_home", false)) {
+            // Переключиться на HomeFragment
+            viewPager.setCurrentItem(0, false);
+        }
+
+        // проверка нет ли новых фото в базе
+        dataManager.initializeContent(this::onContentReady);
     }
 
     private void onContentReady() {

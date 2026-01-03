@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * GroundingActivity - the main activity that manages the grounding exercises sequence
+ * GroundActivity - the main activity that manages the grounding exercises sequence
 
  * The grounding sequence consists of 6 exercises in this order:
  * 1. GroundBreathFragment - Square breathing exercise
@@ -208,7 +208,6 @@ public class GroundActivity extends AppCompatActivity {
     //Строит последовательность упражнений на основе настроек пользователя
     private void buildExerciseSequence() {
         fragmentClasses.clear();
-        //fragmentInstances.clear();
 
         // 1. Первое упражнение - дыхание
         fragmentClasses.add(GroundBreathFragment.class);
@@ -314,10 +313,11 @@ public class GroundActivity extends AppCompatActivity {
             FragmentTransaction transaction = fragmentManager.beginTransaction();
 
             transaction.replace(R.id.fragment_container, currentFragment);
-            transaction.commit();
-            fragmentManager.executePendingTransactions();
 
             currentFragmentIndex=fragmentIndex;
+            
+            transaction.commit();
+            fragmentManager.executePendingTransactions();
 
             /*
             // Скрытие текущего фрагмента, если он существует

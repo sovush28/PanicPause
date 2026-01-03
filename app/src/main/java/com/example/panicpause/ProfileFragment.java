@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,7 +15,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class ProfileFragment extends Fragment{
-    TextView  currentEmailTV, favoritesTV, setTriggersTV, accountSettingsTV, appInfoTV;
+    TextView  currentEmailTV;
+    LinearLayout favoritesLayout, setTriggersLayout, accountSettingsLayout, appInfoLayout;
 
     private FirebaseAuth mAuth;
     private DataManager dataManager;
@@ -65,14 +67,14 @@ public class ProfileFragment extends Fragment{
 
     private void InitializeViews(View view){
         currentEmailTV=view.findViewById(R.id.temp_user_email_tv);
-        favoritesTV=view.findViewById(R.id.favorites_tv);
-        accountSettingsTV=view.findViewById(R.id.go_to_acc_settings_tv);
-        setTriggersTV=view.findViewById(R.id.set_triggers_tv);
-        appInfoTV=view.findViewById(R.id.app_info_tv);
+        favoritesLayout=view.findViewById(R.id.favorites_layout);
+        accountSettingsLayout=view.findViewById(R.id.go_to_acc_settings_layout);
+        setTriggersLayout=view.findViewById(R.id.set_triggers_layout);
+        appInfoLayout=view.findViewById(R.id.app_info_layout);
     }
 
     private void SetOnClickListeners(){
-        favoritesTV.setOnClickListener(new View.OnClickListener() {
+        favoritesLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 inDevelopmentToast();
@@ -80,7 +82,7 @@ public class ProfileFragment extends Fragment{
             }
         });
 
-        accountSettingsTV.setOnClickListener(new View.OnClickListener() {
+        accountSettingsLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), AccountSettingsActivity.class);
@@ -88,7 +90,7 @@ public class ProfileFragment extends Fragment{
             }
         });
 
-        setTriggersTV.setOnClickListener(new View.OnClickListener() {
+        setTriggersLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(getActivity(), SetTriggersActivity.class);
@@ -96,12 +98,12 @@ public class ProfileFragment extends Fragment{
             }
         });
 
-        appInfoTV.setOnClickListener(new View.OnClickListener() {
+        appInfoLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(getActivity(), AppInfoActivity.class);
                 startActivity(intent);
-                getActivity().finish();
+                //getActivity().finish();
             }
         });
     }

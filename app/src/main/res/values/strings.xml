@@ -89,11 +89,10 @@
 
     
     <!--Настройки Заземления-->
-    <string name="ground_settings">Настроки Заземления</string>
+    <string name="ground_settings">Настройки Заземления</string>
 
     <string name="square_breathing_title">Дыхание по квадрату</string>
-    <string name="sq_breathing_setting1">Кнопка Дальше появляется после</string>
-    <string name="sq_breathing_setting2">повторов</string>
+    <string name="sq_breathing_setting">Количество повторов, после которых появится кнопка Дальше</string>
 
     <string name="count_photo_title">Счёт предметов на изображении</string>
     <string name="count_photo_ex_amount">Количество упражнений</string>
@@ -111,6 +110,11 @@
 
     <string name="reset_settings">Сбросить настройки</string>
     <string name="reset_settings_question">Вы уверены, что хотите <b>сбросить настройки?</b></string>
+
+    <string name="no_ex_except_breath_warning">Вы уверены, что хотите <b>убрать все упражнения</b>, кроме
+        "Дыхания по квадрату"?</string>
+    <string name="yes">Да</string>
+    <string name="no_edit_settings">Нет, изменить настройки</string>
 
 
     <!--Как помочь себе-->

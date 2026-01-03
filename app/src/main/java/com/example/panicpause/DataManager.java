@@ -311,7 +311,7 @@ public class DataManager {
     }
 
 
-    //region === 2. Проверка и обновление контента ===
+    // === 2. Проверка и обновление контента ===
 
     private void checkForContentUpdates(Runnable onReady) {
         if (!isNetworkAvailable()) {
@@ -451,7 +451,7 @@ public class DataManager {
         }
     }
 
-    //region === 3. Работа с пользователем и настройками ===
+    //=== 3. Работа с пользователем и настройками ===
 
     /**
      * Проверяет, авторизован ли пользователь в Firebase.
@@ -557,7 +557,7 @@ public class DataManager {
                 .apply();
     }
 
-    //region === 4. Сохранение и загрузка настроек ===
+    // === 4. Сохранение и загрузка настроек ===
 
     /**
      * Сохраняет настройку и обновляет временную метку.
@@ -696,7 +696,6 @@ public class DataManager {
 
     private boolean isNetworkAvailable() {
         // Простая проверка (можно улучшить через ConnectivityManager)
-        // Для MVP достаточно попытки Firestore — он сам обработает отсутствие сети
         return true; // полагаемся на onFailure Firebase
     }
 

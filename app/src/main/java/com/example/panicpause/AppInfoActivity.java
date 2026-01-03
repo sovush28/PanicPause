@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -65,35 +64,40 @@ public class AppInfoActivity extends AppCompatActivity {
         goToGroundSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(AppInfoActivity.this, R.string.in_development, Toast.LENGTH_SHORT).show();
-                //TODO
+                goToGroundSettingsActivity();
             }
         });
 
         goToSetTriggers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GoToSetTriggersActivity();
+                goToSetTriggersActivity();
             }
         });
 
         whatsTrigger.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ShowWhatsTriggerDialog();
+                showWhatsTriggerDialog();
             }
         });
     }
 
     private void GoToMainActivity(){
         Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.putExtra("go_to_home", true);
         startActivity(intent);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         finish();
     }
+    /*Флаг FLAG_ACTIVITY_CLEAR_TOP убирает все активности над MainActivity
+    (включая текущую AppInfoActivity после finish()), а FLAG_ACTIVITY_SINGLE_TOP гарантирует,
+    что если MainActivity уже в стеке — она не будет создана заново, а получит вызов onNewIntent().*/
 
     private void GoBackToProfile(){
-        Intent intent = new Intent(this, MainActivity.class); /////
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.putExtra("go_to_profile", true);
         startActivity(intent);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
@@ -106,14 +110,21 @@ public class AppInfoActivity extends AppCompatActivity {
         GoBackToProfile();
     }
 
-    private void GoToSetTriggersActivity(){
+    private void goToGroundSettingsActivity(){
+        Intent intent = new Intent(this, GroundSettingsActivity.class);
+        startActivity(intent);
+        //overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        //finish();
+    }
+
+    private void goToSetTriggersActivity(){
         Intent intent = new Intent(this, SetTriggersActivity.class);
         startActivity(intent);
         //overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         //finish();
     }
 
-    private void ShowWhatsTriggerDialog(){
+    private void showWhatsTriggerDialog(){
         try{
             WhatsTriggerDialogFragment dialog=new WhatsTriggerDialogFragment();
             dialog.show(getSupportFragmentManager(), "whats_trigger_dialog");

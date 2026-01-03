@@ -10,11 +10,14 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:fillViewport="true"
         >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:paddingBottom="150dp"
             >
             <TextView
                 android:layout_height="wrap_content"
@@ -50,17 +53,18 @@
                     android:layout_marginBottom="10dp"
                     >
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         style="@style/normalTextDark"
-                        android:text="@string/sq_breathing_setting1"
+                        android:text="@string/sq_breathing_setting"
                         />
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:gravity="center_horizontal"
-                        android:layout_marginHorizontal="4dp"
+                        android:layout_marginEnd="20dp"
                         >
                         <ImageView
                             android:layout_width="30dp"
@@ -75,8 +79,9 @@
                             android:layout_height="30dp"
                             android:background="@drawable/et_small_dark_border"
                             android:gravity="center"
-                            android:text="0"
                             android:inputType="number"
+                            android:digits="0123456789"
+                            android:focusable="false"
                             style="@style/normalTextDark"
                             android:textStyle="bold"
                             android:id="@+id/breath_repeat_amount_et"
@@ -90,12 +95,6 @@
                             android:id="@+id/breath_amount_decrease_iv"
                             />
                     </LinearLayout>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        style="@style/normalTextDark"
-                        android:text="@string/sq_breathing_setting2"
-                        />
                 </LinearLayout>
             </LinearLayout>
             <View
@@ -108,7 +107,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginHorizontal="34dp"
+                android:layout_marginStart="34dp"
+                android:layout_marginEnd="20dp"
                 android:layout_marginTop="25dp"
                 >
                 <TextView
@@ -125,6 +125,7 @@
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
                     android:layout_marginBottom="5dp"
+                    android:id="@+id/use_math_toggle_layout"
                     >
                     <TextView
                         android:layout_width="0dp"
@@ -166,7 +167,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginHorizontal="34dp"
+                android:layout_marginStart="34dp"
+                android:layout_marginEnd="20dp"
                 android:layout_marginTop="25dp"
                 >
                 <TextView
@@ -183,6 +185,7 @@
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
                     android:layout_marginBottom="5dp"
+                    android:id="@+id/use_color_toggle_layout"
                     >
                     <TextView
                         android:layout_width="0dp"
@@ -214,7 +217,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginHorizontal="34dp"
+                android:layout_marginStart="34dp"
+                android:layout_marginEnd="20dp"
                 android:layout_marginTop="25dp"
                 >
                 <TextView
@@ -232,6 +236,7 @@
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
                     android:layout_marginTop="5dp"
+                    android:id="@+id/photo_ex_amount_layout"
                     >
                     <TextView
                         android:layout_width="0dp"
@@ -261,8 +266,9 @@
                             android:layout_height="30dp"
                             android:background="@drawable/et_small_dark_border"
                             android:gravity="center"
-                            android:text="2"
                             android:inputType="number"
+                            android:digits="0123456789"
+                            android:focusable="false"
                             style="@style/normalTextDark"
                             android:textStyle="bold"
                             android:id="@+id/photo_ex_amount_et"
@@ -284,6 +290,7 @@
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
                     android:layout_marginBottom="5dp"
+                    android:id="@+id/use_faves_only_toggle_layout"
                     >
                     <TextView
                         android:layout_width="0dp"
@@ -297,7 +304,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="20dp"
-                        android:checked="true"
+                        android:checked="false"
                         android:thumb="@drawable/toggle_thumb_selector"
                         android:track="@drawable/toggle_track_selector"
                         android:id="@+id/use_faves_only_toggle_sc"
@@ -317,8 +324,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginHorizontal="34dp"
+                android:layout_marginStart="34dp"
+                android:layout_marginEnd="20dp"
                 android:layout_marginTop="25dp"
+                android:id="@+id/ground_on_launch_toggle_layout"
                 >
 
                 <TextView
@@ -334,7 +343,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="20dp"
-                    android:checked="true"
+                    android:checked="false"
                     android:thumb="@drawable/toggle_thumb_selector"
                     android:track="@drawable/toggle_track_selector"
                     android:id="@+id/ground_on_launch_toggle_sc"
