@@ -12,8 +12,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -50,14 +52,13 @@ public class GroundActivity extends AppCompatActivity {
     // Список использованных фото в текущей сессии
     private List<DataManager.PhotoData> currentSessionPhotos = new ArrayList<>();
 
+    // поле для хранения доступных фото
+    private List<DataManager.PhotoData> availablePhotosForSession = new ArrayList<>();
+
+
     private boolean useDefaultSettings = false;
 
-    // Ключи для сохранения состояния
-    //private static final String KEY_CURRENT_INDEX = "current_fragment_index";
-    //private static final String KEY_FRAGMENT_TAGS = "fragment_tags";
 
-    // Текущий активный фрагмент
-    //private Fragment currentFragment = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,15 +105,42 @@ public class GroundActivity extends AppCompatActivity {
 
     private void buildAndStartGroundSequence(){
         buildExerciseSequence();
+
+        // инициализация уникального пула фото для сессии
+        initializeAvailablePhotos();
+
         startGroundingSequence();
     }
 
-    //Сохраняем текущее состояние при повороте экрана/изменении конфигурации
-    /*@Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(KEY_CURRENT_INDEX, currentFragmentIndex);
-    }*/
+    private void initializeAvailablePhotos() {
+        List<DataManager.PhotoData> allPhotos = dataManager.getLocalImagesList();
+        availablePhotosForSession = new ArrayList<>(allPhotos);
+
+        // Фильтрация по триггерам — только если НЕ используется режим по умолчанию
+        if (!useDefaultSettings) {
+            List<String> triggers = dataManager.getTriggers();
+            if (triggers != null && !triggers.isEmpty()) {
+                availablePhotosForSession.removeIf(photo ->
+                        photo.tags.stream().anyMatch(triggers::contains)
+                );
+            }
+        }
+
+        // Перемешиваем, чтобы порядок был случайным
+        Collections.shuffle(availablePhotosForSession);
+    }
+
+    /**
+     * Метод для получения уникального фото
+     * Возвращает следующее уникальное фото из пула или null, если фото закончились.
+     */
+    public DataManager.PhotoData getNextUniquePhoto() {
+        if (availablePhotosForSession.isEmpty()) {
+            return null;
+        }
+        // Берём первое и удаляем, чтобы не повторилось
+        return availablePhotosForSession.remove(0);
+    }
 
     //Пытается восстановить ранее созданные фрагменты
     /*private void restoreFragments() {
@@ -135,61 +163,6 @@ public class GroundActivity extends AppCompatActivity {
             showFragment(currentFragmentIndex);
         }
     }*/
-
-    // Загружает настройки пользователя из Firestore и запускает последовательность упражнений
-    /*
-    private void loadUserSettingsAndStartSequence(boolean useDefaultSettings) {
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser == null) {
-            Log.e(TAG, "User not authenticated");
-            finish();
-            return;
-        }
-        if(!useDefaultSettings){
-            db.collection("users").document(currentUser.getUid())
-                    .get()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful() && task.getResult() != null) {
-                            DocumentSnapshot document = task.getResult();
-
-                            // Получение настроек пользователя; использование значения по умолчанию, если данных нет
-                            if(document.getLong("ground_photo_ex_amount") != null){
-                                this.groundPhotoExAmount = document.getLong("ground_photo_ex_amount").intValue();
-                            } else{
-                                this.groundPhotoExAmount = 2;
-                            }
-                            if(document.getBoolean("use_math") != null){
-                                this.useMath = document.getBoolean("use_math");
-                            } else{
-                                this.useMath = true;
-                            }
-                            if(document.getBoolean("use_search_objects_color") != null){
-                                this.useSearchObjectsColor = document.getBoolean("use_search_objects_color");
-                            } else{
-                                this.useSearchObjectsColor = true;
-                            }
-
-                            // Составление последовательности упражнений согласно настройкам
-                            buildExerciseSequence();
-
-                            // Запуск последовательности
-                            startGroundingSequence();
-
-                        } else {
-                            Log.e(TAG, "Failed to load user settings", task.getException());
-                            // Использование настроек по умолчанию, если не удалось загрузить
-                            buildExerciseSequence();
-                            startGroundingSequence();
-                        }
-                    });
-        }
-        else{
-            // Использование настроек по умолчанию (по указке пользователя из диалога)
-            buildExerciseSequence();
-            startGroundingSequence();
-        }
-    }
-*/
 
     //Строит последовательность упражнений на основе настроек пользователя
     private void buildExerciseSequence() {
@@ -245,10 +218,16 @@ public class GroundActivity extends AppCompatActivity {
             for (int i = 0; i < fragmentClasses.size(); i++) {
                 try {
                     Fragment fragment = fragmentClasses.get(i).newInstance();
+                    if (fragment instanceof GroundPhotoFragment) {
+                        DataManager.PhotoData assignedPhoto = getNextUniquePhoto();
+                        ((GroundPhotoFragment) fragment).assignPhoto(assignedPhoto);
+                    }
+
+                    /*Fragment fragment = fragmentClasses.get(i).newInstance();
                     // Передаём флаг useDefaultSettings в фрагменты, если они его поддерживают
                     if (fragment instanceof GroundPhotoFragment) {
                         ((GroundPhotoFragment) fragment).setUseDefaultSettings(useDefaultSettings);
-                    }
+                    }*/
 
                     fragmentInstances.add(fragment);
                 }
@@ -427,7 +406,26 @@ public class GroundActivity extends AppCompatActivity {
         saveExerciseHistory();
         currentSessionPhotos.clear();
 
-        currentFragmentIndex=0;
+        // === УДАЛЯЕМ ВСЕ СУЩЕСТВУЮЩИЕ ФРАГМЕНТЫ ИЗ КОНТЕЙНЕРА ===
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        for (Fragment fragment : fragmentInstances) {
+            if (fragment != null && fragment.isAdded()) {
+                transaction.remove(fragment);
+            }
+        }
+        transaction.commitNow(); // commitNow() — синхронно, чтобы избежать race condition
+        // commitNow() вместо commit(),
+        // чтобы гарантировать, что фрагменты удалятся до создания новых
+
+
+        // Очищаем списки
+        fragmentInstances.clear();
+        availablePhotosForSession.clear();
+
+        // Сбрасываем индекс
+        currentFragmentIndex = 0;
+
+        // Запускаем новую сессию
         buildAndStartGroundSequence();
 
         // Остановка текущего фрагмента

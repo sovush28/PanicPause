@@ -43,10 +43,11 @@ public class GroundPhotoFragment extends Fragment {
     ImageButton backBtn;
 
     private DataManager dataManager;
-    private List<DataManager.PhotoData> photoList;
+    //private List<DataManager.PhotoData> photoList;
     private DataManager.PhotoData currentPhoto;
+    private DataManager.PhotoData assignedPhoto = null;
 
-    private Random random;
+    //private Random random;
 
     private boolean useDefaultSettings = false;
 
@@ -58,20 +59,24 @@ public class GroundPhotoFragment extends Fragment {
         InitializeViews(view);
 
         dataManager = new DataManager(requireContext());
-        photoList = new ArrayList<>();
-        random = new Random();
+        //photoList = new ArrayList<>();
+        //random = new Random();
 
         setupButtonListeners();
 
-        loadLocalPhotos();
+        //loadLocalPhotos();
+
+        // Отображаем назначенное фото (или сообщение об ошибке)
+        displayAssignedPhoto();
 
         return view;
     }
 
     // позволяет активности задать режим
-    public void setUseDefaultSettings(boolean useDefault) {
+    /*public void setUseDefaultSettings(boolean useDefault) {
         this.useDefaultSettings = useDefault;
     }
+    */
 
     private void InitializeViews(View view){
         backBtn = view.findViewById(R.id.back_btn);
@@ -105,6 +110,44 @@ public class GroundPhotoFragment extends Fragment {
         });
     }
 
+    private void displayAssignedPhoto() {
+        if (!isAdded())
+            return;
+
+        if (assignedPhoto == null) {
+            countThingsTV.setText(getString(R.string.photo_not_found));
+            return;
+        }
+
+        // Обновляем текст
+        String instruction = getString(R.string.ground_count_img1) +
+                " " + assignedPhoto.word + " " + getString(R.string.ground_count_img2);
+        countThingsTV.setText(instruction);
+
+        // Загружаем изображение
+        String filename = DataManager.getFilenameFromUrl(assignedPhoto.imgUrl);
+        File photoFile = new File(requireContext().getFilesDir(), "photos/" + filename);
+
+        if (photoFile.exists()) {
+            Glide.with(this).load(photoFile).into(photoIV);
+        } else {
+            Glide.with(this).load(assignedPhoto.imgUrl).into(photoIV);
+        }
+
+        // Передаём фото в активность для истории
+        if (getActivity() instanceof GroundActivity) {
+            ((GroundActivity) getActivity()).onPhotoUsed(assignedPhoto);
+        }
+    }
+
+    /**
+     * Назначает фото для этого фрагмента. Вызывается из активности.
+     */
+    public void assignPhoto(DataManager.PhotoData photo) {
+        this.assignedPhoto = photo;
+    }
+
+    /*
     private void loadLocalPhotos() {
         if (!isAdded())
             return; // защита от вызова после onDestroy
@@ -174,6 +217,6 @@ public class GroundPhotoFragment extends Fragment {
             ((GroundActivity) getActivity()).onPhotoUsed(currentPhoto);
         }
 
-    }
+    }*/
 
 }
