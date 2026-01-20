@@ -6,7 +6,6 @@ import android.animation.ValueAnimator;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +39,6 @@ public class GroundBreathFragment extends Fragment {
 
     ValueAnimator squareAnimator;
     private AnimatedSquareView squareView;
-    //private View squareView;
     private Handler handler;
     private Runnable countdownRunnable;
     
@@ -53,37 +51,50 @@ public class GroundBreathFragment extends Fragment {
     // Animation duration for each side (4 seconds)
     private static final int ANIMATION_DURATION = 4000;
 
+    private boolean breathingStarted = false; // флаг, чтобы не запускать дважды
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_ground_breath, container, false);
 
-        // Initialize phase instructions
         initializePhaseInstructions();
-        
-        // Initialize UI elements
         initializeViews(view);
-
-        updateButtonVisibility();
-        
-        // Set up button click listeners
         setupButtonListeners();
-        
-        // Start the breathing exercise
-        startBreathingExercise();
 
-        squareAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                if (currentPhase == 3) {
-                    // Если последний этап - начинаем анимацию заново
-                    startSquareAnimation();
-                }
-            }
-        });
+        //updateButtonVisibility();
+
+        //startBreathingExercise();
 
         return view;
+    }
+
+    public void updateButtonsForPosition() {
+        if (isAdded() && getActivity() != null) {
+            updateButtonVisibility();
+        }
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        updateButtonVisibility();
+
+        // Запускаем упражнение ТОЛЬКО после создания View
+        if (!breathingStarted) {
+            startBreathingExercise();
+            squareAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    if (currentPhase == 3) {
+                        // Если последний этап - начинаем анимацию заново
+                        startSquareAnimation();
+                    }
+                }
+            });
+            breathingStarted = true;
+        }
     }
 
     /**
@@ -91,6 +102,18 @@ public class GroundBreathFragment extends Fragment {
      * This method must be called after the fragment is attached to the context.
      */
     private void initializePhaseInstructions() {
+        // Убедимся, что фрагмент прикреплён к активности
+        if (getActivity() == null) {
+            // Безопасный fallback — но на практике не должно происходить
+            phaseInstructions = new String[]{
+                    getString(R.string.breath_in),      // Inhale
+                    getString(R.string.breath_hold),    // Hold
+                    getString(R.string.breath_out),     // Exhale
+                    getString(R.string.breath_hold)     // Hold
+            };
+            return;
+        }
+
         phaseInstructions = new String[]{
             getString(R.string.breath_in),      // Inhale
             getString(R.string.breath_hold),    // Hold
@@ -109,16 +132,6 @@ public class GroundBreathFragment extends Fragment {
         
         // Initialize handler for countdown updates
         handler = new Handler(Looper.getMainLooper());
-        
-        // Set initial visibility of buttons
-        // Repeat button should only be visible on the last breathing exercise
-        /*if (isLastBreathingExercise()) {
-            repeatBtn.setVisibility(View.VISIBLE);
-            nextBtn.setText(getString(R.string.end));
-        } else {
-            repeatBtn.setVisibility(View.GONE);
-            nextBtn.setText(getString(R.string.next));
-        }*/
     }
 
     private void setupButtonListeners() {
@@ -169,27 +182,12 @@ public class GroundBreathFragment extends Fragment {
                 nextBtn.setText(getString(R.string.next));
             }
         }
-        /*if (getActivity() instanceof GroundActivity) {
-            GroundActivity activity = (GroundActivity) getActivity();
-            boolean isLast = activity.isLastFragment();
-
-            Log.d(TAG, "Updating button visibility - isLast: " + isLast + ", currentIndex: " +
-                    activity.getCurrentFragmentIndex() + ", total: " + activity.getTotalExercisesCount());
-
-            if (isLast) {
-                repeatBtn.setVisibility(View.VISIBLE);
-                nextBtn.setText(getString(R.string.end));
-            } else {
-                repeatBtn.setVisibility(View.GONE);
-                nextBtn.setText(getString(R.string.next));
-            }
-        }*/
     }
 
     public void onFragmentResumed(){
         super.onResume();
         updateButtonVisibility();
-        startBreathingExercise();
+        //startBreathingExercise();
     }
 
     public void onFragmentPaused() {

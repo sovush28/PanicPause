@@ -1,8 +1,6 @@
 package com.example.panicpause;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,20 +8,10 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -49,7 +37,6 @@ import java.util.Random;
  */
 public class GroundPhotoFragment extends Fragment {
 
-    // UI elements
     private ImageView photoIV;
     private TextView countThingsTV;
     private Button nextBtn;
@@ -59,34 +46,13 @@ public class GroundPhotoFragment extends Fragment {
     private List<DataManager.PhotoData> photoList;
     private DataManager.PhotoData currentPhoto;
 
-    /*
-    // Firebase and data
-    private FirebaseFirestore firestore;
-    private FirebaseAuth mAuth;
-    private List<PhotoData> photoList;
-    private PhotoData currentPhoto;
-
-    // класс для данных об изображениях из БД Firestore
-    private static class PhotoData {
-        String imgUrl;
-        String word;
-        List<String> tags;
-
-        PhotoData(String imgUrl, String word, List<String> tags) {
-            this.imgUrl = imgUrl;
-            this.word = word;
-            this.tags = tags;
-        }
-    }
-    */
-
-    // Random number generator for selecting photos
     private Random random;
+
+    private boolean useDefaultSettings = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_ground_photo, container, false);
 
         InitializeViews(view);
@@ -95,23 +61,16 @@ public class GroundPhotoFragment extends Fragment {
         photoList = new ArrayList<>();
         random = new Random();
 
-        /*
-        // Initialize Firebase Firestore
-        firestore = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
-        */
-        
-        // Set up button click listeners
         setupButtonListeners();
 
         loadLocalPhotos();
 
-        /*
-        // Load photos from Firestore
-        loadPhotoFromFirestore();
-*/
-
         return view;
+    }
+
+    // позволяет активности задать режим
+    public void setUseDefaultSettings(boolean useDefault) {
+        this.useDefaultSettings = useDefault;
     }
 
     private void InitializeViews(View view){
@@ -121,11 +80,8 @@ public class GroundPhotoFragment extends Fragment {
         nextBtn = view.findViewById(R.id.next_btn);
     }
 
-    /**
-     * Sets up click listeners for all buttons.
-     */
     private void setupButtonListeners() {
-        // Back button - handled by the activity, but we can add fragment-specific logic here if needed
+        // Back button - handled by the activity
          backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -150,35 +106,46 @@ public class GroundPhotoFragment extends Fragment {
     }
 
     private void loadLocalPhotos() {
+        if (!isAdded())
+            return; // защита от вызова после onDestroy
+
         countThingsTV.setText(getString(R.string.photo_loading));
 
         // Загружаем ВСЕ фото
         List<DataManager.PhotoData> allPhotos = dataManager.getLocalImagesList();
         photoList = new ArrayList<>(allPhotos);
 
-        // Фильтруем по триггерам
-        List<String> triggers = dataManager.getTriggers();
-        if (triggers != null && !triggers.isEmpty()) {
-            Iterator<DataManager.PhotoData> it = photoList.iterator();
-            while (it.hasNext()) {
-                DataManager.PhotoData photo = it.next();
-                for (String trigger : triggers) {
-                    if (photo.tags.contains(trigger)) {
-                        it.remove();
-                        break;
+        // пропускаем фильтрацию, если useDefaultSettings == true
+        if (!useDefaultSettings) {
+            // Фильтруем по триггерам
+            List<String> triggers = dataManager.getTriggers();
+            if (triggers != null && !triggers.isEmpty()) {
+                Iterator<DataManager.PhotoData> it = photoList.iterator();
+                while (it.hasNext()) {
+                    DataManager.PhotoData photo = it.next();
+                    for (String trigger : triggers) {
+                        if (photo.tags.contains(trigger)) {
+                            it.remove();
+                            break;
+                        }
                     }
                 }
             }
         }
 
         if (photoList.isEmpty()) {
-            countThingsTV.setText(getString(R.string.photo_not_found));
+            if (isAdded()) {
+                countThingsTV.setText(getString(R.string.photo_not_found));
+            }
         } else {
             displayRandomPhoto();
         }
     }
 
     private void displayRandomPhoto() {
+        if (photoList.isEmpty() || !isAdded())
+            return;
+
         int index = random.nextInt(photoList.size());
         currentPhoto = photoList.get(index);
 
@@ -196,215 +163,17 @@ public class GroundPhotoFragment extends Fragment {
                     .load(photoFile)
                     .into(photoIV);
         } else {
-            // Резерв: попробуем загрузить по URL (если интернет есть)
+            // Резерв: пробуем загрузить по URL (если интернет есть)
             Glide.with(this)
                     .load(currentPhoto.imgUrl)
                     .into(photoIV);
         }
-    }
 
-    /*
-    // загружает данные о всех фото из Firestore в список photoList
-    private void loadPhotoFromFirestore() {
-        // отображение состояния загрузки
-        countThingsTV.setText(getString(R.string.photo_loading));
-        
-        // запрос к коллекции "images"
-        firestore.collection("images")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            // очистка существующего списка
-                            photoList.clear();
-                            
-                            // для каждого документа в коллекции
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                try {
-                                    // взять данные из документа
-                                    String imgUrl = document.getString("img_url");
-                                    String word = document.getString("word");
-                                    List<String> tags = (List<String>) document.get("tags");
-                                    
-                                    // убедиться что все поля есть
-                                    if (imgUrl != null && word != null && tags != null) {
-                                        // создать объект класса PhotoData и добавить в список
-                                        PhotoData photoData = new PhotoData(imgUrl, word, tags);
-                                        photoList.add(photoData);
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            // запустил ли пользователь активность с настройками по умолчанию
-                            Intent intent = getActivity().getIntent();
-                            boolean useDefaultSettings = intent != null &&
-                                    intent.hasExtra("default_settings") &&
-                                    intent.getBooleanExtra("default_settings", false);
-
-                            if (useDefaultSettings) {
-                                // не фильтровать список фото
-                                if (!photoList.isEmpty()) {
-                                    displayRandomPhoto();
-                                } else {
-                                    countThingsTV.setText(getString(R.string.photo_not_found));
-                                }
-                            } else {
-                                filterTriggerPhotos();
-                            }
-
-                            if (photoList.isEmpty()) {
-                                countThingsTV.setText(getString(R.string.photo_not_found));
-                            }
-                            
-                        } else {
-                            // ошибка загрузки фото из БД
-                            countThingsTV.setText(getString(R.string.photo_load_error));
-                        }
-                    }
-                });
-    }
-
-    private void filterTriggerPhotos(){
-        FirebaseUser user = mAuth.getCurrentUser();
-        if(user==null){
-            Toast.makeText(getActivity(), "User not found", Toast.LENGTH_SHORT).show();
-            return;
+        // передача фото в активность
+        if (getActivity() instanceof GroundActivity) {
+            ((GroundActivity) getActivity()).onPhotoUsed(currentPhoto);
         }
 
-        Intent intent = getActivity().getIntent();
-        if(intent!=null & intent.hasExtra("default_settings")){
-            if(intent.getBooleanExtra("default_settings", true)==true)
-                return;
-        }
-
-        firestore.collection("users").document(user.getUid())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful() && task.getResult() != null) {
-                            DocumentSnapshot document = task.getResult();
-                            if (document.exists()) {
-                                List<String> userTriggerList = (List<String>) document.get("triggers");
-                                if (userTriggerList != null && !userTriggerList.isEmpty()) {
-                                    // у пользователя выбраны триггеры, нужно отфильтровать список фото
-                                    removePhotosWithTriggers(userTriggerList);
-                                }
-                                // отображение фото
-                                if (!photoList.isEmpty()) {
-                                    displayRandomPhoto();
-                                }
-                            } else {
-                                // документа пользователя не существует
-                                if (!photoList.isEmpty()) {
-                                    displayRandomPhoto();
-                                } else {
-                                    countThingsTV.setText(getString(R.string.photo_not_found));
-                                }
-                            }
-                        } else {
-                            // ошибка загрузки документа пользователя
-                            if (!photoList.isEmpty()) {
-                                displayRandomPhoto();
-                            } else {
-                                countThingsTV.setText(getString(R.string.photo_not_found));
-                            }
-                            Log.e("GroundPhotoFragment", "Error loading user triggers", task.getException());
-                        }
-                    }
-                });
     }
 
-    // удаление объектов, содержащих теги-триггеры
-    private void removePhotosWithTriggers(List<String> userTriggerList){
-        Iterator<PhotoData> iterator = photoList.iterator();
-
-        while (iterator.hasNext()) {
-            PhotoData photoData = iterator.next();
-            boolean containsTrigger = false;
-
-            // проверка, есть ли у этого фото какой-либо тег, который совпадает с каким-либо триггером пользователя
-            for (String trigger : userTriggerList) {
-                if (photoData.tags.contains(trigger)) {
-                    containsTrigger = true;
-                    break;
-                }
-            }
-
-            // удаление фото из списка
-            if (containsTrigger) {
-                iterator.remove();
-            }
-        }
-
-        // отображение случайного фото
-        if (!photoList.isEmpty()) {
-            displayRandomPhoto();
-        }
-    }
-
-    // выбирает случайный объект из photoList и отображает соотв. фото в ImageView
-    private void displayRandomPhoto() {
-        if (photoList.isEmpty()) {
-            countThingsTV.setText(getString(R.string.photo_not_found));
-            return;
-        }
-        
-        // случайное фото из списка
-        int randomIndex = random.nextInt(photoList.size());
-        currentPhoto = photoList.get(randomIndex);
-        
-        // обновление текста упражнения
-        String instruction = getString(R.string.ground_count_img1) +
-            " " + currentPhoto.word + " " + getString(R.string.ground_count_img2);
-        countThingsTV.setText(instruction);
-
-        // загрузка изображения с помощью библиотеки Glide
-        Glide.with(this)
-                .load(currentPhoto.imgUrl)
-                //.placeholder(R.drawable.placeholder_image) // Show placeholder while loading
-                //.error(R.drawable.error_image) // Show error image if loading fails
-                .into(photoIV);
-
-        //тест с енотами (ЗАМЕНИТЬ НА ЗАКОМЕНТИРОВАННОЕ СВЕРХУ)
-        /*
-        Glide.with(this)
-                .load("https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/fr0ggy5-MZrt80_mD7M-unsplash.jpg")
-                //.placeholder(R.drawable.placeholder_image) // Show placeholder while loading
-                //.error(R.drawable.error_image) // Show error image if loading fails
-                .into(photoIV);
-        */
-    //}
-
-    /**
-     * Gets the current photo data.
-     * This can be useful for debugging or if other parts of the app need this information.
-     * 
-     * @return The current PhotoData object, or null if no photo is loaded
-     *//*
-    public PhotoData getCurrentPhoto() {
-        return currentPhoto;
-    }
-    */
-    /**
-     * Gets the number of photos loaded from Firestore
-     */
-    /*
-    public int getPhotoCount() {
-        return photoList.size();
-    }
-    */
-    /**
-     * Reloads a new random photo.
-     * This method can be called if the user wants to see a different photo.
-     */
-    /*
-    public void loadNewRandomPhoto() {
-        if (!photoList.isEmpty()) {
-            displayRandomPhoto();
-        }
-    }*/
 }
