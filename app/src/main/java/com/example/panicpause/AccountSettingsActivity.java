@@ -74,7 +74,6 @@ public class AccountSettingsActivity extends AppCompatActivity {
         }
     }
 
-
     private void inDevelopmentToast(){
         Toast.makeText(AccountSettingsActivity.this, R.string.in_development, Toast.LENGTH_SHORT).show();
     }

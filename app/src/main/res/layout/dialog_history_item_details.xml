@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_marginVertical="100dp"
+    android:layout_gravity="center"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/custom_dialog_background"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:id="@+id/dialog_container"
+    >
+    <LinearLayout
+        android:layout_width="330dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/dialog_bg_dark"
+        android:paddingVertical="40dp"
+        android:paddingHorizontal="30dp"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/normalTextLight"
+            android:text="@string/history_item_info"
+            android:layout_gravity="start"
+            />
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/history_item_main_rv"
+            />
+    </LinearLayout>
+
+
+</LinearLayout>

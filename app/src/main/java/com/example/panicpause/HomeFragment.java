@@ -30,7 +30,6 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // "Надуваем" макет из XML-файла fragment_home.xml
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         dataManager=new DataManager(requireContext());
@@ -38,7 +37,7 @@ public class HomeFragment extends Fragment {
         InitializeViews(view);
         SetOnClickListeners();
 
-        return view;  // Возвращаем готовый экран
+        return view;
     }
 
     private void inDevelopmentToast(){
@@ -47,7 +46,6 @@ public class HomeFragment extends Fragment {
 
     private void InitializeViews(View view){
         panicBtn = view.findViewById(R.id.panic_btn);
-
         historyLayout=view.findViewById(R.id.history_layout);
         groundSettingsLayout=view.findViewById(R.id.ground_settings_layout);
         whatsPALayout=view.findViewById(R.id.whats_pa_layout);
@@ -103,14 +101,14 @@ public class HomeFragment extends Fragment {
     private void checkIfEnoughPhotos(){
         try {
             // 1. Получаем настройки пользователя
-            int requiredCount = dataManager.getGroundPhotoExAmount(); // ← нужно добавить метод в DataManager
-            List<String> userTriggers = dataManager.getTriggers();     // ← нужно добавить метод в DataManager
+            int requiredCount = dataManager.getGroundPhotoExAmount();
+            List<String> userTriggers = dataManager.getTriggers();
 
             // 2. Загружаем все фото локально
             List<DataManager.PhotoData> allPhotos = dataManager.getLocalImagesList();
 
-            // 3. Фильтруем, если есть триггеры
             List<DataManager.PhotoData> safePhotos = new ArrayList<>(allPhotos);
+            // 3. Фильтруем, если есть триггеры
             if (userTriggers != null && !userTriggers.isEmpty()) {
                 Iterator<DataManager.PhotoData> iterator = safePhotos.iterator();
                 while (iterator.hasNext()) {
