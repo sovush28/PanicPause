@@ -12,7 +12,7 @@
     >
     <LinearLayout
         android:layout_width="330dp"
-        android:layout_height="600dp"
+        android:layout_height="640dp"
         android:background="@drawable/dialog_bg_dark"
         android:paddingVertical="40dp"
         android:paddingHorizontal="30dp"

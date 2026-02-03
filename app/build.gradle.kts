@@ -62,8 +62,8 @@ dependencies {
     // from FireBase: When using the BoM, don't specify versions in Firebase dependencies
 
     implementation(libs.firebase.analytics)
-    implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-firestore")
+    implementation(libs.google.firebase.auth)
+    implementation(libs.google.firebase.firestore)
 
     //adding the material design components dependency (MDC)
     implementation (libs.material.v1130)
@@ -72,5 +72,7 @@ dependencies {
     implementation (libs.glide)
 
     implementation (libs.okhttp)
+
+    implementation (libs.flexbox)
 
 }

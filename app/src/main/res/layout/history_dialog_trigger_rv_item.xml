@@ -5,6 +5,8 @@
     android:orientation="horizontal"
     android:gravity="center_vertical"
     android:background="@drawable/history_trigger_filled_unselected_shape"
+    android:layout_marginEnd="10dp"
+    android:layout_marginBottom="10dp"
     android:id="@+id/history_trigger_rv_item_layout"
     >
     <ImageView

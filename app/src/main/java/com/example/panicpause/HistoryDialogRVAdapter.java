@@ -7,10 +7,14 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.flexbox.AlignItems;
+import com.google.android.flexbox.FlexDirection;
+import com.google.android.flexbox.FlexWrap;
+import com.google.android.flexbox.FlexboxLayoutManager;
+import com.google.android.flexbox.JustifyContent;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -90,7 +94,14 @@ public class HistoryDialogRVAdapter extends RecyclerView.Adapter<HistoryDialogRV
         );
 
         // Настраиваем список тегов
-        holder.historyTriggerRV.setLayoutManager(new LinearLayoutManager(context)); //TODO custom layout manager like google chips
+        //holder.historyTriggerRV.setLayoutManager(new LinearLayoutManager(context));
+        FlexboxLayoutManager flexboxLayoutManager = new FlexboxLayoutManager(context);
+        flexboxLayoutManager.setFlexDirection(FlexDirection.ROW); // Горизонтальное направление, слева направо
+        flexboxLayoutManager.setFlexWrap(FlexWrap.WRAP); // Автоматический перенос на новую строку
+        flexboxLayoutManager.setJustifyContent(JustifyContent.FLEX_START); // Выравнивание по левому краю
+        flexboxLayoutManager.setAlignItems(AlignItems.FLEX_START); // Выравнивание по верху
+        holder.historyTriggerRV.setLayoutManager(flexboxLayoutManager);
+
         holder.historyTriggerRV.setAdapter(triggerAdapter);
     }
 
