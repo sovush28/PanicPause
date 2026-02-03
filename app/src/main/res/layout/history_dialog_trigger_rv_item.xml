@@ -13,6 +13,7 @@
         android:layout_marginEnd="8dp"
         android:src="@drawable/beige_x_history_trigger_unselected"
         android:visibility="gone"
+        android:id="@+id/history_trigger_x_iv"
         />
     <TextView
         android:layout_width="wrap_content"

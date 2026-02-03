@@ -15,18 +15,18 @@
         <com.google.android.material.imageview.ShapeableImageView
             android:layout_width="210dp"
             android:layout_height="210dp"
-            android:scaleType="centerInside"
-            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
             app:shapeAppearanceOverlay="@style/GroundImageViewCorner"
             android:id="@+id/history_dialog_photo_iv"
             />
         <ImageButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="10dp"
             android:layout_alignEnd="@id/history_dialog_photo_iv"
             android:scaleType="center"
             android:src="@drawable/fav_heart_unselected"
-            android:background="#00F5EDDE"
+            android:background="@drawable/fav_heart_darkened_gradient_shape"
             android:id="@+id/history_dialog_fav_ib"
             />
 <!--       background transparent?? might be a problem -->

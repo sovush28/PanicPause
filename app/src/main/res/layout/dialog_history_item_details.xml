@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginVertical="100dp"
     android:layout_gravity="center"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -12,7 +12,7 @@
     >
     <LinearLayout
         android:layout_width="330dp"
-        android:layout_height="match_parent"
+        android:layout_height="600dp"
         android:background="@drawable/dialog_bg_dark"
         android:paddingVertical="40dp"
         android:paddingHorizontal="30dp"
@@ -28,7 +28,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/history_item_main_rv"
+            android:id="@+id/history_dialog_main_rv"
             />
     </LinearLayout>
 

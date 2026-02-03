@@ -102,6 +102,41 @@ public class DataManager {
         }
     }
 
+    // Имя файла для хранения истории
+    private static final String EXERCISE_HISTORY_FILE = "exercise_history.json";
+
+    //Представляет один завершённый набор упражнений (сессию).
+    //Хранит дату/время и список фото, использованных в сессии.
+    public static class ExerciseSession {
+        public final long timestamp;          // Время завершения сессии (миллисекунды)
+        public final List<PhotoData> photos;  // Список фото с тегами
+
+        public ExerciseSession(long timestamp, List<PhotoData> photos) {
+            this.timestamp = timestamp;
+            // ВАЖНО: делаем копию списка, чтобы избежать изменений извне
+            this.photos = new ArrayList<>(photos);
+        }
+        // Почему копия списка?
+        // Если сохранить ссылку на currentSessionPhotos,
+        // последующие изменения в этом списке
+        // (например, при новой сессии)
+        // повредят сохранённую историю.
+        // Копия гарантирует целостность данных.
+
+
+        //Форматирует дату для отображения пользователю (например: "30 января 2026, 14:30")
+        public String getFormattedDate(Context context) {
+            java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat("d MMMM yyyy, HH:mm",
+                    java.util.Locale.getDefault());
+            return formatter.format(new java.util.Date(timestamp));
+        }
+    }
+
+    // Ключ для временной метки истории
+    private static final String KEY_EXERCISE_HISTORY_LAST_MODIFIED = "exercise_history_last_modified";
+
+
+
     //Загружает список изображений из локального файла images.json
     public List<PhotoData> getLocalImagesList(){
         List<PhotoData> photos = new ArrayList<>();
@@ -502,7 +537,6 @@ public class DataManager {
                     if (snapshot.exists()) {
                         // Есть данные в облаке — сравниваем время
                         long remoteLastModified = snapshot.getLong("last_modified");
-                        //long remoteLastModified = snapshot.getLong("last_modified", localLastModified); //???
 
                         if (localLastModified >= remoteLastModified && wasGuest) {
                             // Локальные новее — загружаем их в облако
@@ -511,17 +545,24 @@ public class DataManager {
                                         .putString(KEY_USER_ID, firebaseUid)
                                         .putBoolean(KEY_IS_GUEST, false)
                                         .apply();
+
+                                // Также синхронизируем историю
+                                syncExerciseHistoryToFirestore();
+
                                 onSyncComplete.run();
                             });
                         } else {
                             // Облачные новее — загружаем их локально
                             loadUserSettingsFromSnapshot(snapshot);
-                            prefs.edit()
-                                    .putString(KEY_USER_ID, firebaseUid)
-                                    .putBoolean(KEY_IS_GUEST, false)
-                                    .putLong(KEY_LAST_MODIFIED_LOCAL, remoteLastModified)
-                                    .apply();
-                            onSyncComplete.run();
+                            // Загружаем историю из облака
+                            syncExerciseHistoryFromFirestore(() -> {
+                                prefs.edit()
+                                        .putString(KEY_USER_ID, firebaseUid)
+                                        .putBoolean(KEY_IS_GUEST, false)
+                                        .putLong(KEY_LAST_MODIFIED_LOCAL, remoteLastModified)
+                                        .apply();
+                                onSyncComplete.run();
+                            });
                         }
                     } else {
                         // Нет данных в облаке — сохраняем локальные
@@ -530,6 +571,10 @@ public class DataManager {
                                     .putString(KEY_USER_ID, firebaseUid)
                                     .putBoolean(KEY_IS_GUEST, false)
                                     .apply();
+
+                            // Также синхронизируем историю
+                            syncExerciseHistoryToFirestore();
+
                             onSyncComplete.run();
                         });
                     }
@@ -681,6 +726,257 @@ public class DataManager {
 
         editor.apply();
     }
+
+    // ИСТОРИЯ
+
+    // Загружает историю сессий из локального файла.
+    // Возвращает список последних сессий (максимум 3) или пустой список при ошибке/отсутствии файла.
+    public List<ExerciseSession> loadExerciseHistory() {
+        List<ExerciseSession> sessions = new ArrayList<>();
+        File historyFile = new File(context.getFilesDir(), EXERCISE_HISTORY_FILE);
+
+        if (!historyFile.exists()) {
+            // Файл ещё не создан — возвращаем пустой список
+            return sessions;
+        }
+
+        try (FileInputStream fis = new FileInputStream(historyFile);
+             java.io.ByteArrayOutputStream bos = new java.io.ByteArrayOutputStream()) {
+
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = fis.read(buffer)) != -1) {
+                bos.write(buffer, 0, length);
+            }
+
+            String json = bos.toString("UTF-8");
+            JSONArray jsonArray = new JSONArray(json);
+
+            // Читаем максимум 3 сессии (защита от повреждённых данных)
+            int limit = Math.min(jsonArray.length(), 3);
+            for (int i = 0; i < limit; i++) {
+                JSONObject sessionObj = jsonArray.getJSONObject(i);
+                long timestamp = sessionObj.getLong("timestamp");
+
+                // Загружаем фото из сессии
+                JSONArray photosArray = sessionObj.getJSONArray("photos");
+                List<PhotoData> photos = new ArrayList<>();
+                for (int j = 0; j < photosArray.length(); j++) {
+                    JSONObject photoObj = photosArray.getJSONObject(j);
+                    String imgUrl = photoObj.getString("img_url");
+                    String word = photoObj.getString("word");
+                    JSONArray tagsArray = photoObj.getJSONArray("tags");
+                    List<String> tags = new ArrayList<>();
+                    for (int k = 0; k < tagsArray.length(); k++) {
+                        tags.add(tagsArray.getString(k));
+                    }
+                    photos.add(new PhotoData(imgUrl, word, tags));
+                }
+
+                sessions.add(new ExerciseSession(timestamp, photos));
+            }
+
+        } catch (Exception e) {
+            Log.e(TAG, "Ошибка загрузки истории упражнений", e);
+            // При ошибке возвращаем пустой список — безопаснее, чем повреждённые данные
+            return new ArrayList<>();
+        }
+
+        return sessions;
+    }
+
+    // Сохраняет список сессий в локальный файл.
+    // Автоматически обрезает список до 3 элементов (самые свежие в начале).
+    public void saveExerciseHistory(List<ExerciseSession> sessions) {
+        // Обрезаем до 3 самых свежих сессий (они должны быть в начале списка)
+        if (sessions.size() > 3) {
+            sessions = sessions.subList(0, 3);
+        }
+
+        JSONArray jsonArray = new JSONArray();
+        for (ExerciseSession session : sessions) {
+            try {
+                JSONObject sessionObj = new JSONObject();
+                sessionObj.put("timestamp", session.timestamp);
+
+                // Сохраняем фото
+                JSONArray photosArray = new JSONArray();
+                for (PhotoData photo : session.photos) {
+                    JSONObject photoObj = new JSONObject();
+                    photoObj.put("img_url", photo.imgUrl);
+                    photoObj.put("word", photo.word);
+                    JSONArray tagsArray = new JSONArray();
+                    for (String tag : photo.tags) {
+                        tagsArray.put(tag);
+                    }
+                    photoObj.put("tags", tagsArray);
+                    photosArray.put(photoObj);
+                }
+                sessionObj.put("photos", photosArray);
+                jsonArray.put(sessionObj);
+            } catch (Exception e) {
+                Log.e(TAG, "Ошибка сериализации сессии", e);
+            }
+        }
+
+        // Записываем в файл
+        File historyFile = new File(context.getFilesDir(), EXERCISE_HISTORY_FILE);
+        try (FileOutputStream fos = new FileOutputStream(historyFile)) {
+            fos.write(jsonArray.toString(2).getBytes("UTF-8")); // toString(2) для читаемого формата
+            Log.d(TAG, "История упражнений сохранена: " + sessions.size() + " сессий");
+        } catch (Exception e) {
+            Log.e(TAG, "Ошибка сохранения истории упражнений", e);
+        }
+    }
+
+
+    // Добавляет новую сессию в историю и сохраняет обновлённый список.
+    // Автоматически ограничивает историю 3 последними сессиями.
+    public void addExerciseSession(ExerciseSession newSession) {
+        // Загружаем существующую историю
+        List<ExerciseSession> sessions = loadExerciseHistory();
+
+        // Добавляем новую сессию В НАЧАЛО списка (самые свежие — первые)
+        sessions.add(0, newSession);
+
+        // Сохраняем обновлённый список
+        saveExerciseHistory(sessions);
+    }
+
+    //Добавляет новую сессию в историю и синхронизирует с облаком
+    public void addExerciseSessionAndSync(DataManager.ExerciseSession newSession) {
+        // Добавляем сессию в локальную историю
+        addExerciseSession(newSession);
+
+        // Синхронизируем с облаком (если пользователь не гость и есть интернет)
+        if (!isGuest()) {
+            syncExerciseHistoryToFirestore();
+        }
+    }
+
+    // Синхронизирует историю упражнений с Firestore
+    private void syncExerciseHistoryToFirestore() {
+        if (!isNetworkAvailable()) {
+            return;
+        }
+
+        String userId = getUserId();
+        if (isGuest()) {
+            return;
+        }
+
+        // Загружаем локальную историю
+        List<ExerciseSession> localHistory = loadExerciseHistory();
+        if (localHistory.isEmpty()) {
+            return;
+        }
+
+        // Подготавливаем данные для отправки
+        List<Map<String, Object>> historyData = new ArrayList<>();
+        for (ExerciseSession session : localHistory) {
+            Map<String, Object> sessionMap = new HashMap<>();
+            sessionMap.put("timestamp", session.timestamp);
+
+            // Преобразуем фото в формат для Firestore
+            List<Map<String, Object>> photosData = new ArrayList<>();
+            for (PhotoData photo : session.photos) {
+                Map<String, Object> photoMap = new HashMap<>();
+                photoMap.put("img_url", photo.imgUrl);
+                photoMap.put("word", photo.word);
+                photoMap.put("tags", photo.tags);
+                photosData.add(photoMap);
+            }
+            sessionMap.put("photos", photosData);
+            historyData.add(sessionMap);
+        }
+
+        // Сохраняем в Firestore
+        Map<String, Object> data = new HashMap<>();
+        data.put("exercise_history", historyData);
+        data.put("exercise_history_last_modified", System.currentTimeMillis());
+
+        db.collection("users").document(userId)
+                .update(data)
+                .addOnSuccessListener(unused -> {
+                    Log.d(TAG, "История упражнений синхронизирована с облаком");
+                    // Обновляем локальную временную метку
+                    prefs.edit()
+                            .putLong(KEY_EXERCISE_HISTORY_LAST_MODIFIED, System.currentTimeMillis())
+                            .apply();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Ошибка синхронизации истории упражнений", e);
+                });
+    }
+
+    //Загружает историю упражнений из облака (если она новее локальной)
+    public void syncExerciseHistoryFromFirestore(Runnable onComplete) {
+        if (!isNetworkAvailable() || isGuest()) {
+            onComplete.run();
+            return;
+        }
+
+        String userId = getUserId();
+        long localLastModified = prefs.getLong(KEY_EXERCISE_HISTORY_LAST_MODIFIED, 0);
+
+        db.collection("users").document(userId)
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    if (snapshot.exists() && snapshot.contains("exercise_history_last_modified")) {
+                        long remoteLastModified = snapshot.getLong("exercise_history_last_modified");
+
+                        // Если облачная версия новее — загружаем её
+                        if (remoteLastModified > localLastModified) {
+                            @SuppressWarnings("unchecked")
+                            List<Map<String, Object>> remoteHistory =
+                                    (List<Map<String, Object>>) snapshot.get("exercise_history");
+
+                            if (remoteHistory != null && !remoteHistory.isEmpty()) {
+                                // Преобразуем данные из Firestore в локальный формат
+                                List<ExerciseSession> sessions = new ArrayList<>();
+                                for (Map<String, Object> sessionMap : remoteHistory) {
+                                    long timestamp = (long) sessionMap.get("timestamp");
+
+                                    @SuppressWarnings("unchecked")
+                                    List<Map<String, Object>> photosData =
+                                            (List<Map<String, Object>>) sessionMap.get("photos");
+
+                                    List<PhotoData> photos = new ArrayList<>();
+                                    if (photosData != null) {
+                                        for (Map<String, Object> photoMap : photosData) {
+                                            String imgUrl = (String) photoMap.get("img_url");
+                                            String word = (String) photoMap.get("word");
+                                            @SuppressWarnings("unchecked")
+                                            List<String> tags = (List<String>) photoMap.get("tags");
+
+                                            if (imgUrl != null && word != null && tags != null) {
+                                                photos.add(new PhotoData(imgUrl, word, tags));
+                                            }
+                                        }
+                                    }
+
+                                    sessions.add(new ExerciseSession(timestamp, photos));
+                                }
+
+                                // Сохраняем локально
+                                saveExerciseHistory(sessions);
+                                prefs.edit()
+                                        .putLong(KEY_EXERCISE_HISTORY_LAST_MODIFIED, remoteLastModified)
+                                        .apply();
+
+                                Log.d(TAG, "История упражнений загружена из облака");
+                            }
+                        }
+                    }
+                    onComplete.run();
+                })
+                .addOnFailureListener(e -> {
+                    Log.w(TAG, "Не удалось загрузить историю упражнений из облака", e);
+                    onComplete.run();
+                });
+    }
+
+
 
     // === Вспомогательные методы ===
 

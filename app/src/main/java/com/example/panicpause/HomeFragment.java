@@ -40,10 +40,6 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
-    private void inDevelopmentToast(){
-        Toast.makeText(getActivity(), R.string.in_development, Toast.LENGTH_SHORT).show();
-    }
-
     private void InitializeViews(View view){
         panicBtn = view.findViewById(R.id.panic_btn);
         historyLayout=view.findViewById(R.id.history_layout);
@@ -64,8 +60,7 @@ public class HomeFragment extends Fragment {
         historyLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                inDevelopmentToast();
-                //TODO
+                goToHistoryActivity();
             }
         });
 
@@ -169,6 +164,11 @@ public class HomeFragment extends Fragment {
             // Обработка случая, когда Activity уничтожается
             Log.e("Dialog", "Cannot show dialog - activity state invalid");
         }
+    }
+
+    private void goToHistoryActivity(){
+        Intent intent = new Intent(getActivity(), HistoryActivity.class);
+        startActivity(intent);
     }
 
     private void goToSelfHelpActivity(){

@@ -460,11 +460,25 @@ public class GroundActivity extends AppCompatActivity {
         }
     }
 
-    //Сохраняет историю выполнения упражнений в Firestore
+    // Сохраняет историю упражнений локально (данные о пройденных упражнениях:
+    // какие изображения пройдены и в какое время)
     private void saveExerciseHistory() {
+        // Сохраняем только если есть фото (защита от пустых сессий)
+        if (currentSessionPhotos.isEmpty()) {
+            Log.w(TAG, "Пропуск сохранения: сессия не содержит фото");
+            return;
+        }
 
-        // TODO: Реализовать сохранение истории упражнений (данных о пройденных упражнениях: какие изображения пройдены и в какое время)
-        Log.d(TAG, "Saving exercise history with " + currentSessionPhotos.size() + " photos");
+        // Создаём новую сессию с текущим временем и списком фото
+        DataManager.ExerciseSession newSession = new DataManager.ExerciseSession(
+                System.currentTimeMillis(),
+                currentSessionPhotos // Копия создаётся внутри конструктора
+        );
+
+        // Сохраняем через DataManager (локально + синхронизация с облаком)
+        dataManager.addExerciseSessionAndSync(newSession);
+
+        Log.d(TAG, "Сессия сохранена: " + currentSessionPhotos.size() + " фото");
     }
 
     // Checks if the current fragment is the last one in the sequence
