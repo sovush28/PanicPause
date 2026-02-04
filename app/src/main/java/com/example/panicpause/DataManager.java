@@ -517,10 +517,96 @@ public class DataManager {
 
     /**
      * Обрабатывает вход пользователя в аккаунт.
-     * Сравнивает локальные и облачные данные по времени и сохраняет самые свежие.
-     */
+     * Логика синхронизации:
+     * - Новый пользователь (нет данных в облаке): сохраняем локальные данные в облако
+     * - Существующий пользователь + гость: ВСЕГДА загружаем из облака (безопасность)
+     * - Существующий пользователь + не гость (тот же пользователь): сравниваем временные метки для синхронизации
+     * */
     public void handleUserLogin(Runnable onSyncComplete) {
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
+        if (firebaseUser == null) {
+            onSyncComplete.run();
+            return;
+        }
+
+        String firebaseUid = firebaseUser.getUid();
+        boolean wasGuest = isGuest();
+        long localLastModified = prefs.getLong(KEY_LAST_MODIFIED_LOCAL, System.currentTimeMillis());
+
+        // Загружаем данные из Firestore
+        db.collection("users").document(firebaseUid).get()
+                .addOnSuccessListener(snapshot -> {
+                    if (!snapshot.exists()) {
+                        // СЛУЧАЙ 1: НОВЫЙ ПОЛЬЗОВАТЕЛЬ (регистрация)
+                        // Нет данных в облаке — сохраняем текущие локальные настройки (гостевые) в Firestore
+                        saveLocalUserSettingsToFirestore(firebaseUid, localLastModified, () -> {
+                            prefs.edit()
+                                    .putString(KEY_USER_ID, firebaseUid)
+                                    .putBoolean(KEY_IS_GUEST, false)
+                                    .apply();
+                            // Синхронизируем историю упражнений
+                            syncExerciseHistoryToFirestore();
+                            onSyncComplete.run();
+                        });
+                    } else {
+                        // СЛУЧАЙ 2: СУЩЕСТВУЮЩИЙ ПОЛЬЗОВАТЕЛЬ (есть данные в облаке)
+                        long remoteLastModified = snapshot.getLong("last_modified");
+
+                        if (wasGuest) {
+                            // Подслучай 2a: ГОСТЬ входит в существующий аккаунт
+                            // загружаем данные из облака, игнорируем гостевые данные
+                            loadUserSettingsFromSnapshot(snapshot);
+                            // Загружаем историю упражнений из облака
+                            syncExerciseHistoryFromFirestore(() -> {
+                                prefs.edit()
+                                        .putString(KEY_USER_ID, firebaseUid)
+                                        .putBoolean(KEY_IS_GUEST, false)
+                                        .putLong(KEY_LAST_MODIFIED_LOCAL, remoteLastModified)
+                                        .apply();
+                                onSyncComplete.run();
+                            });
+                        } else {
+                            // Подслучай 2b: ПОЛЬЗОВАТЕЛЬ (не гость) снова входит в свой аккаунт
+                            // Применяем сравнение временных меток для корректной multi-device синхронизации
+                            if (localLastModified >= remoteLastModified) {
+                                // Локальные данные новее или равны — сохраняем их в облако
+                                saveLocalUserSettingsToFirestore(firebaseUid, localLastModified, () -> {
+                                    prefs.edit()
+                                            .putString(KEY_USER_ID, firebaseUid)
+                                            .putBoolean(KEY_IS_GUEST, false)
+                                            .apply();
+                                    // Синхронизируем историю упражнений
+                                    syncExerciseHistoryToFirestore();
+                                    onSyncComplete.run();
+                                });
+                            } else {
+                                // Облачные данные новее — загружаем их локально
+                                loadUserSettingsFromSnapshot(snapshot);
+                                // Загружаем историю упражнений из облака
+                                syncExerciseHistoryFromFirestore(() -> {
+                                    prefs.edit()
+                                            .putString(KEY_USER_ID, firebaseUid)
+                                            .putBoolean(KEY_IS_GUEST, false)
+                                            .putLong(KEY_LAST_MODIFIED_LOCAL, remoteLastModified)
+                                            .apply();
+                                    onSyncComplete.run();
+                                });
+                            }
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.w(TAG, "Не удалось загрузить данные пользователя", e);
+                    // При ошибке сохраняем текущие локальные данные, но меняем статус на авторизованный
+                    // (безопасный отказоустойчивый режим)
+                    prefs.edit()
+                            .putString(KEY_USER_ID, firebaseUid)
+                            .putBoolean(KEY_IS_GUEST, false)
+                            .apply();
+                    onSyncComplete.run();
+                });
+
+        /*FirebaseUser firebaseUser = mAuth.getCurrentUser();
         if (firebaseUser == null) {
             onSyncComplete.run();
             return;
@@ -587,7 +673,7 @@ public class DataManager {
                             .putBoolean(KEY_IS_GUEST, false)
                             .apply();
                     onSyncComplete.run();
-                });
+                });*/
     }
 
     /**
