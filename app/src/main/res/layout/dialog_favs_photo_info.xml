@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/custom_dialog_background"
+    android:id="@+id/dialog_container">
+
+    <LinearLayout
+        android:id="@+id/dialog_content"
+        android:layout_width="340dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dialog_bg_dark"
+        android:orientation="vertical"
+        android:paddingHorizontal="30dp"
+        android:paddingVertical="35dp"
+        >
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/favs_view_photo_dialog_layout"
+            >
+            <com.google.android.material.imageview.ShapeableImageView
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:scaleType="centerCrop"
+                app:shapeAppearanceOverlay="@style/GroundImageViewCorner"
+                android:foreground="@color/colorTransparentBlack"
+                android:id="@+id/favs_view_photo_iv"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:layout_centerInParent="true"
+                style="@style/normalTextLight"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:text="@string/view_full_image"
+                />
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/normalTextLight"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:text="@string/exercise_text"
+            android:layout_marginTop="22dp"
+            android:layout_marginBottom="12dp"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/normalTextLight"
+            android:id="@+id/favs_ex_text_tv"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/normalTextLight"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:text="@string/tags"
+            android:layout_marginTop="22dp"
+            android:layout_marginBottom="12dp"
+            />
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/favs_photo_tags_rv"
+            />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="35dp"
+            app:backgroundTint="@null"
+            android:background="@drawable/light_btn_shape"
+            style="@style/normalTextDark"
+            android:textStyle="bold"
+            android:text="@string/delete_from_faves"
+            android:id="@+id/delete_from_favs_btn"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    
+    <com.google.android.material.imageview.ShapeableImageView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/GroundImageViewCorner"
+        android:foreground="@color/colorTransparentBlack"
+        android:id="@+id/favorites_rv_iv"
+        />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        android:src="@drawable/triangle_favs_beige"
+        android:layout_centerInParent="true"
+        />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/info_favs_beige"
+        android:padding="15dp"
+        android:layout_alignStart="@id/favorites_rv_iv"
+        android:layout_alignTop="@id/favorites_rv_iv"
+        android:id="@+id/favs_photo_info_iv"
+        />
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        app:backgroundTint="@null"
+        app:background="@null"
+        android:src="@drawable/fav_heart_unselected"
+        android:layout_alignTop="@id/favorites_rv_iv"
+        android:layout_alignEnd="@id/favorites_rv_iv"
+        android:id="@+id/favs_heart_ib"
+        />
+
+    
+</RelativeLayout>

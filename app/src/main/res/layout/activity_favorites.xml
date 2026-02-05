@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FavoritesActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            style="@style/normalTextGreen"
+            android:textStyle="bold"
+            android:text="@string/fav_exercises"
+            android:layout_marginTop="70dp"
+            android:layout_marginBottom="40dp"
+            android:layout_gravity="center_horizontal"
+            />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginHorizontal="30dp"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="35dp"
+            android:id="@+id/favs_random_order_layout"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/normalTextDark"
+                android:textSize="20sp"
+                android:text="@string/random_order"
+                android:layout_marginEnd="20dp"
+                />
+            <CheckBox
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:buttonTint="@null"
+                android:button="@drawable/favs_random_order_checkbox_selector"
+                android:id="@+id/favs_random_order_checkbox"
+                />
+        </LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:paddingBottom="70dp"
+            android:id="@+id/favorites_rv"
+            />
+
+    </LinearLayout>
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/back_arrow_icon"
+        android:layout_marginTop="40dp"
+        android:layout_marginStart="30dp"
+        android:id="@+id/back_btn"
+        android:contentDescription="Back Button"
+        />
+
+</RelativeLayout>

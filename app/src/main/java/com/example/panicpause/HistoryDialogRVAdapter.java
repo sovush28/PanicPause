@@ -103,6 +103,15 @@ public class HistoryDialogRVAdapter extends RecyclerView.Adapter<HistoryDialogRV
         holder.historyTriggerRV.setLayoutManager(flexboxLayoutManager);
 
         holder.historyTriggerRV.setAdapter(triggerAdapter);
+
+        holder.historyPhotoIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FullscreenImageDialog dialog = FullscreenImageDialog.newInstance(photo.imgUrl);
+                dialog.show(((androidx.fragment.app.FragmentActivity) context).getSupportFragmentManager(), "fullscreen_image");
+            }
+        });
+
     }
 
     // Загружает фото в изображение с помощью Glide
