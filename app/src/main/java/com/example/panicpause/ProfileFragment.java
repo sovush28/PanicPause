@@ -38,10 +38,6 @@ public class ProfileFragment extends Fragment{
         return view;  // Возвращаем готовый экран
     }
 
-    private void inDevelopmentToast(){
-        Toast.makeText(getActivity(), R.string.in_development, Toast.LENGTH_SHORT).show();
-    }
-
     @Override
     public void onResume(){
         super.onResume();
@@ -77,8 +73,8 @@ public class ProfileFragment extends Fragment{
         favoritesLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                inDevelopmentToast();
-                //TODO
+                Intent intent = new Intent(getActivity(), FavoritesActivity.class);
+                startActivity(intent);
             }
         });
 

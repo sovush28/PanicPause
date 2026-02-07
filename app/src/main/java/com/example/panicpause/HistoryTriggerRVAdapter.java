@@ -55,7 +55,7 @@ public class HistoryTriggerRVAdapter extends RecyclerView.Adapter<HistoryTrigger
         TriggerItem tagItem = photoTags.get(position); // Теперь это объект
 
         // ОТОБРАЖЕНИЕ ЛОКАЛИЗОВАННОЙ СТРОКИ
-        String displayText = tagItem.getStrRes(); // Ключ строки, например "animals_label"
+        /*String displayText = tagItem.getStrRes(); // Ключ строки, например "animals_label"
 
         try {
             // Преобразуем ключ в строку из resources
@@ -68,10 +68,13 @@ public class HistoryTriggerRVAdapter extends RecyclerView.Adapter<HistoryTrigger
             }
         } catch (Exception e) {
             holder.tagTV.setText(displayText);
-        }
+        }*/
+
+        if (tagItem.getNameRus()!=null)
+            holder.tagTV.setText(tagItem.getNameRus());
 
         // === ПРОВЕРКА: ВЫБРАН ЛИ ТРИГГЕР ===
-        // Сравниваем по imgTag (ключу), а не по отображаемому тексту!
+        // Сравниваем по imgTag (ключу), а не по отображаемому тексту
         boolean isSelected = userTriggers.contains(tagItem.getImgTag());
 
         // === ЦВЕТ И ФОН ===

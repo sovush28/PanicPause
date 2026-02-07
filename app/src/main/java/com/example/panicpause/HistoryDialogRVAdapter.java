@@ -94,7 +94,6 @@ public class HistoryDialogRVAdapter extends RecyclerView.Adapter<HistoryDialogRV
         );
 
         // Настраиваем список тегов
-        //holder.historyTriggerRV.setLayoutManager(new LinearLayoutManager(context));
         FlexboxLayoutManager flexboxLayoutManager = new FlexboxLayoutManager(context);
         flexboxLayoutManager.setFlexDirection(FlexDirection.ROW); // Горизонтальное направление, слева направо
         flexboxLayoutManager.setFlexWrap(FlexWrap.WRAP); // Автоматический перенос на новую строку

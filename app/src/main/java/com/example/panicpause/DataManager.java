@@ -194,6 +194,7 @@ public class DataManager {
             while ((length = fis.read(buffer)) != -1) {
                 bos.write(buffer, 0, length);
             }
+
             String json = bos.toString("UTF-8");
             JSONArray array = new JSONArray(json);
 
@@ -202,10 +203,11 @@ public class DataManager {
                 String imgTag = obj.optString("img_tag", null);
                 Boolean isParent = obj.optBoolean("is_parent", false);
                 String parentTag = obj.optString("parent_tag", "");
-                String strRes = obj.optString("str_res", "");
+                //String strRes = obj.optString("str_res", "");
+                String nameRus = obj.optString("name_rus", "");
 
                 if (imgTag != null) {
-                    tags.add(new TriggerItem(imgTag, isParent, parentTag, strRes));
+                    tags.add(new TriggerItem(imgTag, isParent, parentTag, nameRus));
                 }
             }
         } catch (Exception e) {
@@ -332,7 +334,25 @@ public class DataManager {
             while ((length = is.read(buffer)) > 0) {
                 os.write(buffer, 0, length);
             }
+
+            // === ПРОВЕРКА: убедиться, что файл содержит валидный UTF-8 ===
+            if (assetPath.equals("tags.json") || assetPath.equals("images.json")) {
+                try (FileInputStream fis = new FileInputStream(destFile)) {
+                    byte[] bom = new byte[3];
+                    if (fis.read(bom) == 3 && bom[0] == (byte)0xEF && bom[1] == (byte)0xBB && bom[2] == (byte)0xBF) {
+                        Log.d(TAG, "Файл " + assetPath + " содержит UTF-8 BOM");
+                    }
+                }
+            }
         }
+        /*try (InputStream is = context.getAssets().open(assetPath);
+             OutputStream os = new FileOutputStream(destFile)) {
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) > 0) {
+                os.write(buffer, 0, length);
+            }
+        }*/
     }
 
     private void copyAssetsPhotos() throws IOException {
@@ -410,7 +430,7 @@ public class DataManager {
                 }
                 File file = new File(contentDir, filename);
                 try (FileOutputStream fos = new FileOutputStream(file)) {
-                    fos.write(array.toString(2).getBytes());
+                    fos.write(array.toString(2).getBytes(java.nio.charset.StandardCharsets.UTF_8));
                 }
                 onComplete.run();
             } catch (Exception e) {

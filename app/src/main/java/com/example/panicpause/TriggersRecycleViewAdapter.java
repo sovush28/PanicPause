@@ -328,7 +328,7 @@ public class TriggersRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVie
                 return;
 
             // Set text from string resource
-            try {
+            /*try {
                 int strResID = itemView.getContext().getResources()
                         .getIdentifier(triggerItem.getStrRes(), "string",
                                 itemView.getContext().getPackageName());
@@ -337,7 +337,10 @@ public class TriggersRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVie
             catch (Exception e) {
                 // Fallback: use the string resource name directly
                 titleTV.setText(triggerItem.getStrRes());
-            }
+            }*/
+
+            if(triggerItem.getNameRus()!=null)
+                titleTV.setText(triggerItem.getNameRus());
 
             // Set triangle rotation based on expanded state
             if(triggerItem.isExpanded()){
@@ -411,7 +414,7 @@ public class TriggersRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVie
                 return;
 
             // Set text from string resource
-            try {
+            /*try {
                 int strResID = itemView.getContext().getResources()
                         .getIdentifier(triggerItem.getStrRes(), "string",
                                 itemView.getContext().getPackageName());
@@ -419,7 +422,10 @@ public class TriggersRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVie
             } catch (Exception e) {
                 // Fallback: use the string resource name directly
                 titleTV.setText(triggerItem.getStrRes());
-            }
+            }*/
+
+            if(triggerItem.getNameRus()!=null)
+                titleTV.setText(triggerItem.getNameRus());
 
             // Update button state based on whether trigger is selected
             updatePlusButtonSrc(triggerItem.getImgTag());
