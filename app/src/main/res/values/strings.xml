@@ -91,6 +91,7 @@
     <!--История-->
     <string name="history_item_info">Здесь вы можете добавить упражнение в <b>избранные</b>
         или занести определенные теги в <b>триггеры</b> (<b>x</b>).</string>
+    <string name="history_empty">История пуста</string>
 
 
     <!--Настройки Заземления-->
@@ -186,10 +187,12 @@
     <!--Избранные-->
     <string name="fav_exercises">Избранные упражнения</string>
     <string name="random_order">В случайном порядке</string>
+    <string name="no_favs">Нет избранных</string>
     <string name="view_full_image">Просмотреть полное изображение</string>
     <string name="exercise_text">Текст упражнения</string>
     <string name="tags">Теги</string>
     <string name="delete_from_faves">Удалить из избранных</string>
+    <string name="delete_fav_warning">Вы уверены, что хотите <b>удалить</b> упражнение из избранных?</string>
 
 
     <!--Триггеры-->

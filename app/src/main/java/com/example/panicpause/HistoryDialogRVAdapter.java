@@ -111,6 +111,34 @@ public class HistoryDialogRVAdapter extends RecyclerView.Adapter<HistoryDialogRV
             }
         });
 
+        if(dataManager.getFaves().contains(photo.imgUrl)){
+            holder.favoriteBtn.setImageResource(R.drawable.fav_heart_selected);
+        }
+        else{
+            holder.favoriteBtn.setImageResource(R.drawable.fav_heart_unselected);
+        }
+
+        holder.favoriteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<String> faves = dataManager.getFaves();
+                String photoUrl = photo.imgUrl;
+
+                if (faves.contains(photoUrl)) {
+                    // Удаляем из избранных
+                    faves.remove(photoUrl);
+                    holder.favoriteBtn.setImageResource(R.drawable.fav_heart_unselected);
+                } else {
+                    // Добавляем в избранные
+                    faves.add(photoUrl);
+                    holder.favoriteBtn.setImageResource(R.drawable.fav_heart_selected);
+                }
+
+                // Сохраняем обновлённый список
+                dataManager.saveFaves(faves);
+            }
+        });
+
     }
 
     // Загружает фото в изображение с помощью Glide
@@ -147,7 +175,7 @@ public class HistoryDialogRVAdapter extends RecyclerView.Adapter<HistoryDialogRV
         return photos.size();
     }
 
-    // ViewHolder для элемента диалога.
+    // ViewHolder для элемента диалога
     static class HistoryDialogRVViewHolder extends RecyclerView.ViewHolder {
         com.google.android.material.imageview.ShapeableImageView historyPhotoIV;
         RecyclerView historyTriggerRV;
@@ -158,9 +186,6 @@ public class HistoryDialogRVAdapter extends RecyclerView.Adapter<HistoryDialogRV
             historyPhotoIV = itemView.findViewById(R.id.history_dialog_photo_iv);
             historyTriggerRV = itemView.findViewById(R.id.history_dialog_trigger_rv);
             favoriteBtn = itemView.findViewById(R.id.history_dialog_fav_ib);
-
-            // TODO: функционал избранного
-
         }
     }
 

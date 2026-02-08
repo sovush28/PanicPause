@@ -8,70 +8,62 @@
     tools:context=".SetTriggersActivity"
     >
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:fillViewport="true"
+        android:orientation="vertical"
+        android:layout_marginBottom="50dp"
         >
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            style="@style/normalTextGreen"
+            android:textStyle="bold"
+            android:text="@string/set_triggers"
+            android:layout_marginTop="50dp"
+            android:layout_marginBottom="40dp"
+            android:layout_gravity="center_horizontal"
+            />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginBottom="50dp"
+            android:layout_marginStart="35dp"
+            android:layout_marginEnd="15dp"
             >
+
             <TextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                style="@style/normalTextDark"
+                android:textSize="20dp"
+                android:text="@string/set_triggers_info1"
+                />
+
+            <TextView
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="start"
                 style="@style/normalTextGreen"
-                android:textStyle="bold"
-                android:text="@string/set_triggers"
-                android:layout_marginTop="50dp"
-                android:layout_marginBottom="40dp"
-                android:layout_gravity="center_horizontal"
+                android:text="@string/set_triggers_info2"
                 />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginStart="35dp"
-                android:layout_marginEnd="15dp"
-                >
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    style="@style/normalTextDark"
-                    android:textSize="20dp"
-                    android:text="@string/set_triggers_info1"
-                    />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:layout_gravity="start"
-                    style="@style/normalTextGreen"
-                    android:text="@string/set_triggers_info2"
-                    />
-            </LinearLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/triggers_recycler_view"
-                />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:backgroundTint="@color/colorBeige"
-                />
-
         </LinearLayout>
 
-    </ScrollView>
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/triggers_recycler_view"
+            />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:backgroundTint="@color/colorBeige"
+            />
+
+    </LinearLayout>
 
 
     <ImageButton

@@ -8,8 +8,8 @@
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:scaleType="centerCrop"
-        app:shapeAppearanceOverlay="@style/GroundImageViewCorner"
-        android:foreground="@color/colorTransparentBlack"
+        app:shapeAppearanceOverlay="@style/HistoryImageViewCorner"
+        android:foreground="@drawable/custom_dialog_background"
         android:id="@+id/favorites_rv_iv"
         />
     <ImageView
@@ -18,6 +18,7 @@
         android:padding="15dp"
         android:src="@drawable/triangle_favs_beige"
         android:layout_centerInParent="true"
+        android:id="@+id/favs_triangle_iv"
         />
     <ImageView
         android:layout_width="wrap_content"
@@ -34,7 +35,8 @@
         android:padding="15dp"
         app:backgroundTint="@null"
         app:background="@null"
-        android:src="@drawable/fav_heart_unselected"
+        android:background="@android:color/transparent"
+        android:src="@drawable/fav_heart_selected"
         android:layout_alignTop="@id/favorites_rv_iv"
         android:layout_alignEnd="@id/favorites_rv_iv"
         android:id="@+id/favs_heart_ib"

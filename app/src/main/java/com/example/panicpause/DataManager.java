@@ -12,9 +12,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -216,9 +216,12 @@ public class DataManager {
         return tags;
     }
 
-    //Сохраняет список триггеров пользователя
     public void saveTriggers(List<String> triggers) {
         saveUserSetting(KEY_TRIGGERS, triggers);
+    }
+
+    public void saveFaves(List<String> faves){
+        saveUserSetting(KEY_FAVES, faves);
     }
 
     public int getGroundPhotoExAmount() {
@@ -335,7 +338,7 @@ public class DataManager {
                 os.write(buffer, 0, length);
             }
 
-            // === ПРОВЕРКА: убедиться, что файл содержит валидный UTF-8 ===
+            // ПРОВЕРКА: убедиться, что файл содержит валидный UTF-8
             if (assetPath.equals("tags.json") || assetPath.equals("images.json")) {
                 try (FileInputStream fis = new FileInputStream(destFile)) {
                     byte[] bom = new byte[3];
@@ -560,12 +563,15 @@ public class DataManager {
                         // СЛУЧАЙ 1: НОВЫЙ ПОЛЬЗОВАТЕЛЬ (регистрация)
                         // Нет данных в облаке — сохраняем текущие локальные настройки (гостевые) в Firestore
                         saveLocalUserSettingsToFirestore(firebaseUid, localLastModified, () -> {
+                            // Синхронизируем историю упражнений
+                            syncExerciseHistoryToFirestore();
+
+                            // Обновляем локальный статус
                             prefs.edit()
                                     .putString(KEY_USER_ID, firebaseUid)
                                     .putBoolean(KEY_IS_GUEST, false)
                                     .apply();
-                            // Синхронизируем историю упражнений
-                            syncExerciseHistoryToFirestore();
+
                             onSyncComplete.run();
                         });
                     } else {
@@ -574,8 +580,13 @@ public class DataManager {
 
                         if (wasGuest) {
                             // Подслучай 2a: ГОСТЬ входит в существующий аккаунт
-                            // загружаем данные из облака, игнорируем гостевые данные
+
+                            // очищаем гостевые данные
+                            clearLocalUserData();
+
+                            // безопасно загружаем данные из облака
                             loadUserSettingsFromSnapshot(snapshot);
+
                             // Загружаем историю упражнений из облака
                             syncExerciseHistoryFromFirestore(() -> {
                                 prefs.edit()
@@ -585,18 +596,19 @@ public class DataManager {
                                         .apply();
                                 onSyncComplete.run();
                             });
+
                         } else {
                             // Подслучай 2b: ПОЛЬЗОВАТЕЛЬ (не гость) снова входит в свой аккаунт
                             // Применяем сравнение временных меток для корректной multi-device синхронизации
                             if (localLastModified >= remoteLastModified) {
                                 // Локальные данные новее или равны — сохраняем их в облако
                                 saveLocalUserSettingsToFirestore(firebaseUid, localLastModified, () -> {
+                                    // Синхронизируем историю упражнений
+                                    syncExerciseHistoryToFirestore();
                                     prefs.edit()
                                             .putString(KEY_USER_ID, firebaseUid)
                                             .putBoolean(KEY_IS_GUEST, false)
                                             .apply();
-                                    // Синхронизируем историю упражнений
-                                    syncExerciseHistoryToFirestore();
                                     onSyncComplete.run();
                                 });
                             } else {
@@ -701,12 +713,42 @@ public class DataManager {
      * Данные остаются локально, создаётся новый гостевой ID.
      */
     public void handleUserLogout() {
+        // Полная очистка данных перед созданием нового гостя
+        clearLocalUserData();
+
+        // Создаем нового гостя
         String guestId = "guest_" + System.currentTimeMillis();
         prefs.edit()
                 .putString(KEY_USER_ID, guestId)
                 .putBoolean(KEY_IS_GUEST, true)
                 .apply();
     }
+
+    /**
+     * Немедленно очищает ВСЕ пользовательские данные (для нового гостя или при входе в чужой аккаунт).
+     * Выполняется синхронно, чтобы UI не показывал старые данные.
+     */
+    private void clearLocalUserData() {
+        SharedPreferences.Editor editor = prefs.edit();
+
+        // Сбрасываем настройки к значениям по умолчанию
+        editor.putString(KEY_TRIGGERS, "[]");
+        editor.putString(KEY_FAVES, "[]");
+        editor.putInt(KEY_BREATH_REPEAT, 1);
+        editor.putBoolean(KEY_USE_MATH, true);
+        editor.putBoolean(KEY_USE_COLOR_SEARCH, true);
+        editor.putInt(KEY_GROUND_PHOTO_AMOUNT, 2);
+        editor.putBoolean(KEY_GROUND_ON_LAUNCH, false);
+        editor.putBoolean(KEY_USE_FAVES_ONLY, false);
+        editor.putLong(KEY_LAST_MODIFIED_LOCAL, System.currentTimeMillis());
+
+        // Сбрасываем историю упражнений
+        saveExerciseHistory(new ArrayList<>()); // Сохраняем пустой список СРАЗУ
+        editor.putLong(KEY_EXERCISE_HISTORY_LAST_MODIFIED, 0);
+
+        editor.apply();
+    }
+
 
     // === 4. Сохранение и загрузка настроек ===
 
@@ -740,7 +782,6 @@ public class DataManager {
 
     private void syncUserSettingsToFirestore(long lastModified) {
         if (!isNetworkAvailable()){
-            //onComplete.run();
             return;
         }
 
@@ -752,8 +793,6 @@ public class DataManager {
         Map<String, Object> data = new HashMap<>();
         try {
             data.put("email", prefs.getString("email", ""));
-            /*data.put("triggers", new JSONArray(prefs.getString(KEY_TRIGGERS, "[]")));
-            data.put("faves", new JSONArray(prefs.getString(KEY_FAVES, "[]")));*/
             data.put("triggers", convertJsonStringToList(prefs.getString(KEY_TRIGGERS, "[]")));
             data.put("faves", convertJsonStringToList(prefs.getString(KEY_FAVES, "[]")));
             data.put("breath_repeat_amount", prefs.getInt(KEY_BREATH_REPEAT, 1));
@@ -764,7 +803,13 @@ public class DataManager {
             data.put("use_faves_only", prefs.getBoolean(KEY_USE_FAVES_ONLY, false));
             data.put("last_modified", lastModified);
 
-            db.collection("users").document(userId).set(data);
+            //db.collection("users").document(userId).set(data);
+            // set - полная перезапись документа (плохо)
+            db.collection("users").document(userId)
+                    .set(data, SetOptions.merge())
+                    .addOnFailureListener(e ->
+                            Log.e(TAG, "Ошибка синхронизации настроек", e)
+                    );
         } catch (Exception e) {
             Log.e(TAG, "Ошибка сериализации настроек", e);
         }
@@ -781,8 +826,6 @@ public class DataManager {
         try {
             // Собираем все текущие настройки
             data.put("email", prefs.getString("email", ""));
-            /*data.put("triggers", new JSONArray(prefs.getString(KEY_TRIGGERS, "[]")));
-            data.put("faves", new JSONArray(prefs.getString(KEY_FAVES, "[]")));*/
             data.put("triggers", convertJsonStringToList(prefs.getString(KEY_TRIGGERS, "[]")));
             data.put("faves", convertJsonStringToList(prefs.getString(KEY_FAVES, "[]")));
             data.put("breath_repeat_amount", prefs.getInt(KEY_BREATH_REPEAT, 1));
@@ -793,11 +836,12 @@ public class DataManager {
             data.put("use_faves_only", prefs.getBoolean(KEY_USE_FAVES_ONLY, false));
             data.put("last_modified", lastModified);
 
-            db.collection("users").document(userId).set(data)
+            db.collection("users").document(userId)
+                    .set(data, SetOptions.merge())
                     .addOnSuccessListener(unused -> onComplete.run())
                     .addOnFailureListener(e -> {
                         Log.w(TAG, "Не удалось сохранить настройки в Firestore", e);
-                        onComplete.run(); // всё равно завершаем
+                        onComplete.run();
                     });
         } catch (Exception e) {
             Log.e(TAG, "Ошибка при сохранении настроек", e);
@@ -810,15 +854,10 @@ public class DataManager {
 
         editor.putString("email", snapshot.getString("email"));
 
-        //editor.putString(KEY_TRIGGERS, snapshot.getString("triggers"));
-        //editor.putString(KEY_FAVES, snapshot.getString("faves"));
-
-        // triggers — List<String>
         @SuppressWarnings("unchecked")
         List<String> triggers = (List<String>) snapshot.get("triggers");
         editor.putString(KEY_TRIGGERS, triggers != null ? new JSONArray(triggers).toString() : "[]");
 
-        // faves — List<String>
         @SuppressWarnings("unchecked")
         List<String> faves = (List<String>) snapshot.get("faves");
         editor.putString(KEY_FAVES, faves != null ? new JSONArray(faves).toString() : "[]");
@@ -832,6 +871,7 @@ public class DataManager {
 
         editor.apply();
     }
+
 
     // ИСТОРИЯ
 
@@ -934,7 +974,6 @@ public class DataManager {
             Log.e(TAG, "Ошибка сохранения истории упражнений", e);
         }
     }
-
 
     // Добавляет новую сессию в историю и сохраняет обновлённый список.
     // Автоматически ограничивает историю 3 последними сессиями.

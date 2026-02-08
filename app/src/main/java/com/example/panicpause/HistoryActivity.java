@@ -41,7 +41,7 @@ public class HistoryActivity extends AppCompatActivity {
 
         if (sessions.isEmpty()) {
             // Если история пуста — показываем сообщение
-            Toast.makeText(this, "История пуста", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getText(R.string.history_empty), Toast.LENGTH_SHORT).show();
         } else {
             // Создаём адаптер и устанавливаем его
             HistoryRVAdapter historyRVAdapter = new HistoryRVAdapter(
