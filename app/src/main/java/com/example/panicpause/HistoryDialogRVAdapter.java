@@ -33,6 +33,19 @@ public class HistoryDialogRVAdapter extends RecyclerView.Adapter<HistoryDialogRV
 
     private final List<TriggerItem> allTriggers;
 
+    // Слушатель для обновления всего списка при изменении триггеров ===
+    private OnTriggersChangedListener triggersChangedListener;
+
+    // Интерфейс для уведомления об изменении триггеров
+    public interface OnTriggersChangedListener {
+        void onTriggersChanged();
+    }
+
+    // Метод для установки слушателя (вызывается из диалога/фрагмента)
+    public void setOnTriggersChangedListener(OnTriggersChangedListener listener) {
+        this.triggersChangedListener = listener;
+    }
+
     public HistoryDialogRVAdapter(List<DataManager.PhotoData> photos, Context context, DataManager dataManager) {
         this.photos = photos;
         this.context = context;
@@ -69,7 +82,8 @@ public class HistoryDialogRVAdapter extends RecyclerView.Adapter<HistoryDialogRV
         HistoryTriggerRVAdapter triggerAdapter = new HistoryTriggerRVAdapter(
                 //photo.tags,
                 photoTriggerItems, // List<TriggerItem>
-                dataManager.getTriggers(), // List<String> — ключи выбранных триггеров
+                new ArrayList<>(dataManager.getTriggers()),
+                //dataManager.getTriggers(), // List<String> — ключи выбранных триггеров
                 new HistoryTriggerRVAdapter.OnHistoryTriggerActionListener() {
                     @Override
                     public void onTriggerClick(String tag, boolean isSelected) {
@@ -84,11 +98,20 @@ public class HistoryDialogRVAdapter extends RecyclerView.Adapter<HistoryDialogRV
                         dataManager.saveTriggers(userTriggers);
 
                         // ОБНОВЛЯЕМ АДАПТЕР ТЕГА НЕМЕДЛЕННО
-                        HistoryTriggerRVAdapter triggerAdapter =
+                        /*HistoryTriggerRVAdapter triggerAdapter =
                                 (HistoryTriggerRVAdapter) holder.historyTriggerRV.getAdapter();
                         if (triggerAdapter != null) {
                             triggerAdapter.updateUserTriggers(dataManager.getTriggers());
-                        }
+                        }*/
+
+                        // Уведомляем родительский адаптер об изменении триггеров
+                        // Используем post() для безопасности - откладываем обновление до завершения текущего цикла обработки событий
+                        // Это предотвращает возможные исключения при вызове notifyDataSetChanged() во время привязки данных
+                        holder.itemView.post(() -> {
+                            if (triggersChangedListener != null) {
+                                triggersChangedListener.onTriggersChanged();
+                            }
+                        });
                     }
                 }
         );
@@ -100,7 +123,6 @@ public class HistoryDialogRVAdapter extends RecyclerView.Adapter<HistoryDialogRV
         flexboxLayoutManager.setJustifyContent(JustifyContent.FLEX_START); // Выравнивание по левому краю
         flexboxLayoutManager.setAlignItems(AlignItems.FLEX_START); // Выравнивание по верху
         holder.historyTriggerRV.setLayoutManager(flexboxLayoutManager);
-
         holder.historyTriggerRV.setAdapter(triggerAdapter);
 
         holder.historyPhotoIV.setOnClickListener(new View.OnClickListener() {

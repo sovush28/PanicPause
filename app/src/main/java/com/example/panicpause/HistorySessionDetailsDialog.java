@@ -85,6 +85,12 @@ public class HistorySessionDetailsDialog extends DialogFragment {
                 dataManager
         );
 
+        // слушатель для обновления всего списка при изменении триггеров
+        adapter.setOnTriggersChangedListener(() -> {
+            // Полное обновление списка фото перестроит все списки тегов с актуальными данными
+            adapter.notifyDataSetChanged();
+        });
+
         // Настраиваем список
         photoRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         photoRecyclerView.setAdapter(adapter);

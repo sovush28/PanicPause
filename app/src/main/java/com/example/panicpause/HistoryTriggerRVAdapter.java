@@ -73,7 +73,7 @@ public class HistoryTriggerRVAdapter extends RecyclerView.Adapter<HistoryTrigger
         if (tagItem.getNameRus()!=null)
             holder.tagTV.setText(tagItem.getNameRus());
 
-        // === ПРОВЕРКА: ВЫБРАН ЛИ ТРИГГЕР ===
+        // ПРОВЕРКА: ВЫБРАН ЛИ ТРИГГЕР
         // Сравниваем по imgTag (ключу), а не по отображаемому тексту
         boolean isSelected = userTriggers.contains(tagItem.getImgTag());
 
