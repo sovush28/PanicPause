@@ -187,6 +187,7 @@
     <!--Избранные-->
     <string name="fav_exercises">Избранные упражнения</string>
     <string name="random_order">В случайном порядке</string>
+    <string name="begin_random_order">Пройти в случайном порядке</string>
     <string name="no_favs">Нет избранных</string>
     <string name="view_full_image">Просмотреть полное изображение</string>
     <string name="exercise_text">Текст упражнения</string>

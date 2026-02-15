@@ -108,7 +108,7 @@ public class GroundCountColorFragment extends Fragment {
                 colorNames[i] = getString(resourceId);
             } else {
                 // Fallback color names if string resources are not found
-                colorNames[i] = "цвета"; //????
+                colorNames[i] = "цвета"; //???
             }
         }
     }

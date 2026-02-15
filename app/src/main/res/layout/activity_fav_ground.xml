@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FavGroundActivity"
+    >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginHorizontal="30dp"
+        >
+        <ImageButton
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/back_arrow_icon"
+            android:scaleType="centerInside"
+            android:background="@android:color/transparent"
+            android:layout_alignParentStart="true"
+            android:id="@+id/back_btn"
+            />
+        <ImageButton
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/x_cross_close_soft_green"
+            android:scaleType="centerInside"
+            android:background="@android:color/transparent"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/exit_btn"
+            />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        >
+        <!-- Image view for the photo -->
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/photo_iv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxHeight="470dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+            android:layout_gravity="center_horizontal"
+            android:scaleType="centerInside"
+            android:adjustViewBounds="true"
+            app:shapeAppearanceOverlay="@style/GroundImageViewCorner"
+            />
+
+        <!-- Instruction text -->
+        <TextView
+            android:id="@+id/count_things_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            style="@style/normalTextDark"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="40dp"
+            android:text="Загрузка фотографии..."
+            />
+
+        <!-- Next button -->
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:background="@drawable/btn_shape"
+            android:layout_marginStart="80dp"
+            android:layout_marginEnd="80dp"
+            android:text="@string/next"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            style="@style/normalTextLight"
+            android:gravity="center"
+            android:id="@+id/next_btn"
+            />
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>

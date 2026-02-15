@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -119,20 +120,24 @@ public class GroundPhotoFragment extends Fragment {
             return;
         }
 
-        // Обновляем текст
-        String instruction = getString(R.string.ground_count_img1) +
-                " " + assignedPhoto.word + " " + getString(R.string.ground_count_img2);
-        countThingsTV.setText(instruction);
-
         // Загружаем изображение
         String filename = DataManager.getFilenameFromUrl(assignedPhoto.imgUrl);
         File photoFile = new File(requireContext().getFilesDir(), "photos/" + filename);
 
         if (photoFile.exists()) {
-            Glide.with(this).load(photoFile).into(photoIV);
+            Glide.with(this).load(photoFile)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(photoIV);
         } else {
-            Glide.with(this).load(assignedPhoto.imgUrl).into(photoIV);
+            Glide.with(this).load(assignedPhoto.imgUrl)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(photoIV);
         }
+
+        // Обновляем текст
+        String instruction = getString(R.string.ground_count_img1) +
+                " " + assignedPhoto.word + " " + getString(R.string.ground_count_img2);
+        countThingsTV.setText(instruction);
 
         // Передаём фото в активность для истории
         if (getActivity() instanceof GroundActivity) {

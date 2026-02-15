@@ -55,10 +55,7 @@ public class GroundActivity extends AppCompatActivity {
     // поле для хранения доступных фото
     private List<DataManager.PhotoData> availablePhotosForSession = new ArrayList<>();
 
-
     private boolean useDefaultSettings = false;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,8 +65,6 @@ public class GroundActivity extends AppCompatActivity {
 
         dataManager=new DataManager(this);
         fragmentManager = getSupportFragmentManager();
-
-
 
         Intent intent = getIntent();
         if(intent!=null && intent.hasExtra("default_settings")){

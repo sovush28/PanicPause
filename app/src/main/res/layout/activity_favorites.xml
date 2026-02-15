@@ -23,15 +23,29 @@
             android:layout_gravity="center_horizontal"
             />
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginHorizontal="30dp"
             android:gravity="center_vertical"
-            android:layout_marginBottom="35dp"
+            android:paddingVertical="10dp"
+            android:layout_marginBottom="25dp"
             android:id="@+id/favs_random_order_layout"
             >
             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/normalTextDark"
+                android:textSize="20sp"
+                android:text="@string/begin_random_order"
+                android:layout_marginEnd="20dp"
+                />
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/small_triangle_right_soft_green"
+                />
+            <!--<TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/normalTextDark"
@@ -45,7 +59,7 @@
                 app:buttonTint="@null"
                 android:button="@drawable/favs_random_order_checkbox_selector"
                 android:id="@+id/favs_random_order_checkbox"
-                />
+                />-->
         </LinearLayout>
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"

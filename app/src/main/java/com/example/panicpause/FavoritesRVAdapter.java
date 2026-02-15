@@ -45,7 +45,7 @@ public class FavoritesRVAdapter extends RecyclerView.Adapter<FavoritesRVAdapter.
         loadPhoto(photo, holder.photoIV);
 
         // Обработка клика на info
-        holder.infoIV.setOnClickListener(new View.OnClickListener() {
+        holder.photoIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FavsPhotoDetailsDialog dialog = FavsPhotoDetailsDialog.newInstance(
@@ -110,14 +110,13 @@ public class FavoritesRVAdapter extends RecyclerView.Adapter<FavoritesRVAdapter.
 
     static class FavoriteViewHolder extends RecyclerView.ViewHolder {
         com.google.android.material.imageview.ShapeableImageView photoIV;
-        ImageView infoIV, triangleIV;
+        //ImageView infoIV;
         ImageButton heartIB;
 
         FavoriteViewHolder(@NonNull View itemView) {
             super(itemView);
             photoIV=itemView.findViewById(R.id.favorites_rv_iv);
-            infoIV=itemView.findViewById(R.id.favs_photo_info_iv);
-            triangleIV=itemView.findViewById(R.id.favs_triangle_iv);
+            //infoIV=itemView.findViewById(R.id.favs_photo_info_iv);
             heartIB=itemView.findViewById(R.id.favs_heart_ib);
         }
     }

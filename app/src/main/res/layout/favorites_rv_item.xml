@@ -12,21 +12,20 @@
         android:foreground="@drawable/custom_dialog_background"
         android:id="@+id/favorites_rv_iv"
         />
-    <ImageView
+    <!--<ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="15dp"
         android:src="@drawable/triangle_favs_beige"
         android:layout_centerInParent="true"
         android:id="@+id/favs_triangle_iv"
-        />
+        />-->
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/info_favs_beige"
         android:padding="15dp"
-        android:layout_alignStart="@id/favorites_rv_iv"
-        android:layout_alignTop="@id/favorites_rv_iv"
+        android:layout_centerInParent="true"
         android:id="@+id/favs_photo_info_iv"
         />
     <ImageButton

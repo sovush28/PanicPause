@@ -1,5 +1,6 @@
 package com.example.panicpause;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.View;
@@ -23,7 +24,6 @@ public class FavoritesActivity extends AppCompatActivity {
 
     ImageButton backBtn;
     LinearLayout randomOrderLayout;
-    CheckBox randomOrderCB;
     RecyclerView favoritesRV;
 
     private DataManager dataManager;
@@ -81,7 +81,6 @@ public class FavoritesActivity extends AppCompatActivity {
     private void initializeViews(){
         backBtn=findViewById(R.id.back_btn);
         randomOrderLayout=findViewById(R.id.favs_random_order_layout);
-        randomOrderCB=findViewById(R.id.favs_random_order_checkbox);
         favoritesRV=findViewById(R.id.favorites_rv);
     }
 
@@ -95,7 +94,13 @@ public class FavoritesActivity extends AppCompatActivity {
         randomOrderLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO checkbox checked/unchecked and random order for groundfav activity
+                if(!dataManager.getFaves().isEmpty()){
+                    Intent intent = new Intent(FavoritesActivity.this, FavGroundActivity.class);
+                    startActivity(intent);
+                }
+                else{
+                    Toast.makeText(FavoritesActivity.this, R.string.no_favs, Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
