@@ -116,6 +116,7 @@
 
     <string name="reset_settings">Сбросить настройки</string>
     <string name="reset_settings_question">Вы уверены, что хотите <b>сбросить настройки?</b></string>
+    <string name="yes_reset">Да, сбросить</string>
 
     <string name="no_ex_except_breath_warning">Вы уверены, что хотите <b>убрать все упражнения</b>, кроме
         "Дыхания по квадрату"?</string>

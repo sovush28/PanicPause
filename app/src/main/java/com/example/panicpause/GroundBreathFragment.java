@@ -53,6 +53,9 @@ public class GroundBreathFragment extends Fragment {
 
     private boolean breathingStarted = false; // флаг, чтобы не запускать дважды
 
+    private int breathRepeatCount;
+    private int userBreathRepeatAmount;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -62,9 +65,10 @@ public class GroundBreathFragment extends Fragment {
         initializeViews(view);
         setupButtonListeners();
 
-        //updateButtonVisibility();
+        breathRepeatCount = 0;
 
-        //startBreathingExercise();
+        DataManager dataManager = new DataManager(requireContext());
+        userBreathRepeatAmount= dataManager.getBreathRepeatAmount();
 
         return view;
     }
@@ -88,7 +92,9 @@ public class GroundBreathFragment extends Fragment {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     if (currentPhase == 3) {
-                        // Если последний этап - начинаем анимацию заново
+                        // Если последний этап
+
+                        //начинаем анимацию заново
                         startSquareAnimation();
                     }
                 }
@@ -174,6 +180,35 @@ public class GroundBreathFragment extends Fragment {
     private void updateButtonVisibility() {
         if (getActivity() instanceof GroundActivity) {
             GroundActivity activity = (GroundActivity) getActivity();
+
+            if (activity.isLastFragment()){
+                nextBtn.setText(getString(R.string.end));
+
+                if (breathRepeatCount >= userBreathRepeatAmount){
+                    repeatBtn.setVisibility(View.VISIBLE);
+                    nextBtn.setVisibility(View.VISIBLE);
+                }
+                else{
+                    repeatBtn.setVisibility(View.INVISIBLE);
+                    nextBtn.setVisibility(View.INVISIBLE);
+                }
+            }
+            else{
+                repeatBtn.setVisibility(View.GONE);
+
+                if (breathRepeatCount >= userBreathRepeatAmount){
+                    nextBtn.setVisibility(View.VISIBLE);
+                }
+                else{
+                    nextBtn.setVisibility(View.INVISIBLE);
+                }
+            }
+        }
+    }
+
+    /*private void updateButtonVisibility() {
+        if (getActivity() instanceof GroundActivity) {
+            GroundActivity activity = (GroundActivity) getActivity();
             if (activity.isLastFragment()) {
                 repeatBtn.setVisibility(View.VISIBLE);
                 nextBtn.setText(getString(R.string.end));
@@ -182,7 +217,7 @@ public class GroundBreathFragment extends Fragment {
                 nextBtn.setText(getString(R.string.next));
             }
         }
-    }
+    }*/
 
     public void onFragmentResumed(){
         super.onResume();
@@ -200,6 +235,7 @@ public class GroundBreathFragment extends Fragment {
      * This method sets up the initial state and begins the animation cycle.
      */
     private void startBreathingExercise() {
+
         // Reset the current phase
         currentPhase = 0;
 
@@ -207,8 +243,6 @@ public class GroundBreathFragment extends Fragment {
         if (squareAnimator != null) {
             squareAnimator.cancel();
         }
-        // Set initial square color (light)
-        //squareView.setBackgroundColor(LIGHT_COLOR);
         
         // Start the first phase
         startPhase(0);
@@ -267,7 +301,9 @@ public class GroundBreathFragment extends Fragment {
                         currentPhase = 0;
                         startPhase(currentPhase);
 
-                        //TODO nextBtn.visibility=visible depending on ground_breath_repeat_amount
+                        breathRepeatCount++;
+
+                        updateButtonVisibility();
 
                     }
                 }
@@ -309,67 +345,7 @@ public class GroundBreathFragment extends Fragment {
         // Запускаем анимацию
         squareAnimator.start();
     }
-/*
 
-    */
-/**
-     * Animates the square for the current phase.
-     * Each phase animates one side of the square becoming darker.
-     *//*
-
-    private void animateSquare() {
-        // Cancel any existing animation
-        if (animator != null) {
-            animator.cancel();
-        }
-        // Use a ValueAnimator instead
-        ValueAnimator animator = ValueAnimator.ofFloat(0, 4 * squareView.getWidth());
-        animator.setDuration(ANIMATION_DURATION * 4); // Total time for one full cycle
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float animatedValue = (float) animation.getAnimatedValue();
-                ((AnimatedSquareView) squareView).animateStroke(animatedValue);
-            }
-        });
-        animator.start();
-
-        // Create a value animator that will change the background color
-        // We'll animate from light color to dark color over 4 seconds
-        */
-/*squareAnimator = ObjectAnimator.ofArgb(squareView, "backgroundColor", LIGHT_COLOR, DARK_COLOR);
-        squareAnimator.setDuration(ANIMATION_DURATION);
-        
-        // Add animation listener to handle completion
-        squareAnimator.addListener(new android.animation.AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(android.animation.Animator animation) {
-                // Animation completed, but we don't need to do anything here
-                // The countdown will handle moving to the next phase
-            }
-        });*//*
-
-        
-        // Start the animation
-        animator.start();
-    }
-
-    */
-/**
-     * Checks if this is the last breathing exercise in the sequence.
-     * The last breathing exercise is the 6th fragment (index 5).
-     * 
-     * @return true if this is the last breathing exercise, false otherwise
-     *//*
-
-    private boolean isLastBreathingExercise() {
-        if (getActivity() instanceof GroundActivity) {
-            GroundActivity activity = (GroundActivity) getActivity();
-            return activity.isLastFragment();
-        }
-        return false;
-    }
-*/
 
     @Override
     public void onDestroyView() {

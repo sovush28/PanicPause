@@ -511,23 +511,17 @@ public class DataManager {
 
     //=== 3. Работа с пользователем и настройками ===
 
-    /**
-     * Проверяет, авторизован ли пользователь в Firebase.
-     */
+    // Проверяет, авторизован ли пользователь в Firebase
     public boolean isUserLoggedIn() {
         return mAuth.getCurrentUser() != null;
     }
 
-    /**
-     * Возвращает true, если текущий пользователь — гость.
-     */
+    // Возвращает true, если текущий пользователь — гость
     public boolean isGuest() {
         return prefs.getBoolean(KEY_IS_GUEST, true);
     }
 
-    /**
-     * Возвращает ID пользователя (guest_... или firebase uid).
-     */
+    // Возвращает ID пользователя (guest_... или firebase uid)
     public String getUserId() {
         String savedId = prefs.getString(KEY_USER_ID, null);
         if (savedId != null) return savedId;
@@ -752,9 +746,7 @@ public class DataManager {
 
     // === 4. Сохранение и загрузка настроек ===
 
-    /**
-     * Сохраняет настройку и обновляет временную метку.
-     */
+    // Сохраняет настройку и обновляет временную метку.
     public void saveUserSetting(String key, Object value) {
         SharedPreferences.Editor editor = prefs.edit();
         long now = System.currentTimeMillis();

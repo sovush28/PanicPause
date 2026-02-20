@@ -1,8 +1,6 @@
 package com.example.panicpause;
 
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -66,7 +64,7 @@ public class GroundSettingsActivity extends AppCompatActivity {
         userUseCountColor=dataManager.getUseSearchObjectsColor();
         userPhotoExAmount=dataManager.getGroundPhotoExAmount();
         userUseFavesOnly=dataManager.getUseFavesOnly();
-        userGroundOnLaunch=dataManager.getGroundOnLaunch();
+        //userGroundOnLaunch=dataManager.getGroundOnLaunch();
     }
 
     private void updateUI(){
@@ -75,19 +73,19 @@ public class GroundSettingsActivity extends AppCompatActivity {
         useColorSwitch.setChecked(userUseCountColor);
         photoQET.setText(String.valueOf(userPhotoExAmount));
         useFavesOnlySwitch.setChecked(userUseFavesOnly);
-        groundOnLaunchSwitch.setChecked(userGroundOnLaunch);
+        //groundOnLaunchSwitch.setChecked(userGroundOnLaunch);
 
         if(!userUseMath && !userUseCountColor){
             photoExAmountLayout.setAlpha(1);
             photoQIncreaseIV.setEnabled(true);
             photoQDecreaseIV.setEnabled(true);
-            photoQET.setEnabled(true);
+            //photoQET.setEnabled(true);
         }
         else{
             photoExAmountLayout.setAlpha((float)0.5);
             photoQIncreaseIV.setEnabled(false);
             photoQDecreaseIV.setEnabled(false);
-            photoQET.setEnabled(false);
+            //photoQET.setEnabled(false);
         }
     }
 
@@ -107,13 +105,13 @@ public class GroundSettingsActivity extends AppCompatActivity {
         useMathSwitch=findViewById(R.id.use_math_toggle_sc);
         useColorSwitch=findViewById(R.id.use_color_toggle_sc);
         useFavesOnlySwitch =findViewById(R.id.use_faves_only_toggle_sc);
-        groundOnLaunchSwitch=findViewById(R.id.ground_on_launch_toggle_sc);
+        //groundOnLaunchSwitch=findViewById(R.id.ground_on_launch_toggle_sc);
         photoExAmountLayout=findViewById(R.id.photo_ex_amount_layout);
 
         useMathLayout=findViewById(R.id.use_math_toggle_layout);
         useColorLayout=findViewById(R.id.use_color_toggle_layout);
         useFavesOnlyLayout=findViewById(R.id.use_faves_only_toggle_layout);
-        groundOnLaunchLayout=findViewById(R.id.ground_on_launch_toggle_layout);
+        //groundOnLaunchLayout=findViewById(R.id.ground_on_launch_toggle_layout);
     }
 
     private void setListeners(){
@@ -133,9 +131,7 @@ public class GroundSettingsActivity extends AppCompatActivity {
         resetBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                allSettingsToDefault();
-                saveAllSettings();
-                updateUI();
+                showResetSettingsConfirmationDialog();
             }
         });
 
@@ -181,16 +177,6 @@ public class GroundSettingsActivity extends AppCompatActivity {
             }
         });
 
-        setupEditTextWatcher(breathQET, "breath_repeat_amount", value -> {
-            userBreathRepeatAmount = value;
-            dataManager.saveUserSetting("breath_repeat_amount", (long) value);
-        });
-
-        setupEditTextWatcher(photoQET, "ground_photo_ex_amount", value -> {
-            userPhotoExAmount = value;
-            dataManager.saveUserSetting("ground_photo_ex_amount", (long) value);
-        });
-
         useMathLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -203,12 +189,12 @@ public class GroundSettingsActivity extends AppCompatActivity {
                 useColorSwitch.setChecked(!useColorSwitch.isChecked());
             }
         });
-        groundOnLaunchLayout.setOnClickListener(new View.OnClickListener() {
+        /*groundOnLaunchLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 groundOnLaunchSwitch.setChecked(!groundOnLaunchSwitch.isChecked());
             }
-        });
+        });*/
 
         useMathSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -244,17 +230,87 @@ public class GroundSettingsActivity extends AppCompatActivity {
                 inDevelopmentToast();
             }
         });
-        groundOnLaunchSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        /*groundOnLaunchSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 userGroundOnLaunch = isChecked;
                 dataManager.saveUserSetting("ground_on_launch", isChecked);
                 inDevelopmentToast();
             }
+        });*/
+
+        /*setupEditTextWatcher(breathQET, "breath_repeat_amount", value -> {
+            userBreathRepeatAmount = value;
+            dataManager.saveUserSetting("breath_repeat_amount", (long) value);
         });
+
+        setupEditTextWatcher(photoQET, "ground_photo_ex_amount", value -> {
+            userPhotoExAmount = value;
+            dataManager.saveUserSetting("ground_photo_ex_amount", (long) value);
+        });
+        */
+
     }
 
-    private void setupEditTextWatcher(EditText editText, String settingName, java.util.function.LongConsumer onValueChanged) {
+    private void showResetSettingsConfirmationDialog(){
+        try{
+            ResetSettingsDIalogFragment dialog = new ResetSettingsDIalogFragment();
+            dialog.setResetSettingsListener(new ResetSettingsDIalogFragment.OnResetSettingsListener() {
+                @Override
+                public void onResetSettingsConfirmed() {
+                    allSettingsToDefault();
+                    saveAllSettings();
+                    updateUI();
+                }
+
+                @Override
+                public void onResetSettingsCancelled() {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show(getSupportFragmentManager(), "reset_settings_dialog");
+        }
+        catch(IllegalStateException ex){
+            // Обработка случая, когда Activity уничтожается
+            Log.e("Dialog", "Cannot show dialog - activity state invalid");
+        }
+    }
+
+    private void allSettingsToDefault(){
+        userBreathRepeatAmount=1;
+        userUseMath=true;
+        userUseCountColor=true;
+        userPhotoExAmount=2;
+        userUseFavesOnly=false;
+        userGroundOnLaunch=false;
+    }
+
+    private void saveAllSettings(){
+        dataManager.saveUserSetting("breath_repeat_amount", userBreathRepeatAmount);
+        dataManager.saveUserSetting("use_math", userUseMath);
+        dataManager.saveUserSetting("use_search_objects_color", userUseCountColor);
+        dataManager.saveUserSetting("ground_photo_ex_amount", userPhotoExAmount);
+        dataManager.saveUserSetting("use_faves_only", userUseFavesOnly);
+        dataManager.saveUserSetting("ground_on_launch", userGroundOnLaunch);
+    }
+
+    private void showNoExsExceptBreathDialog(){
+        try{
+            NoExExceptBreathDialogFragment dialog = new NoExExceptBreathDialogFragment();
+            dialog.show(getSupportFragmentManager(),"dialog_no_ex_except_breath");
+        }
+        catch (IllegalStateException e){
+            Log.e("Dialog", "Cannot show dialog - activity state invalid");
+        }
+    }
+
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+        saveAllSettings();
+    }
+
+    /*private void setupEditTextWatcher(EditText editText, String settingName, java.util.function.LongConsumer onValueChanged) {
         editText.addTextChangedListener(new TextWatcher() {
             private boolean isUpdating = false; // Флаг для предотвращения рекурсии
 
@@ -321,83 +377,5 @@ public class GroundSettingsActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    private void allSettingsToDefault(){
-        userBreathRepeatAmount=1;
-        userUseMath=true;
-        userUseCountColor=true;
-        userPhotoExAmount=2;
-        userUseFavesOnly=false;
-        userGroundOnLaunch=false;
-    }
-
-    private void saveAllSettings(){
-        dataManager.saveUserSetting("breath_repeat_amount", userBreathRepeatAmount);
-        dataManager.saveUserSetting("use_math", userUseMath);
-        dataManager.saveUserSetting("use_search_objects_color", userUseCountColor);
-        dataManager.saveUserSetting("ground_photo_ex_amount", userPhotoExAmount);
-        dataManager.saveUserSetting("use_faves_only", userUseFavesOnly);
-        dataManager.saveUserSetting("ground_on_launch", userGroundOnLaunch);
-    }
-
-    private void showNoExsExceptBreathDialog(){
-        try{
-            NoExExceptBreathDialogFragment dialog = new NoExExceptBreathDialogFragment();
-            dialog.show(getSupportFragmentManager(),"dialog_no_ex_except_breath");
-        }
-        catch (IllegalStateException e){
-            Log.e("Dialog", "Cannot show dialog - activity state invalid");
-        }
-    }
-
-    @Override
-    public void onBackPressed(){
-        super.onBackPressed();
-        saveAllSettings();
-        //finish();
-    }
-
-    /*private void toggleSwitchSetting(Switch switchV, boolean boolSetting, String settingDBName){
-        if(switchV.isChecked()){
-            boolSetting = true;
-        }
-        else{
-            boolSetting = false;
-        }
-        dataManager.saveUserSetting(settingDBName, boolSetting);
-    }
-
-    private void editTextListener(EditText editText, long longSetting, String settingDBName){
-        if(editText.getText().length()<1){
-            editText.setText(String.valueOf(0));
-        }
-        else if (editText.getText().length()>1){
-            editText.setText(String.valueOf(9));
-        }
-        longSetting = Long.parseLong(String.valueOf(editText.getText()));
-
-        dataManager.saveUserSetting(settingDBName, longSetting);
-    }
-
-    private void increaseDecrease(long longSetting, boolean increase, EditText editText, String settingDBName){
-        long number = Long.parseLong(String.valueOf(editText.getText()));
-        if(increase && number<=8 && number>=0)
-            number++;
-        else if(!increase && number<=9 && number>=1)
-            number--;
-
-        editText.setText(String.valueOf(number));
-
-        longSetting=number;
-        dataManager.saveUserSetting(settingDBName, longSetting);
-    }
-
-    private void increaseDecreaseBreathQ(boolean increase){
-        increaseDecrease(userBreathRepeatAmount, increase, breathQET, "breath_repeat_amount");
-    }
-
-    private void increaseDecreasePhotoExQ(boolean increase){
-        increaseDecrease(userPhotoExAmount, increase, photoQET, "ground_photo_ex_amount");
     }*/
 }
