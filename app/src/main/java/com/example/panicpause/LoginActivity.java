@@ -25,7 +25,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 /*
 После входа/регистрации вызывается dataManager.handleUserLogin().
@@ -41,10 +40,8 @@ public class LoginActivity extends AppCompatActivity {
     Button logInBtn, logInAsGuestBtn;
     LinearLayout guestBtnLayout;
 
-    private FirebaseAuth mAuth; //Declare an instance of FirebaseAuth
+    private FirebaseAuth mAuth;
     private DataManager dataManager;
-
-    //private FirebaseFirestore db;
 
     private boolean fromAccSettings=false;
 
@@ -62,8 +59,8 @@ public class LoginActivity extends AppCompatActivity {
 
         // Инициализация Firebase
         mAuth = FirebaseAuth.getInstance();
-        //db = FirebaseFirestore.getInstance();
         dataManager=new DataManager(this);
+
         //loadingDialog = new LoadingDialog(this); //////////////////////
 
         InitializeViews();
@@ -120,8 +117,8 @@ public class LoginActivity extends AppCompatActivity {
         forgotPasswTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: восстановление пароля
-                Toast.makeText(LoginActivity.this, R.string.in_development, Toast.LENGTH_SHORT).show();
+                Intent intent=new Intent(LoginActivity.this, ResetPasswordActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -179,28 +176,6 @@ public class LoginActivity extends AppCompatActivity {
         //checkCurrentUser();
     }
 
-    /*
-    @Override
-    public void onClick(View v){
-        if(v.getId()==R.id.log_in_btn){
-            LogInUser();
-        }
-        else if(v.getId()==R.id.create_acc_tv){
-            Intent intent=new Intent(this, SignInActivity.class);
-            startActivity(intent);
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out); // Плавное появление/исчезание
-            finish();
-        }
-        else if (v.getId()==R.id.forgot_passw_tv) {
-            // TODO: восстановление пароля
-            Toast.makeText(LoginActivity.this, R.string.in_development, Toast.LENGTH_SHORT).show();
-        }
-        else if (v.getId()==R.id.back_btn) {
-            finish();
-        }
-    }
-*/
-
     private String getErrorMessage(Exception exception) {
 
         if (exception == null || exception.getMessage() == null) {
@@ -220,7 +195,6 @@ public class LoginActivity extends AppCompatActivity {
             return getString(R.string.invalid_auth_data);
         }
         return getString(R.string.an_error_occured) + errorMessage;
-
     }
 
     private void LogInUser() {

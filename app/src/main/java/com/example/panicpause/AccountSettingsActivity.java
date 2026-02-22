@@ -3,6 +3,7 @@ package com.example.panicpause;
 import static android.widget.Toast.LENGTH_SHORT;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -111,16 +112,16 @@ public class AccountSettingsActivity extends AppCompatActivity {
         passwResetLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                inDevelopmentToast();
-                //TODO
+                Intent intent=new Intent(AccountSettingsActivity.this, ResetPasswordActivity.class);
+                startActivity(intent);
             }
         });
 
         techSupportLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                inDevelopmentToast();
-                //TODO
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/yuureisen"));
+                startActivity(browserIntent);
             }
         });
 

@@ -14,9 +14,12 @@
         android:theme="@style/Base.Theme.PanicPause"
         tools:targetApi="31">
         <activity
+            android:name=".ResetPasswordActivity"
+            android:exported="false" />
+        <activity
             android:name=".FavGroundActivity"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".FavoritesActivity"
             android:exported="false"

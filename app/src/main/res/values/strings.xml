@@ -32,11 +32,16 @@
     <string name="create_new_passw">Придумайте новый пароль</string>
     <string name="reset_passw">Сбросить пароль</string>
     <string name="cancel">Отмена</string>
+    <string name="cancel_underline"><u>Отмена</u></string>
+    <string name="send_link">Получить ссылку для сброса пароля</string>
+    <string name="set_new_passw">Сохранить новый пароль</string>
+    <string name="link_sent">На введённый email-адрес была отправлена <b>ссылка</b>.\n\n
+        Перейдите по ней, чтобы установить новый пароль для вашей учётной записи.</string>
 
 
     <string name="enter_all">Заполните поля</string>
-    <string name="enter_email">Введите пароль</string>
-    <string name="enter_passw">Введите адрес электронной почты</string>
+    <string name="enter_passw">Введите пароль</string>
+    <string name="enter_email">Введите Email-адрес</string>
     <string name="passw_length">Длина пароля должна составлять минимум 8 символов</string>
     <string name="invalid_email">Введите корректный Email-адрес</string>
     <string name="user_email_exists">Аккаунт с таким Email уже существует</string>
@@ -244,7 +249,7 @@
     <string name="account_settings">Настройки учётной записи</string>
 
     <string name="email_short">Эл. почта</string>
-    <string name="passw_reset"><u>Сброс пароля</u></string>
+    <string name="passw_reset">Сброс пароля</string>
     <string name="tech_support"><u>Техническая поддержка</u></string>
 
     <string name="sign_out"><u><b>Выйти</b> из учетной записи</u></string>
@@ -267,7 +272,7 @@
         (настройки, история, избранные и т. д.) сохраняются только <b>локально</b> на вашем устройстве,
         и при удалении приложения будут безвозвратно утеряны. \nЧтобы это предотвратить, вы можете
         создать <b>учётную запись</b> - тогда ваши данные будут храниться на сервере,
-        и вы сможете получить к ним доступ в любой момент, войдя в неё в приложении  с любого устройства.
+        и вы сможете получить к ним доступ в любой момент, войдя в неё в приложении.
     </string>
     <string name="go_to_login_signin"><b><u>Войти/Зарегистрироваться</u></b></string>
 
