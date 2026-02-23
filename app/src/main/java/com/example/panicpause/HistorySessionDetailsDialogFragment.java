@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 // Диалог для отображения деталей выбранной сессии
 // Показывает все фото из сессии с их тегами
-public class HistorySessionDetailsDialog extends DialogFragment {
+public class HistorySessionDetailsDialogFragment extends DialogFragment {
 
     // Ключи для передачи данных через аргументы
     private static final String ARG_SESSION = "session";
@@ -31,10 +31,10 @@ public class HistorySessionDetailsDialog extends DialogFragment {
      * @param dataManager Менеджер данных для доступа к триггерам
      * @return Новый экземпляр диалога
      */
-    public static HistorySessionDetailsDialog newInstance(
+    public static HistorySessionDetailsDialogFragment newInstance(
             DataManager.ExerciseSession session,
             DataManager dataManager) {
-        HistorySessionDetailsDialog fragment = new HistorySessionDetailsDialog();
+        HistorySessionDetailsDialogFragment fragment = new HistorySessionDetailsDialogFragment();
         //Bundle args = new Bundle();
         //args.putSerializable(ARG_SESSION, session);
         // DataManager не сериализуется, поэтому передаём через сеттер

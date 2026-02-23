@@ -2,6 +2,7 @@ package com.example.panicpause;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.activity.EdgeToEdge;
@@ -141,6 +142,19 @@ public class MainActivity extends AppCompatActivity{
         } else {
             // Если на профиле - возвращаем на главную
             viewPager.setCurrentItem(0, true);
+        }
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Проверяем состояние пользователя при возврате в активность
+        if (dataManager != null) {
+            boolean isGuest = dataManager.isGuest();
+            boolean isLoggedIn = dataManager.isUserLoggedIn();
+
+            Log.d("MainActivity", "onResume: isGuest=" + isGuest + ", isLoggedIn=" + isLoggedIn);
         }
     }
 

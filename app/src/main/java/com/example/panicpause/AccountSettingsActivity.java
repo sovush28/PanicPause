@@ -55,6 +55,9 @@ public class AccountSettingsActivity extends AppCompatActivity {
     ///////
 
     private void updateUI() {
+        if (dataManager == null) {
+            dataManager = new DataManager(this);
+        }
         if (dataManager.isGuest()) {
             // Гость
             guestMsgLayout.setVisibility(View.VISIBLE);
@@ -69,14 +72,8 @@ public class AccountSettingsActivity extends AppCompatActivity {
             FirebaseUser user = mAuth.getCurrentUser();
             if (user != null && user.getEmail() != null) {
                 userEmailTV.setText(user.getEmail());
-            } /*else {
-                userEmailTV.setText(R.string.unknown_user);
-            }*/
+            }
         }
-    }
-
-    private void inDevelopmentToast(){
-        Toast.makeText(AccountSettingsActivity.this, R.string.in_development, Toast.LENGTH_SHORT).show();
     }
 
     private void InitializeViews(){
@@ -142,9 +139,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
         deleteAccTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                inDevelopmentToast();
-                //TODO
-                //showDeleteAccountConfirmationDialog();
+                showDeleteAccountConfirmationDialog();
             }
         });
     }
@@ -211,75 +206,19 @@ public class AccountSettingsActivity extends AppCompatActivity {
         }
     }
 
-
-    //TODO: ошибка (необходим недавний вход?)
-    // УДАЛЕНИЕ аккаунта пользователя
-    /*private void deleteUserAccount() {
-        // Получаем текущего пользователя
-        FirebaseUser user = mAuth.getCurrentUser();
-
-        // Проверяем, что пользователь существует (вошел в систему)
-        if (user != null) {
-
-            user.delete()
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Log.d(TAG, "User account deleted.");
-
-                                // HomeFragment.this.getContext() - получаем контекст фрагмента
-                                Toast.makeText(AccountSettingsActivity.this, R.string.user_deleted, Toast.LENGTH_SHORT).show();
-
-                                // getActivity() - получаем активность, в которой находится фрагмент
-                                Intent intent = new Intent(getActivity(), LoginActivity.class);
-
-                                // Очищаем историю навигации, чтобы пользователь не мог вернуться назад
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-                                startActivity(intent);
-
-                                // завершаем активность
-                                if (getActivity() != null) {
-                                    getActivity().finish();
-                                }
-
-                            } else {
-                                // ошибка удаления
-                                Log.w(TAG, "Failed to delete user account", task.getException());
-                                Toast.makeText(AccountSettingsActivity.this,
-                                        R.string.acc_deletion_error + task.getException().getMessage(),
-                                        Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    });
-        } else {
-            // Пользователь не авторизован
-            Toast.makeText(AccountSettingsActivity.this, R.string.user_isnt_signed_in, Toast.LENGTH_SHORT).show();
-        }
-    }*/
-
-    /*private void showDeleteAccountConfirmationDialog() {
+    private void showDeleteAccountConfirmationDialog(){
         DeleteAccountDialogFragment dialog = new DeleteAccountDialogFragment();
-        dialog.setOnDeleteAccountListener(new DeleteAccountDialogFragment.OnDeleteAccountListener() {
-            @Override
-            public void onDeleteConfirmed() {
-                // Пользователь подтвердил удаление
-                deleteUserAccount();
-            }
 
-            @Override
-            public void onDeleteCancelled() {
-                // Пользователь отменил удаление
-                Toast.makeText(AccountSettingsActivity.this, "Удаление отменено", Toast.LENGTH_SHORT).show();
-                //TODO: то же самое что и повыше, тост потом убрать
-            }
-        });
-
-        if (getParentFragmentManager() != null) {
-            dialog.show(getParentFragmentManager(), "delete_account_dialog");
+        if (getSupportFragmentManager() != null) {
+            dialog.show(getSupportFragmentManager(), "delete_account_dialog");
         }
-    }*/
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Обновляем UI при возврате в активность (важно после удаления аккаунта)
+        updateUI();
+    }
 
 }

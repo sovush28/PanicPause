@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -48,7 +47,7 @@ public class FavoritesRVAdapter extends RecyclerView.Adapter<FavoritesRVAdapter.
         holder.photoIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FavsPhotoDetailsDialog dialog = FavsPhotoDetailsDialog.newInstance(
+                FavsPhotoDetailsDialogFragment dialog = FavsPhotoDetailsDialogFragment.newInstance(
                         photo,
                         dataManager,
                         deletedPhoto -> {

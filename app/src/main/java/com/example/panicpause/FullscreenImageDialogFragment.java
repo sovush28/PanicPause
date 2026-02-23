@@ -19,7 +19,7 @@ import java.io.File;
  * Показывает изображение по URL, поддерживает локальные и сетевые файлы.
  * Закрывается по клику на изображение или фон.
  */
-public class FullscreenImageDialog extends DialogFragment {
+public class FullscreenImageDialogFragment extends DialogFragment {
 
     private String imageUrl;
     private Context context;
@@ -29,8 +29,8 @@ public class FullscreenImageDialog extends DialogFragment {
      * @param imageUrl URL или путь к изображению
      * @return Новый экземпляр
      */
-    public static FullscreenImageDialog newInstance(String imageUrl) {
-        FullscreenImageDialog fragment = new FullscreenImageDialog();
+    public static FullscreenImageDialogFragment newInstance(String imageUrl) {
+        FullscreenImageDialogFragment fragment = new FullscreenImageDialogFragment();
         Bundle args = new Bundle();
         args.putString("image_url", imageUrl);
         fragment.setArguments(args);

@@ -109,7 +109,14 @@
     <string name="count_photo_ex_amount">Количество упражнений</string>
     <string name="not_enough_safe_photos">В приложении недостаточно безопасных фото</string>
     <string name="count_photo_only_faves">Использовать только избранные</string>
-    <string name="not_enough_faves">Недостаточно избранных</string>
+
+    <string name="not_enough_faves_msg">В данный момент включён режим \"Использовать только Избранные\",
+        но избранных упражнений недостаточно для одного Заземления.\n\n
+        Совет: упражнения с фото можно добавлять в Избранные, просматривая их на странице Истории.</string>
+    <string name="turn_off_faves_only">Отключить \"Использовать только Избранные\" и запустить Заземление</string>
+    <string name="launch_ground_faves_only_turned_off">Пройти это Заземление не только с Избранными</string>
+    <string name="go_to_history">Перейти в Историю</string>
+    <string name="not_enough_faves">Недостаточно Избранных</string>
 
     <string name="math_title">Математические примеры</string>
     <string name="include_math">Включать математические примеры</string>
@@ -189,6 +196,8 @@
 
     <string name="guest">Гость</string>
 
+    <string name="logged_in_as">Вы вошли как:</string>
+
 
     <!--Избранные-->
     <string name="fav_exercises">Избранные упражнения</string>
@@ -259,8 +268,10 @@
     <string name="yes_sign_out">Да, выйти</string>
 
     <string name="delete_acc_warning">Вы уверены, что хотите <b>удалить учётную запись</b>?</string>
-    <string name="action_cant_be_cancelled"><b><u>Это действие нельзя отменить</u></b></string>
+    <string name="delete_acc_msg">Введите пароль от текущей учётной записи, чтобы удалить её.</string>
+    <string name="acc_deletion_cannot_be_cancelled">Внимание!\n<b>Это действие нельзя отменить.</b></string>
     <string name="yes_delete_acc">Да, удалить</string>
+    <string name="delete_acc">Удалить учётную запись</string>
 
     <string name="user_deleted">Учетная запись успешно удалена</string>
     <string name="signout_success">Вы успешно вышли из аккаунта</string>

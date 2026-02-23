@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#90000000"
+    android:background="@drawable/custom_dialog_background"
     android:orientation="vertical"
     android:gravity="center"
-    android:id="@+id/dialog_container">
+    android:id="@+id/dialog_container"
+    >
 
     <LinearLayout
-        android:layout_width="290dp"
+        android:layout_width="310dp"
         android:layout_height="wrap_content"
         android:background="@drawable/dialog_bg_dark"
         android:orientation="vertical"
@@ -22,35 +24,57 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:textAlignment="center"
-            android:id="@+id/delete_acc_warning_tv"
+            android:id="@+id/delete_acc_msg_tv"
             style="@style/normalTextLight"
             android:textSize="18dp"
-            android:text="@string/delete_acc_warning"
+            android:text="@string/delete_acc_msg"
             />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:passwordToggleEnabled="true"
+            android:layout_marginTop="20dp"
+            android:textColorHint="@color/colorTransparentBeige"
+            app:passwordToggleTint="@color/colorTransparentBeige"
+            app:hintEnabled="false"
+            >
+            <!--    app:hintEnabled="false" - убирает анимацию хинта при фокусе  -->
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:background="@drawable/et_light_border"
+                android:hint="@string/password"
+                android:textColor="@color/colorBeige"
+                android:textColorHint="@color/colorTransparentBeige"
+                android:textCursorDrawable="@null"
+                android:inputType="textPassword"
+                android:id="@+id/delete_acc_passw_et"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
             android:layout_gravity="center_horizontal"
             android:textAlignment="center"
-            android:id="@+id/action_cant_be_cancelled_tv"
+            android:layout_marginTop="20dp"
+            android:id="@+id/delete_acc_warning_tv"
             style="@style/normalTextLight"
             android:textSize="18dp"
-            android:textStyle="bold"
-            android:text="@string/action_cant_be_cancelled"
+            android:text="@string/acc_deletion_cannot_be_cancelled"
             />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="20dp"
             app:backgroundTint="@null"
             android:background="@drawable/light_btn_shape"
-            android:text="@string/yes_delete_acc"
+            android:text="@string/delete_acc"
             style="@style/normalTextDark"
             android:textStyle="bold"
-            android:id="@+id/yes_delete_btn"
+            android:id="@+id/yes_delete_acc_btn"
             />
         <Button
             android:layout_width="match_parent"

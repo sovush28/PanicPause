@@ -864,6 +864,77 @@ public class DataManager {
         editor.apply();
     }
 
+    /**
+     * Обрабатывает полное удаление аккаунта пользователя.
+     * Вызывается после успешного удаления аккаунта из Firebase Auth и Firestore.
+     * 1. Очищает ВСЕ пользовательские данные из SharedPreferences
+     * 2. Сбрасывает все настройки к значениям по умолчанию
+     * 3. Создаёт нового гостя с новым ID
+     * 4. Очищает историю упражнений
+     * 5. Сбрасывает флаги состояния
+     *
+     * !! метод должен вызываться ТОЛЬКО после подтверждения удаления
+     * из Firebase Auth и Firestore.
+     */
+    public void handleAccountDeletion() {
+        Log.d(TAG, "Начало обработки удаления аккаунта");
+
+        // Полная очистка всех пользовательских данных
+        clearAllUserData();
+
+        // Создаём нового гостя с новым ID
+        String guestId = "guest_" + System.currentTimeMillis();
+        prefs.edit()
+                .putString(KEY_USER_ID, guestId)
+                .putBoolean(KEY_IS_GUEST, true)
+                .putLong(KEY_LAST_MODIFIED_LOCAL, System.currentTimeMillis())
+                .apply();
+
+        Log.d(TAG, "Аккаунт удалён, создан новый гость: " + guestId);
+    }
+
+    /**
+     * Полностью очищает ВСЕ пользовательские данные из SharedPreferences.
+     * В отличие от clearLocalUserData(), этот метод также сбрасывает
+     * флаги онбординга и другие системные настройки.
+     *
+     * Используется при:
+     * - Удалении аккаунта
+     * - Полном сбросе приложения
+     */
+    private void clearAllUserData() {
+        SharedPreferences.Editor editor = prefs.edit();
+
+        // Сбрасываем все пользовательские настройки к значениям по умолчанию
+        editor.putString(KEY_TRIGGERS, "[]");
+        editor.putString(KEY_FAVES, "[]");
+        editor.putInt(KEY_BREATH_REPEAT, 1);
+        editor.putBoolean(KEY_USE_MATH, true);
+        editor.putBoolean(KEY_USE_COLOR_SEARCH, true);
+        editor.putInt(KEY_GROUND_PHOTO_AMOUNT, 2);
+        editor.putBoolean(KEY_GROUND_ON_LAUNCH, false);
+        editor.putBoolean(KEY_USE_FAVES_ONLY, false);
+
+        // Сбрасываем историю упражнений
+        saveExerciseHistory(new ArrayList<>());
+        editor.putLong(KEY_EXERCISE_HISTORY_LAST_MODIFIED, 0);
+
+        // Сбрасываем флаги состояния
+        editor.putBoolean(KEY_ONBOARDING_COMPLETED, false);
+
+        // Очищаем email (если сохранялся)
+        editor.remove("email");
+
+        // Очищаем старый user_id (будет создан новый)
+        editor.remove(KEY_USER_ID);
+        editor.remove(KEY_IS_GUEST);
+        editor.remove(KEY_LAST_MODIFIED_LOCAL);
+
+        editor.apply();
+
+        Log.d(TAG, "Все пользовательские данные очищены");
+    }
+
 
     // ИСТОРИЯ
 

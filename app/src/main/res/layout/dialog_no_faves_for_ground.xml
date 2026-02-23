@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/custom_dialog_background"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:id="@+id/dialog_container"
+    >
+
+    <LinearLayout
+        android:layout_width="290dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dialog_bg_dark"
+        android:orientation="vertical"
+        android:paddingVertical="30dp"
+        android:paddingHorizontal="22dp"
+        android:id="@+id/dialog_content"
+        >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            style="@style/normalTextLight"
+            android:textSize="18sp"
+            android:text="@string/not_enough_faves_msg"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            app:backgroundTint="@null"
+            android:background="@drawable/light_btn_shape"
+            style="@style/normalTextDark"
+            android:textStyle="bold"
+            android:text="@string/turn_off_faves_only"
+            android:id="@+id/turn_off_faves_only_btn"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            app:backgroundTint="@null"
+            android:background="@drawable/light_btn_shape"
+            style="@style/normalTextDark"
+            android:textStyle="bold"
+            android:text="@string/launch_ground_faves_only_turned_off"
+            android:id="@+id/launch_ground_faves_only_turned_off_btn"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            app:backgroundTint="@null"
+            android:background="@drawable/et_light_border"
+            style="@style/normalTextLight"
+            android:textStyle="bold"
+            android:text="@string/go_to_history"
+            android:id="@+id/go_to_history_btn"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-// Фрагмент - "мини-активность", которая может быть частью экрана
 public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
     Button panicBtn;
@@ -51,7 +50,12 @@ public class HomeFragment extends Fragment {
         panicBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                checkIfEnoughPhotos();
+                if(!dataManager.getUseFavesOnly()){
+                    checkIfEnoughPhotos();
+                }
+                else{
+                    checkIfEnoughFaves();
+                }
             }
         });
 
@@ -89,6 +93,27 @@ public class HomeFragment extends Fragment {
                 showWhatsTriggerDialog();
             }
         });
+    }
+
+    private void checkIfEnoughFaves(){
+        if(dataManager.getFaves().size() >= dataManager.getGroundPhotoExAmount()){
+            Intent intent = new Intent(getActivity(), GroundActivity.class);
+            intent.putExtra("faves_only", true);
+            startActivity(intent);
+        }
+        else{
+            showNotEnoughFavesDialog();
+        }
+    }
+
+    private void showNotEnoughFavesDialog(){
+        try {
+            NotEnoughFavesDialogFragment dialog = new NotEnoughFavesDialogFragment();
+            dialog.show(getChildFragmentManager(),"dialog_no_faves_for_ground");
+        }
+        catch (IllegalStateException e){
+            Log.e("Dialog", "Cannot show dialog - activity state invalid");
+        }
     }
 
     private void checkIfEnoughPhotos(){

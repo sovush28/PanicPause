@@ -128,7 +128,7 @@ public class HistoryDialogRVAdapter extends RecyclerView.Adapter<HistoryDialogRV
         holder.historyPhotoIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FullscreenImageDialog dialog = FullscreenImageDialog.newInstance(photo.imgUrl);
+                FullscreenImageDialogFragment dialog = FullscreenImageDialogFragment.newInstance(photo.imgUrl);
                 dialog.show(((androidx.fragment.app.FragmentActivity) context).getSupportFragmentManager(), "fullscreen_image");
             }
         });

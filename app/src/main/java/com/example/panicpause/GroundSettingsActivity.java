@@ -87,11 +87,17 @@ public class GroundSettingsActivity extends AppCompatActivity {
             photoQDecreaseIV.setEnabled(false);
             //photoQET.setEnabled(false);
         }
+
+        if(!userUseFavesOnly && dataManager.getFaves().size() < dataManager.getGroundPhotoExAmount()){
+            useFavesOnlyLayout.setAlpha((float)0.5);
+            useFavesOnlySwitch.setEnabled(false);
+        }
+        else{
+            useFavesOnlyLayout.setAlpha(1);
+            useFavesOnlySwitch.setEnabled(true);
+        }
     }
 
-    private void inDevelopmentToast(){
-        Toast.makeText(this, R.string.in_development, Toast.LENGTH_SHORT).show();
-    }
 
     private void initializeViews(){
         backBtn=findViewById(R.id.back_btn);
@@ -164,6 +170,7 @@ public class GroundSettingsActivity extends AppCompatActivity {
                     photoQET.setText(String.valueOf(userPhotoExAmount));
                     dataManager.saveUserSetting("ground_photo_ex_amount", (int) userPhotoExAmount);
                 }
+                updateUI();
             }
         });
         photoQDecreaseIV.setOnClickListener(new View.OnClickListener() {
@@ -174,6 +181,7 @@ public class GroundSettingsActivity extends AppCompatActivity {
                     photoQET.setText(String.valueOf(userPhotoExAmount));
                     dataManager.saveUserSetting("ground_photo_ex_amount", (int) userPhotoExAmount);
                 }
+                updateUI();
             }
         });
 
@@ -187,6 +195,18 @@ public class GroundSettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 useColorSwitch.setChecked(!useColorSwitch.isChecked());
+            }
+        });
+        useFavesOnlyLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!userUseFavesOnly && dataManager.getFaves().size() < dataManager.getGroundPhotoExAmount()){
+                    Toast.makeText(GroundSettingsActivity.this, getString(R.string.not_enough_faves), Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    useFavesOnlySwitch.setChecked(!useFavesOnlySwitch.isChecked());
+                }
+                updateUI();
             }
         });
         /*groundOnLaunchLayout.setOnClickListener(new View.OnClickListener() {
@@ -227,7 +247,6 @@ public class GroundSettingsActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 userUseFavesOnly = isChecked;
                 dataManager.saveUserSetting("use_faves_only", isChecked);
-                inDevelopmentToast();
             }
         });
         /*groundOnLaunchSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

@@ -81,7 +81,7 @@ public class HistoryActivity extends AppCompatActivity {
         // Создаём и показываем диалог
         /*HistorySessionDetailsDialog dialog = new HistorySessionDetailsDialog(this, session, dataManager);
         dialog.show();*/
-        HistorySessionDetailsDialog dialog = HistorySessionDetailsDialog.newInstance(session, dataManager);
+        HistorySessionDetailsDialogFragment dialog = HistorySessionDetailsDialogFragment.newInstance(session, dataManager);
         dialog.show(getSupportFragmentManager(), "history_session_details");
     }
 

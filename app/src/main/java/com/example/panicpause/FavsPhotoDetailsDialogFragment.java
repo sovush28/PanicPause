@@ -28,7 +28,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FavsPhotoDetailsDialog extends DialogFragment {
+public class FavsPhotoDetailsDialogFragment extends DialogFragment {
     private DataManager.PhotoData photo;
     private DataManager dataManager;
     private Context context;
@@ -42,10 +42,10 @@ public class FavsPhotoDetailsDialog extends DialogFragment {
 
     private OnFavDeletedListener deleteListener;
 
-    public static FavsPhotoDetailsDialog newInstance(
+    public static FavsPhotoDetailsDialogFragment newInstance(
             DataManager.PhotoData photo, DataManager dataManager,
             OnFavDeletedListener listener) {
-        FavsPhotoDetailsDialog fragment = new FavsPhotoDetailsDialog();
+        FavsPhotoDetailsDialogFragment fragment = new FavsPhotoDetailsDialogFragment();
         fragment.photo = photo;
         fragment.dataManager = dataManager;
         fragment.deleteListener = listener;
@@ -89,7 +89,7 @@ public class FavsPhotoDetailsDialog extends DialogFragment {
         viewPhotoLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FullscreenImageDialog dialog = FullscreenImageDialog.newInstance(photo.imgUrl);
+                FullscreenImageDialogFragment dialog = FullscreenImageDialogFragment.newInstance(photo.imgUrl);
                 dialog.show(((androidx.fragment.app.FragmentActivity) context).getSupportFragmentManager(), "fullscreen_image");
             }
         });

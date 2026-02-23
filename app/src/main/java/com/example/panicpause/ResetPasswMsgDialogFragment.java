@@ -12,7 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-public class ResetPasswMsgDialog extends DialogFragment {
+public class ResetPasswMsgDialogFragment extends DialogFragment {
     TextView msgTV;
 
     @Override

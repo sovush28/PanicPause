@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -56,8 +55,11 @@ public class FavoritesActivity extends AppCompatActivity {
 
         if(favoritePhotos.isEmpty()){
             Toast.makeText(this, getText(R.string.no_favs), Toast.LENGTH_SHORT).show();
+            randomOrderLayout.setVisibility(View.INVISIBLE);
         }
         else{
+            randomOrderLayout.setVisibility(View.VISIBLE);
+
             // Создаём адаптер
             FavoritesRVAdapter adapter = new FavoritesRVAdapter(favoritePhotos, this, dataManager);
             favoritesRV.setAdapter(adapter);

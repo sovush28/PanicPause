@@ -149,7 +149,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
     private void showMsgDialog(){
         try{
-            ResetPasswMsgDialog dialog=new ResetPasswMsgDialog();
+            ResetPasswMsgDialogFragment dialog=new ResetPasswMsgDialogFragment();
             dialog.show(getSupportFragmentManager(), "reset_passw_dialog");
         }
         catch(IllegalStateException ex){

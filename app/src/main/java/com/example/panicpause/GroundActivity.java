@@ -2,6 +2,7 @@ package com.example.panicpause;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -56,6 +57,7 @@ public class GroundActivity extends AppCompatActivity {
     private List<DataManager.PhotoData> availablePhotosForSession = new ArrayList<>();
 
     private boolean useDefaultSettings = false;
+    private boolean useFavesOnly=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,8 +69,13 @@ public class GroundActivity extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
 
         Intent intent = getIntent();
-        if(intent!=null && intent.hasExtra("default_settings")){
-            useDefaultSettings = intent.getBooleanExtra("default_settings", false);
+        if(intent!=null){
+            if(intent.hasExtra("default_settings")){
+                useDefaultSettings = intent.getBooleanExtra("default_settings", false);
+            }
+            if(intent.hasExtra("faves_only")){
+                useFavesOnly = intent.getBooleanExtra("faves_only", false);
+            }
         }
 
         buildAndStartGroundSequence();
@@ -108,20 +115,31 @@ public class GroundActivity extends AppCompatActivity {
     }
 
     private void initializeAvailablePhotos() {
+        availablePhotosForSession = new ArrayList<>();
         List<DataManager.PhotoData> allPhotos = dataManager.getLocalImagesList();
-        availablePhotosForSession = new ArrayList<>(allPhotos);
+        if(!useFavesOnly){
+            availablePhotosForSession = new ArrayList<>(allPhotos);
 
-        // Фильтрация по триггерам — только если НЕ используется режим по умолчанию
-        if (!useDefaultSettings) {
-            List<String> triggers = dataManager.getTriggers();
-            if (triggers != null && !triggers.isEmpty()) {
-                availablePhotosForSession.removeIf(photo ->
-                        photo.tags.stream().anyMatch(triggers::contains)
-                );
+            if (!useDefaultSettings) {
+                // Фильтрация по триггерам
+                List<String> triggers = dataManager.getTriggers();
+                if (triggers != null && !triggers.isEmpty()) {
+                    availablePhotosForSession.removeIf(photo ->
+                            photo.tags.stream().anyMatch(triggers::contains)
+                    );
+                }
+            }
+        }
+        else{
+            List<String> userFaves = dataManager.getFaves();
+            for (DataManager.PhotoData photo : allPhotos){
+                if(userFaves.contains(photo.imgUrl)){
+                    availablePhotosForSession.add(photo);
+                }
             }
         }
 
-        // Перемешиваем, чтобы порядок был случайным
+        // Перемешиваем
         Collections.shuffle(availablePhotosForSession);
     }
 
@@ -217,12 +235,6 @@ public class GroundActivity extends AppCompatActivity {
                         DataManager.PhotoData assignedPhoto = getNextUniquePhoto();
                         ((GroundPhotoFragment) fragment).assignPhoto(assignedPhoto);
                     }
-
-                    /*Fragment fragment = fragmentClasses.get(i).newInstance();
-                    // Передаём флаг useDefaultSettings в фрагменты, если они его поддерживают
-                    if (fragment instanceof GroundPhotoFragment) {
-                        ((GroundPhotoFragment) fragment).setUseDefaultSettings(useDefaultSettings);
-                    }*/
 
                     fragmentInstances.add(fragment);
                 }
