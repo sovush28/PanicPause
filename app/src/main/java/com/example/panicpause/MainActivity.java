@@ -82,8 +82,15 @@ public class MainActivity extends AppCompatActivity{
 
     private void onContentReady() {
         if (dataManager.isOnboardingCompleted()) {
-            // Пользователь уже прошёл онбординг — показываем главное меню
-            viewPager.setCurrentItem(0);
+            if(dataManager.isAppInfoViewed()){
+                // Пользователь уже прошёл онбординг — показываем главное меню
+                viewPager.setCurrentItem(0);
+            }
+            else{
+                Intent intent = new Intent(this, AppInfoActivity.class);
+                startActivity(intent);
+                dataManager.markAppInfoViewed();
+            }
         } else {
             // Первый запуск — показываем выбор: гость или вход
             Intent intent = new Intent(this, LoginActivity.class);

@@ -258,14 +258,15 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/back_arrow_icon"
+        android:src="@drawable/x_cross_close_on_beige_circle"
+        android:background="@android:color/transparent"
         android:layout_marginTop="40dp"
         android:layout_marginStart="30dp"
         android:id="@+id/back_btn"
         android:contentDescription="Back Button"
         />
 
-    <LinearLayout
+    <!--<LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -273,11 +274,11 @@
         android:layout_alignParentStart="true"
         android:background="@drawable/beige_rectangle_blurred_border"
         >
-        <!--<ImageView
+        &lt;!&ndash;<ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/beige_rectangle_blurred_borders"
-            />-->
+            />&ndash;&gt;
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -291,6 +292,6 @@
             android:textStyle="bold"
             android:id="@+id/go_to_main_btn"
             />
-    </LinearLayout>
+    </LinearLayout>-->
 
 </RelativeLayout>

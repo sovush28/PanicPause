@@ -57,6 +57,7 @@ public class DataManager {
     private static final String KEY_IS_GUEST = "is_guest";
     private static final String KEY_LAST_MODIFIED_LOCAL = "last_modified_local";
     private static final String KEY_ONBOARDING_COMPLETED = "onboarding_completed";
+    private static final String KEY_APP_INFO_VIEWED = "app_info_viewed";
 
     // Поля пользователя (сохраняются как строки/числа/булевы)
     private static final String KEY_TRIGGERS = "triggers";
@@ -203,7 +204,6 @@ public class DataManager {
                 String imgTag = obj.optString("img_tag", null);
                 Boolean isParent = obj.optBoolean("is_parent", false);
                 String parentTag = obj.optString("parent_tag", "");
-                //String strRes = obj.optString("str_res", "");
                 String nameRus = obj.optString("name_rus", "");
 
                 if (imgTag != null) {
@@ -283,6 +283,15 @@ public class DataManager {
     public void markOnboardingCompleted() {
         prefs.edit().putBoolean(KEY_ONBOARDING_COMPLETED, true).apply();
     }
+
+    public boolean isAppInfoViewed(){
+        return prefs.getBoolean(KEY_APP_INFO_VIEWED, false);
+    }
+
+    public void markAppInfoViewed(){
+        prefs.edit().putBoolean(KEY_APP_INFO_VIEWED, true).apply();
+    }
+
 
     // 1. Инициализация контента
 
@@ -921,6 +930,7 @@ public class DataManager {
 
         // Сбрасываем флаги состояния
         editor.putBoolean(KEY_ONBOARDING_COMPLETED, false);
+        editor.putBoolean(KEY_APP_INFO_VIEWED, false);
 
         // Очищаем email (если сохранялся)
         editor.remove("email");
