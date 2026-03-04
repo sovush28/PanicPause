@@ -22,6 +22,8 @@ public class MainActivity extends AppCompatActivity{
     private BottomNavigationView bottomNavigationV;
     private DataManager dataManager;
 
+    private ProgressDialogFragment progressDialog = new ProgressDialogFragment();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,14 +89,30 @@ public class MainActivity extends AppCompatActivity{
                 viewPager.setCurrentItem(0);
             }
             else{
+                try {
+                    progressDialog.show(getSupportFragmentManager(), "progress_dialog");
+                }
+                catch(IllegalStateException ex){
+                    // Обработка случая, когда Activity уничтожается
+                    Log.e("Dialog", "Cannot show dialog - activity state invalid");
+                }
                 Intent intent = new Intent(this, AppInfoActivity.class);
                 startActivity(intent);
                 dataManager.markAppInfoViewed();
+                progressDialog.dismiss();
             }
         } else {
+            try {
+                progressDialog.show(getSupportFragmentManager(), "progress_dialog");
+            }
+            catch(IllegalStateException ex){
+                // Обработка случая, когда Activity уничтожается
+                Log.e("Dialog", "Cannot show dialog - activity state invalid");
+            }
             // Первый запуск — показываем выбор: гость или вход
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
+            progressDialog.dismiss();
             finish(); // чтобы нельзя было вернуться назад
         }
     }

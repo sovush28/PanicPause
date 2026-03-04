@@ -48,6 +48,8 @@ public class SignInActivity extends AppCompatActivity {
 
     private boolean fromAccSettings = false;
 
+    private ProgressDialogFragment progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -148,30 +150,6 @@ public class SignInActivity extends AppCompatActivity {
         });
     }
 
-    /*
-    @Override
-    public void onClick(View v){
-        if(v.getId()==R.id.to_login_tv){
-            Intent intent=new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out); // Плавное появление/исчезание
-            finish();
-        }
-        else if (v.getId()==R.id.sign_in_btn) {
-            String passw=passwET.getText().toString();
-            String passwRepeat=repeatPasswET.getText().toString();
-            if(!passw.trim().equals(passwRepeat.trim())) {
-                Toast.makeText(this, getString(R.string.passws_not_same),Toast.LENGTH_SHORT).show();
-                return;
-            }
-            signInUser();
-        }
-        else if(v.getId()==R.id.back_iv){
-            finish();
-        }
-    }
-*/
-
     private String getErrorMessage(Exception exception) {
 
         if (exception == null || exception.getMessage() == null) {
@@ -183,13 +161,15 @@ public class SignInActivity extends AppCompatActivity {
             return getString(R.string.invalid_passw_error);
         } else if (errorMessage.contains("no user record")) {
             return getString(R.string.email_not_found);
-        } else if (errorMessage.contains("badly formatted")) {
+        } else if (errorMessage.contains("badly formatted") || errorMessage.contains("email") && errorMessage.contains("format")) {
             return getString(R.string.invalid_email_error);
-        } else if (errorMessage.contains("failed to connect") && errorMessage.contains("network")) {
+        } else if (errorMessage.contains("network")) {
             return getString(R.string.network_error);
         } else if (errorMessage.contains("email address is already") ||
                 errorMessage.contains("The email address is already in use")) {
             return getString(R.string.user_email_exists);
+        } else if(errorMessage.contains("internal server error")){
+            return getString(R.string.error_check_network);
         }
         return getString(R.string.an_error_occured) + errorMessage;
 
@@ -216,7 +196,14 @@ public class SignInActivity extends AppCompatActivity {
             return;
         }
 
-        // loadingDialog.show("Регистрация...");
+        progressDialog = new ProgressDialogFragment();
+        try {
+            progressDialog.show(getSupportFragmentManager(), "progress_dialog");
+        }
+        catch(IllegalStateException ex){
+            // Обработка случая, когда Activity уничтожается
+            Log.e("Dialog", "Cannot show dialog - activity state invalid");
+        }
 
         // регистрация
         mAuth.createUserWithEmailAndPassword(email, password)
@@ -229,8 +216,6 @@ public class SignInActivity extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
 
                             if(user!=null){
-                                //saveUserToFirestore(user);
-
                                 dataManager.saveUserSetting("email", user.getEmail());
 
                                 Toast.makeText(SignInActivity.this,
@@ -238,9 +223,9 @@ public class SignInActivity extends AppCompatActivity {
                                         Toast.LENGTH_SHORT).show();
 
                                 // DataManager автоматически создаст документ в Firestore, если его нет
-                                //dataManager.handleUserLogin(SignInActivity.this::goToLoginActivity);
                                 dataManager.handleUserLogin(() -> {
                                     dataManager.markOnboardingCompleted();
+                                    progressDialog.dismiss();
                                     goToMainActivity();
                                 });
 
@@ -250,12 +235,14 @@ public class SignInActivity extends AppCompatActivity {
                                 Toast.makeText(SignInActivity.this,
                                         getString(R.string.user_data_saving_error),
                                         Toast.LENGTH_LONG).show();
+                                progressDialog.dismiss();
                             }
                         }
                         else{
                             String errorMessage = getErrorMessage(task.getException());
                             Toast.makeText(SignInActivity.this, errorMessage, Toast.LENGTH_LONG).show();
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                            progressDialog.dismiss();
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -264,73 +251,11 @@ public class SignInActivity extends AppCompatActivity {
                         String errorMessage = getErrorMessage(e);
                         Toast.makeText(SignInActivity.this, errorMessage, Toast.LENGTH_LONG).show();
                         Log.e(TAG, "Registration failed", e);
+                        progressDialog.dismiss();
                     }
                 });
 
-        /*
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "createUserWithEmail:success");
-
-                            FirebaseUser user = mAuth.getCurrentUser();
-
-                            if (user!=null){
-                                saveUserToFirestore(user, new OnUserSavedListener() {
-                                    @Override
-                                    public void onUserSaved() {
-                                        //sendEmailVerification(user);
-
-                                        Toast.makeText(SignInActivity.this,
-                                                getString(R.string.signin_success),
-                                                Toast.LENGTH_SHORT).show();
-
-                                        //sendEmailVerification(user);
-
-                                        goToLoginActivity();
-                                    }
-
-                                    @Override
-                                    public void onUserSaveFailed(Exception e) {
-                                        // не сохранилось в Firestore
-                                        Log.w(TAG, "Failed to save user to Firestore", e);
-                                        Toast.makeText(SignInActivity.this,
-                                                "Не удалось сохранить пользователя", //то же самое что и signin_error ?
-                                                Toast.LENGTH_LONG).show();
-                                    }
-                                });
-
-                            }
-                            else {
-                                Toast.makeText(SignInActivity.this,
-                                        getString(R.string.user_create_error), //то же самое что и signin_error ?
-                                        Toast.LENGTH_LONG).show();
-                            }
-                            return;
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-
-                            String errorMessage = getErrorMessage(task.getException());
-                            Toast.makeText(SignInActivity.this, errorMessage, Toast.LENGTH_LONG).show();
-
-                            return;
-                        }
-                    }
-                });*/
     }
-
-    ////
-
-    //коллбэки для асинхронных операций
-    // Интерфейс для коллбэка сохранения пользователя
-    /*interface OnUserSavedListener{
-        void onUserSaved();
-        void onUserSaveFailed(Exception e);
-    }*/
 
     /////
 
@@ -346,7 +271,6 @@ public class SignInActivity extends AppCompatActivity {
         userData.put("use_math", true);
         userData.put("use_search_objects_color", true);
         userData.put("ground_on_launch", false);
-        //userData.put("displayName", ""); // поле для имени
 
         db.collection("users")
                 .document(user.getUid())
@@ -355,14 +279,12 @@ public class SignInActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "User data saved to Firestore");
-                        //listener.onUserSaved();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w(TAG, "Error saving user data", e);
-                        //listener.onUserSaveFailed(e);
                     }
                 });
     }
@@ -375,16 +297,5 @@ public class SignInActivity extends AppCompatActivity {
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         finish();
     }
-
-    /////
-
-    // Обработчик кнопки "Назад"
-    /*@Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-    }*/
-
-    ////////////////////
 
 }

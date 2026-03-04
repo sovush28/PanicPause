@@ -31,6 +31,8 @@ public class AccountSettingsActivity extends AppCompatActivity {
             techSupportLayout, signOutDeleteAccLayout;
     TextView userEmailTV, signOutTV, deleteAccTV;
 
+    private ProgressDialogFragment progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -148,6 +150,15 @@ public class AccountSettingsActivity extends AppCompatActivity {
     private void signOutUser() {
         FirebaseUser user = mAuth.getCurrentUser();
         if(user!=null){
+            progressDialog = new ProgressDialogFragment();
+            try {
+                progressDialog.show(getSupportFragmentManager(), "progress_dialog");
+            }
+            catch(IllegalStateException ex){
+                // Обработка случая, когда Activity уничтожается
+                Log.e("Dialog", "Cannot show dialog - activity state invalid");
+            }
+
             // Выход из Firebase Auth
             mAuth.signOut();
 
@@ -156,23 +167,12 @@ public class AccountSettingsActivity extends AppCompatActivity {
 
             Toast.makeText(AccountSettingsActivity.this, R.string.signout_success, LENGTH_SHORT).show();
 
+            progressDialog.dismiss();
+
             // Перезапуск активности для обновления UI
             Intent intent = getIntent();
             finish();
             startActivity(intent);
-
-            /*
-            // Переходим на экран входа
-            Intent intent = new Intent(this, LoginActivity.class);
-
-            // Очищаем историю навигации
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-            startActivity(intent);
-
-            // Завершаем текущую активность
-            finish();
-*/
         }
         else{
             Toast.makeText(AccountSettingsActivity.this, "Пользователь не обнаружен",

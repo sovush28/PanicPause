@@ -3,6 +3,10 @@
 
     <string name="in_development">В разработке</string>
 
+    <string name="loading">Загрузка...</string>
+    <!--<string name="data_preparing">Подготовка данных...</string>
+    <string name="app_ready">Приложение готово к работе</string>-->
+
     <!--Вход-->
     <string name="welcome_to">Добро пожаловать в</string>
 
@@ -42,7 +46,7 @@
     <string name="enter_all">Заполните поля</string>
     <string name="enter_passw">Введите пароль</string>
     <string name="enter_email">Введите Email-адрес</string>
-    <string name="passw_length">Длина пароля должна составлять минимум 8 символов</string>
+    <string name="passw_length">Пароль должен быть 8 символами или больше</string>
     <string name="invalid_email">Введите корректный Email-адрес</string>
     <string name="user_email_exists">Аккаунт с таким Email уже существует</string>
 
@@ -61,6 +65,7 @@
     <string name="invalid_auth_data">Неверные данные</string>
     <string name="network_error">Проблемы с интернет-соединением</string>
     <string name="an_error_occured">Произошла ошибка: </string>
+    <string name="error_check_network">Ошибка. Проверьте интернет-соединение</string>
 
 
     <!--Главная-->

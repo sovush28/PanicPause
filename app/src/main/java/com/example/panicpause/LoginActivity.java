@@ -45,11 +45,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean fromAccSettings=false;
 
-    // Для показа прогресса в build.gradle (module:app) dependencies добавить:
-    // implementation 'com.github.ybq:Android-SpinKit:1.4.0'
-    // далее отмечено так /////////////////////
 
-    //private LoadingDialog loadingDialog; //////////////////
+    private ProgressDialogFragment progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +57,6 @@ public class LoginActivity extends AppCompatActivity {
         // Инициализация Firebase
         mAuth = FirebaseAuth.getInstance();
         dataManager=new DataManager(this);
-
-        //loadingDialog = new LoadingDialog(this); //////////////////////
 
         InitializeViews();
         SetOnClickListeners();
@@ -161,21 +156,6 @@ public class LoginActivity extends AppCompatActivity {
         finish(); // чтобы пользователь не вернулся сюда нажав назад
     }
 
-    //убрано тк DataManager сам управляет состоянием
-    /*private void checkCurrentUser() {
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            goToMainActivity();
-        }
-    }*/
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        //checkCurrentUser();
-    }
-
     private String getErrorMessage(Exception exception) {
 
         if (exception == null || exception.getMessage() == null) {
@@ -219,7 +199,14 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        //loadingDialog.show("Вход в систему..."); ////////////////////////////////
+        progressDialog = new ProgressDialogFragment();
+        try {
+            progressDialog.show(getSupportFragmentManager(), "progress_dialog");
+        }
+        catch(IllegalStateException ex){
+            // Обработка случая, когда Activity уничтожается
+            Log.e("Dialog", "Cannot show dialog - activity state invalid");
+        }
 
         // авторизация через Firebase Auth
         mAuth.signInWithEmailAndPassword(email, password)
@@ -238,24 +225,24 @@ public class LoginActivity extends AppCompatActivity {
                                 //dataManager.handleUserLogin(LoginActivity.this::goToMainActivity);
                                 dataManager.handleUserLogin(() -> {
                                     dataManager.markOnboardingCompleted();
+                                    progressDialog.dismiss();
                                     goToMainActivity();
                                 });
-
-                                //goToMainActivity();
                             }
                             else{
                                 String errorMessage = getErrorMessage(task.getException());
                                 Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                                progressDialog.dismiss();
                             }
 
                             return;
                         }
                         else {
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            //Toast.makeText(LoginActivity.this, R.string.login_error, Toast.LENGTH_SHORT).show();
 
                             String errorMessage = getErrorMessage(task.getException());
                             Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                            progressDialog.dismiss();
 
                             return;
                         }

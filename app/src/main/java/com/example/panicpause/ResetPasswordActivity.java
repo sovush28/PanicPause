@@ -22,11 +22,8 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
     private EditText emailET;
     private Button sendLinkBtn;
-    //private LinearLayout newPasswLayout;
     private TextView cancelTV;
     private ImageButton backBtn;
-
-    //private DataManager dataManager;
     private FirebaseAuth mAuth;
 
     // Regex для валидации email
@@ -40,13 +37,10 @@ public class ResetPasswordActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_reset_password);
 
-        //dataManager=new DataManager(this);
         mAuth=FirebaseAuth.getInstance();
 
         initializeViews();
         setOnClickListeners();
-
-        //setEnabledNewPasswLayout(false);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -57,11 +51,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
     private void initializeViews(){
         emailET=findViewById(R.id.email_et);
-        //newPasswET=findViewById(R.id.new_passw_et);
-        //repeatNewPasswET=findViewById(R.id.repeat_new_passw_et);
         sendLinkBtn=findViewById(R.id.send_link_btn);
-        //resetPasswBtn=findViewById(R.id.new_passw_btn);
-        //newPasswLayout=findViewById(R.id.new_passw_layout);
         cancelTV=findViewById(R.id.cancel_tv);
         backBtn=findViewById(R.id.back_btn);
     }
@@ -148,7 +138,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
     }
 
     private void showMsgDialog(){
-        try{
+        try {
             ResetPasswMsgDialogFragment dialog=new ResetPasswMsgDialogFragment();
             dialog.show(getSupportFragmentManager(), "reset_passw_dialog");
         }
@@ -157,17 +147,5 @@ public class ResetPasswordActivity extends AppCompatActivity {
             Log.e("Dialog", "Cannot show dialog - activity state invalid");
         }
     }
-
-    /*private void setEnabledNewPasswLayout(boolean enabled){
-        if(enabled){
-            newPasswLayout.setAlpha((float)1);
-        }
-        else{
-            newPasswLayout.setAlpha((float)0.5);
-        }
-        newPasswET.setEnabled(enabled);
-        repeatNewPasswET.setEnabled(enabled);
-        resetPasswBtn.setEnabled(enabled);
-    }*/
 
 }

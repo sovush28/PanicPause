@@ -37,6 +37,7 @@ public class DeleteAccountDialogFragment extends DialogFragment {
 
     private DataManager dataManager;
 
+    private ProgressDialogFragment progressDialog = new ProgressDialogFragment();
 
     @Nullable
     @Override
@@ -111,6 +112,13 @@ public class DeleteAccountDialogFragment extends DialogFragment {
 
         isDeleting = true;
         deleteBtn.setEnabled(false); // Блокируем кнопку во время удаления
+        try {
+            progressDialog.show(getChildFragmentManager(), "progress_dialog");
+        }
+        catch(IllegalStateException ex){
+            // Обработка случая, когда Activity уничтожается
+            Log.e("Dialog", "Cannot show dialog - activity state invalid");
+        }
 
         try{
             final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -129,6 +137,7 @@ public class DeleteAccountDialogFragment extends DialogFragment {
                 Toast.makeText(requireContext(), R.string.user_isnt_signed_in, Toast.LENGTH_LONG).show();
                 isDeleting = false;
                 deleteBtn.setEnabled(true);
+                progressDialog.dismiss();
                 dismiss();
                 return;
             }
@@ -144,6 +153,7 @@ public class DeleteAccountDialogFragment extends DialogFragment {
                                 deleteUserRecordFromFirestore(userIdToDelete);
                             } else {
                                 deleteBtn.setEnabled(true);
+                                progressDialog.dismiss();
                                 Toast.makeText(requireContext(), getErrorMessage(task.getException()), Toast.LENGTH_LONG).show();
                             }
                         }
@@ -178,6 +188,7 @@ public class DeleteAccountDialogFragment extends DialogFragment {
         catch(Exception exception){
             isDeleting = false;
             deleteBtn.setEnabled(true);
+            progressDialog.dismiss();
             Toast.makeText(requireContext(), getErrorMessage(exception), Toast.LENGTH_LONG).show();
         }
 
@@ -239,6 +250,7 @@ public class DeleteAccountDialogFragment extends DialogFragment {
                             cleanupAfterDeletion();
                         } else {
                             deleteBtn.setEnabled(true);
+                            progressDialog.dismiss();
                             Toast.makeText(requireContext(), getErrorMessage(task.getException()), Toast.LENGTH_LONG).show();
                         }
                     }
@@ -251,6 +263,8 @@ public class DeleteAccountDialogFragment extends DialogFragment {
 
         // Шаг 5: Показываем сообщение об успешном удалении
         Toast.makeText(requireContext(), getString(R.string.user_deleted), Toast.LENGTH_LONG).show();
+
+        progressDialog.dismiss();
 
         // Шаг 6: Закрываем диалог
         dismiss();
