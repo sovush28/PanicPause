@@ -24,8 +24,8 @@ public class GroundSettingsActivity extends AppCompatActivity {
     Button resetBtn;
     ImageView breathQIncreaseIV, breathQDecreaseIV, photoQIncreaseIV, photoQDecreaseIV;
     EditText breathQET, photoQET;
-    LinearLayout photoExAmountLayout, useMathLayout, useColorLayout, useFavesOnlyLayout, groundOnLaunchLayout;
-    Switch useMathSwitch, useColorSwitch, useFavesOnlySwitch, groundOnLaunchSwitch;
+    LinearLayout photoExAmountLayout, useMathLayout, useColorLayout, useFavesOnlyLayout;
+    Switch useMathSwitch, useColorSwitch, useFavesOnlySwitch;
 
     private DataManager dataManager;
 
@@ -64,7 +64,6 @@ public class GroundSettingsActivity extends AppCompatActivity {
         userUseCountColor=dataManager.getUseSearchObjectsColor();
         userPhotoExAmount=dataManager.getGroundPhotoExAmount();
         userUseFavesOnly=dataManager.getUseFavesOnly();
-        //userGroundOnLaunch=dataManager.getGroundOnLaunch();
     }
 
     private void updateUI(){
@@ -73,19 +72,16 @@ public class GroundSettingsActivity extends AppCompatActivity {
         useColorSwitch.setChecked(userUseCountColor);
         photoQET.setText(String.valueOf(userPhotoExAmount));
         useFavesOnlySwitch.setChecked(userUseFavesOnly);
-        //groundOnLaunchSwitch.setChecked(userGroundOnLaunch);
 
         if(!userUseMath && !userUseCountColor){
             photoExAmountLayout.setAlpha(1);
             photoQIncreaseIV.setEnabled(true);
             photoQDecreaseIV.setEnabled(true);
-            //photoQET.setEnabled(true);
         }
         else{
             photoExAmountLayout.setAlpha((float)0.5);
             photoQIncreaseIV.setEnabled(false);
             photoQDecreaseIV.setEnabled(false);
-            //photoQET.setEnabled(false);
         }
 
         if(!userUseFavesOnly && dataManager.getFaves().size() < dataManager.getGroundPhotoExAmount()){
@@ -96,8 +92,19 @@ public class GroundSettingsActivity extends AppCompatActivity {
             useFavesOnlyLayout.setAlpha(1);
             useFavesOnlySwitch.setEnabled(true);
         }
+        updatePhotoQIncreaseArrow();
     }
 
+    private void updatePhotoQIncreaseArrow(){
+        if(userUseFavesOnly && dataManager.getFaves().size() <= userPhotoExAmount){
+            photoQIncreaseIV.setEnabled(false);
+            photoQIncreaseIV.setAlpha((float)0.5);
+        }
+        else{
+            photoQIncreaseIV.setEnabled(true);
+            photoQIncreaseIV.setAlpha((float)1);
+        }
+    }
 
     private void initializeViews(){
         backBtn=findViewById(R.id.back_btn);
@@ -111,13 +118,11 @@ public class GroundSettingsActivity extends AppCompatActivity {
         useMathSwitch=findViewById(R.id.use_math_toggle_sc);
         useColorSwitch=findViewById(R.id.use_color_toggle_sc);
         useFavesOnlySwitch =findViewById(R.id.use_faves_only_toggle_sc);
-        //groundOnLaunchSwitch=findViewById(R.id.ground_on_launch_toggle_sc);
         photoExAmountLayout=findViewById(R.id.photo_ex_amount_layout);
 
         useMathLayout=findViewById(R.id.use_math_toggle_layout);
         useColorLayout=findViewById(R.id.use_color_toggle_layout);
         useFavesOnlyLayout=findViewById(R.id.use_faves_only_toggle_layout);
-        //groundOnLaunchLayout=findViewById(R.id.ground_on_launch_toggle_layout);
     }
 
     private void setListeners(){
@@ -209,12 +214,6 @@ public class GroundSettingsActivity extends AppCompatActivity {
                 updateUI();
             }
         });
-        /*groundOnLaunchLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                groundOnLaunchSwitch.setChecked(!groundOnLaunchSwitch.isChecked());
-            }
-        });*/
 
         useMathSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -247,27 +246,9 @@ public class GroundSettingsActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 userUseFavesOnly = isChecked;
                 dataManager.saveUserSetting("use_faves_only", isChecked);
+                updatePhotoQIncreaseArrow();
             }
         });
-        /*groundOnLaunchSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                userGroundOnLaunch = isChecked;
-                dataManager.saveUserSetting("ground_on_launch", isChecked);
-                inDevelopmentToast();
-            }
-        });*/
-
-        /*setupEditTextWatcher(breathQET, "breath_repeat_amount", value -> {
-            userBreathRepeatAmount = value;
-            dataManager.saveUserSetting("breath_repeat_amount", (long) value);
-        });
-
-        setupEditTextWatcher(photoQET, "ground_photo_ex_amount", value -> {
-            userPhotoExAmount = value;
-            dataManager.saveUserSetting("ground_photo_ex_amount", (long) value);
-        });
-        */
 
     }
 
@@ -329,72 +310,4 @@ public class GroundSettingsActivity extends AppCompatActivity {
         saveAllSettings();
     }
 
-    /*private void setupEditTextWatcher(EditText editText, String settingName, java.util.function.LongConsumer onValueChanged) {
-        editText.addTextChangedListener(new TextWatcher() {
-            private boolean isUpdating = false; // Флаг для предотвращения рекурсии
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (isUpdating) return; // Защита от рекурсии
-
-                String input = s.toString();
-
-                // Случай 1: пользователь очистил поле — разрешаем, ничего не делаем
-                if (input.isEmpty()) {
-                    return;
-                }
-
-                // Случай 2: больше одного символа — оставляем ТОЛЬКО последнюю цифру
-                if (input.length() > 1) {
-                    char lastChar = input.charAt(input.length() - 1);
-                    if (Character.isDigit(lastChar)) {
-                        isUpdating = true;
-                        editText.setText(String.valueOf(lastChar));
-                        editText.setSelection(1);
-                        isUpdating = false;
-                        onValueChanged.accept(Character.getNumericValue(lastChar));
-                    } else {
-                        // На всякий случай — если вдруг не цифра
-                        isUpdating = true;
-                        editText.setText("0");
-                        editText.setSelection(1);
-                        isUpdating = false;
-                        onValueChanged.accept(0);
-                    }
-                    return;
-                }
-
-                // Случай 3: один символ
-                char c = input.charAt(0);
-                if (Character.isDigit(c)) {
-                    int value = Character.getNumericValue(c);
-                    onValueChanged.accept(value);
-                } else {
-                    // Очень маловероятно из-за inputType="number", но на всякий
-                    isUpdating = true;
-                    editText.setText("0");
-                    editText.setSelection(1);
-                    isUpdating = false;
-                    onValueChanged.accept(0);
-                }
-            }
-        });
-
-        // При потере фокуса: если поле пустое — ставим "0"
-        editText.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                String text = editText.getText().toString();
-                if (text.isEmpty()) {
-                    editText.setText("0");
-                    onValueChanged.accept(0);
-                }
-            }
-        });
-    }*/
 }

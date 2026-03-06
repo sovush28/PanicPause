@@ -22,16 +22,11 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class SignInActivity extends AppCompatActivity {
 
@@ -42,7 +37,6 @@ public class SignInActivity extends AppCompatActivity {
     LinearLayout guestBtnLayout;
 
     private FirebaseAuth mAuth;
-    private FirebaseFirestore db;
 
     private DataManager dataManager;
 
@@ -57,7 +51,6 @@ public class SignInActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_in);
 
         mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
 
         dataManager=new DataManager(this);
 
@@ -244,7 +237,7 @@ public class SignInActivity extends AppCompatActivity {
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
                             progressDialog.dismiss();
                         }
-                    }
+                    }/*
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
@@ -252,14 +245,14 @@ public class SignInActivity extends AppCompatActivity {
                         Toast.makeText(SignInActivity.this, errorMessage, Toast.LENGTH_LONG).show();
                         Log.e(TAG, "Registration failed", e);
                         progressDialog.dismiss();
-                    }
+                    }*/
                 });
 
     }
 
     /////
 
-    private void saveUserToFirestore(FirebaseUser user) { //, OnUserSavedListener listener
+    /*private void saveUserToFirestore(FirebaseUser user) { //, OnUserSavedListener listener
         Map<String, Object> userData = new HashMap<>();
         userData.put("email", user.getEmail());
         userData.put("created_at", System.currentTimeMillis());
@@ -287,7 +280,7 @@ public class SignInActivity extends AppCompatActivity {
                         Log.w(TAG, "Error saving user data", e);
                     }
                 });
-    }
+    }*/
 
     /////
 

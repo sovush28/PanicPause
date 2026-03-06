@@ -85,12 +85,19 @@ public class ResetPasswordActivity extends AppCompatActivity {
             return;
         }
 
-        //setLoadingState(true);
+        ProgressDialogFragment progressDialog = new ProgressDialogFragment();
+        try {
+            progressDialog.show(getSupportFragmentManager(), "progress_dialog");
+        }
+        catch(IllegalStateException ex){
+            // Обработка случая, когда Activity уничтожается
+            Log.e("Dialog", "Cannot show dialog - activity state invalid");
+        }
 
         // ОТПРАВКА ЗАПРОСА В FIREBASE
         mAuth.sendPasswordResetEmail(email)
                 .addOnCompleteListener(task -> {
-                    //setLoadingState(false);
+                    progressDialog.dismiss();
 
                     if (task.isSuccessful()) {
                         showMsgDialog();
@@ -129,7 +136,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
             return getString(R.string.email_not_found);
         } else if (errorMessage.contains("badly formatted")) {
             return getString(R.string.invalid_email_error);
-        } else if (errorMessage.contains("failed to connect") && errorMessage.contains("network")) {
+        } else if (errorMessage.contains("network")) {
             return getString(R.string.network_error);
         } else if(errorMessage.contains("auth credential is incorrect")){
             return getString(R.string.invalid_auth_data);
