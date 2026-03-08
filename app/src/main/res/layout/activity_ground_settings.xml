@@ -144,15 +144,6 @@
                         android:track="@drawable/toggle_track_selector"
                         android:id="@+id/use_math_toggle_sc"
                         />
-                    <!--<androidx.appcompat.widget.SwitchCompat
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="20dp"
-                        app:track="@drawable/toggle_track_selector"
-                        android:thumb="@drawable/toggle_thumb_selector"
-                        android:checked="true"
-                        android:id="@+id/use_math_toggle_sc"
-                        />-->
                 </LinearLayout>
             </LinearLayout>
 
