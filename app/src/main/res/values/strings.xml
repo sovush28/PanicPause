@@ -264,7 +264,7 @@
 
     <string name="email_short">Эл. почта</string>
     <string name="passw_reset">Сброс пароля</string>
-    <string name="tech_support"><u>Техническая поддержка</u></string>
+    <string name="tech_support"><u>Копировать Email технической поддержки</u></string>
 
     <string name="sign_out"><u><b>Выйти</b> из учетной записи</u></string>
     <string name="delete_account"><u><b>Удалить учетную запись</b></u></string>

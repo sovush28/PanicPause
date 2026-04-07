@@ -2,6 +2,9 @@ package com.example.panicpause;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -119,8 +122,13 @@ public class AccountSettingsActivity extends AppCompatActivity {
         techSupportLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/yuureisen"));
-                startActivity(browserIntent);
+                //Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/yuureisen"));
+                //Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://vk.com/im/convo/-237456249"));
+                //startActivity(browserIntent);
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                android.content.ClipData clip = android.content.ClipData.newPlainText("Email","ign_yu103@mail.ru");
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(AccountSettingsActivity.this, "Email тех. поддержки скопирован", LENGTH_SHORT).show();
             }
         });
 

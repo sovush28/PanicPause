@@ -1,5 +1,6 @@
 package com.example.panicpause;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,16 +10,18 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
 
 /**
  * GroundPhotoFragment - This fragment displays a random photo from Firestore
@@ -42,15 +45,7 @@ public class GroundPhotoFragment extends Fragment {
     private TextView countThingsTV;
     private Button nextBtn;
     ImageButton backBtn;
-
-    private DataManager dataManager;
-    //private List<DataManager.PhotoData> photoList;
-    private DataManager.PhotoData currentPhoto;
     private DataManager.PhotoData assignedPhoto = null;
-
-    //private Random random;
-
-    private boolean useDefaultSettings = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,25 +54,13 @@ public class GroundPhotoFragment extends Fragment {
 
         InitializeViews(view);
 
-        dataManager = new DataManager(requireContext());
-        //photoList = new ArrayList<>();
-        //random = new Random();
-
         setupButtonListeners();
-
-        //loadLocalPhotos();
 
         // Отображаем назначенное фото (или сообщение об ошибке)
         displayAssignedPhoto();
 
         return view;
     }
-
-    // позволяет активности задать режим
-    /*public void setUseDefaultSettings(boolean useDefault) {
-        this.useDefaultSettings = useDefault;
-    }
-    */
 
     private void InitializeViews(View view){
         backBtn = view.findViewById(R.id.back_btn);
@@ -88,7 +71,7 @@ public class GroundPhotoFragment extends Fragment {
 
     private void setupButtonListeners() {
         // Back button - handled by the activity
-         backBtn.setOnClickListener(new View.OnClickListener() {
+        backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Get reference to the parent activity and call its method
@@ -134,7 +117,7 @@ public class GroundPhotoFragment extends Fragment {
                     .into(photoIV);
         }
 
-        // Обновляем текст
+        // Ставим текст
         String instruction = getString(R.string.ground_count_img1) +
                 " " + assignedPhoto.word + " " + getString(R.string.ground_count_img2);
         countThingsTV.setText(instruction);
@@ -145,83 +128,9 @@ public class GroundPhotoFragment extends Fragment {
         }
     }
 
-    /**
-     * Назначает фото для этого фрагмента. Вызывается из активности.
-     */
+    // Назначает фото для этого фрагмента. Вызывается из активности.
     public void assignPhoto(DataManager.PhotoData photo) {
         this.assignedPhoto = photo;
     }
-
-    /*
-    private void loadLocalPhotos() {
-        if (!isAdded())
-            return; // защита от вызова после onDestroy
-
-        countThingsTV.setText(getString(R.string.photo_loading));
-
-        // Загружаем ВСЕ фото
-        List<DataManager.PhotoData> allPhotos = dataManager.getLocalImagesList();
-        photoList = new ArrayList<>(allPhotos);
-
-        // пропускаем фильтрацию, если useDefaultSettings == true
-        if (!useDefaultSettings) {
-            // Фильтруем по триггерам
-            List<String> triggers = dataManager.getTriggers();
-            if (triggers != null && !triggers.isEmpty()) {
-                Iterator<DataManager.PhotoData> it = photoList.iterator();
-                while (it.hasNext()) {
-                    DataManager.PhotoData photo = it.next();
-                    for (String trigger : triggers) {
-                        if (photo.tags.contains(trigger)) {
-                            it.remove();
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        if (photoList.isEmpty()) {
-            if (isAdded()) {
-                countThingsTV.setText(getString(R.string.photo_not_found));
-            }
-        } else {
-            displayRandomPhoto();
-        }
-    }
-
-    private void displayRandomPhoto() {
-        if (photoList.isEmpty() || !isAdded())
-            return;
-
-        int index = random.nextInt(photoList.size());
-        currentPhoto = photoList.get(index);
-
-        String instruction = getString(R.string.ground_count_img1) +
-                " " + currentPhoto.word + " " + getString(R.string.ground_count_img2);
-        countThingsTV.setText(instruction);
-
-        // Получаем локальный путь к фото
-        String filename = DataManager.getFilenameFromUrl(currentPhoto.imgUrl);
-        File photoFile = new File(requireContext().getFilesDir(), "photos/" + filename);
-
-        if (photoFile.exists()) {
-            // Загружаем локальный файл через Glide
-            Glide.with(this)
-                    .load(photoFile)
-                    .into(photoIV);
-        } else {
-            // Резерв: пробуем загрузить по URL (если интернет есть)
-            Glide.with(this)
-                    .load(currentPhoto.imgUrl)
-                    .into(photoIV);
-        }
-
-        // передача фото в активность
-        if (getActivity() instanceof GroundActivity) {
-            ((GroundActivity) getActivity()).onPhotoUsed(currentPhoto);
-        }
-
-    }*/
 
 }

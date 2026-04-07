@@ -49,10 +49,9 @@
             android:textAlignment="center"
             style="@style/normalTextDark"
             android:textStyle="bold"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:layout_marginTop="40dp"
             android:layout_marginBottom="40dp"
-            android:text="Загрузка фотографии..."
             />
 
         <!-- Next button -->
