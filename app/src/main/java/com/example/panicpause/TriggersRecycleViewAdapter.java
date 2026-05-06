@@ -57,22 +57,6 @@ public class TriggersRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVie
         return userSelectedTriggers.contains(imgTag);
     }
 
-    /*
-    // Add a trigger to selected set
-    public void addSelectedTrigger(String imgTag) {
-        userSelectedTriggers.add(imgTag);
-        // Find and update the specific item if possible, otherwise refresh all
-        notifyDataSetChanged();
-    }
-
-    // Remove a trigger from selected set
-    public void removeSelectedTrigger(String imgTag) {
-        userSelectedTriggers.remove(imgTag);
-        // Find and update the specific item if possible, otherwise refresh all
-        notifyDataSetChanged();
-    }
-*/
-
     // Build initial display list with only root items (level 0)
     // Only show items without parents (root categories)
     private void buildDisplayedItemsList() {

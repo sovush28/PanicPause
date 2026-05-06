@@ -38,11 +38,11 @@ public class FavoritesActivity extends AppCompatActivity {
 
         dataManager = new DataManager(this);
 
-        // Получаем избранные фото
+        // получить список URL избранных фото
         List<String> faves = dataManager.getFaves();
         List<DataManager.PhotoData> favoritePhotos = new ArrayList<>();
 
-        // Преобразуем URL в PhotoData
+        // создать список фото PhotoData на основе списка с URL
         List<DataManager.PhotoData> allPhotos = dataManager.getLocalImagesList();
         for (String url : faves) {
             for (DataManager.PhotoData photo : allPhotos) {
@@ -60,15 +60,15 @@ public class FavoritesActivity extends AppCompatActivity {
         else{
             randomOrderLayout.setVisibility(View.VISIBLE);
 
-            // Создаём адаптер
+            // создать адаптер
             FavoritesRVAdapter adapter = new FavoritesRVAdapter(favoritePhotos, this, dataManager);
             favoritesRV.setAdapter(adapter);
 
-            // Настройка сетки
+            // настройка сетки
             GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
             favoritesRV.setLayoutManager(layoutManager);
 
-            // Добавляем отступы
+            // добавить отступы
             int spacing = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 22, getResources().getDisplayMetrics());
             favoritesRV.addItemDecoration(new GridSpacingItemDecoration(spacing));
         }

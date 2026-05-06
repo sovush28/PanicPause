@@ -36,21 +36,23 @@ public class HistoryActivity extends AppCompatActivity {
         // Настройка списка
         historyRV.setLayoutManager(new LinearLayoutManager(this));
 
-        // Загружаем историю из локального хранилища
-        List<DataManager.ExerciseSession> sessions = dataManager.loadExerciseHistory();
+        dataManager.syncExerciseHistoryFromFirestore(()->{
+            // Загружаем историю из локального хранилища
+            List<DataManager.ExerciseSession> sessions = dataManager.loadExerciseHistory();
 
-        if (sessions.isEmpty()) {
-            // Если история пуста — показываем сообщение
-            Toast.makeText(this, getText(R.string.history_empty), Toast.LENGTH_SHORT).show();
-        } else {
-            // Создаём адаптер и устанавливаем его
-            HistoryRVAdapter historyRVAdapter = new HistoryRVAdapter(
-                    sessions,
-                    this,
-                    this::showHistorySessionDetailsDialog
-            );
-            historyRV.setAdapter(historyRVAdapter);
-        }
+            if (sessions.isEmpty()) {
+                // Если история пуста — показываем сообщение
+                Toast.makeText(this, getText(R.string.history_empty), Toast.LENGTH_SHORT).show();
+            } else {
+                // Создаём адаптер и устанавливаем его
+                HistoryRVAdapter historyRVAdapter = new HistoryRVAdapter(
+                        sessions,
+                        this,
+                        this::showHistorySessionDetailsDialog
+                );
+                historyRV.setAdapter(historyRVAdapter);
+            }
+        });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -79,8 +81,6 @@ public class HistoryActivity extends AppCompatActivity {
      */
     private void showHistorySessionDetailsDialog(DataManager.ExerciseSession session) {
         // Создаём и показываем диалог
-        /*HistorySessionDetailsDialog dialog = new HistorySessionDetailsDialog(this, session, dataManager);
-        dialog.show();*/
         HistorySessionDetailsDialogFragment dialog = HistorySessionDetailsDialogFragment.newInstance(session, dataManager);
         dialog.show(getSupportFragmentManager(), "history_session_details");
     }

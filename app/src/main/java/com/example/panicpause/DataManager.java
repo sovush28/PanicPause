@@ -15,6 +15,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -66,7 +67,6 @@ public class DataManager {
     private static final String KEY_USE_MATH = "use_math";
     private static final String KEY_USE_COLOR_SEARCH = "use_search_objects_color";
     private static final String KEY_GROUND_PHOTO_AMOUNT = "ground_photo_ex_amount";
-    private static final String KEY_GROUND_ON_LAUNCH = "ground_on_launch";
     private static final String KEY_USE_FAVES_ONLY = "use_faves_only";
 
     private final Context context;
@@ -137,26 +137,49 @@ public class DataManager {
     private static final String KEY_EXERCISE_HISTORY_LAST_MODIFIED = "exercise_history_last_modified";
 
 
-
     //Загружает список изображений из локального файла images.json
     public List<PhotoData> getLocalImagesList(){
         List<PhotoData> photos = new ArrayList<>();
         File imagesFile=new File(context.getFilesDir(), "content/images.json");
 
-        if(!imagesFile.exists()){
-            Log.w(TAG, "Local images.json not found");
-            return photos;
-        }
-        try (FileInputStream fis = new FileInputStream(imagesFile);
-             ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = fis.read(buffer)) != -1) {
-                bos.write(buffer, 0, length);
-            }
-            String json = bos.toString("UTF-8");
-            JSONArray array = new JSONArray(json);
+        if (imagesFile.exists()) {
+            try {
+                String json = readFileToString(imagesFile);
+                if (json != null && !json.isEmpty()) {
+                    JSONArray array = new JSONArray(json);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject obj = safeGetJSONObject(array, i);
 
+                        String imgUrl = obj.optString("img_url", null);
+                        String word = obj.optString("word", null);
+                        JSONArray tagsArray = obj.optJSONArray("tags");
+                        List<String> tags = new ArrayList<>();
+                        if (tagsArray != null) {
+                            for (int j = 0; j < tagsArray.length(); j++) {
+                                tags.add(tagsArray.getString(j));
+                            }
+                        }
+
+                        if (imgUrl != null && word != null) {
+                            photos.add(new PhotoData(imgUrl, word, tags));
+                        }
+                    }
+                    Log.d(TAG, "Загружено " + photos.size() + " изображений из локального файла");
+                    return photos;
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Ошибка парсинга локального images.json. Файл поврежден.", e);
+                imagesFile.delete();
+                Log.w(TAG, "Поврежденный файл images.json удален. Восстановление из Assets...");
+            }
+        }
+
+        // Загрузка из Assets
+        Log.d(TAG, "Загрузка изображений из Assets");
+        try {
+            InputStream is = context.getAssets().open("images.json");
+            String json = streamToString(is);
+            JSONArray array = new JSONArray(json);
             for (int i = 0; i < array.length(); i++) {
                 JSONObject obj = array.getJSONObject(i);
                 String imgUrl = obj.optString("img_url", null);
@@ -172,9 +195,53 @@ public class DataManager {
                     photos.add(new PhotoData(imgUrl, word, tags));
                 }
             }
+            copyAssetToFile("images.json", new File(context.getFilesDir(), "content/images.json"));
+            Log.d(TAG, "Изображения успешно загружены из Assets и сохранены локально");
+        } catch (Exception e) {
+            Log.e(TAG, "Критическая ошибка: не удалось загрузить изображения из Assets", e);
+        }
+
+        /*if(!imagesFile.exists()){
+            Log.w(TAG, "Local images.json not found");
+            return photos;
+        }
+        try (FileInputStream fis = new FileInputStream(imagesFile);
+             ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = fis.read(buffer)) != -1) {
+                bos.write(buffer, 0, length);
+            }
+            String json = bos.toString("UTF-8");
+
+            // Удаляем BOM (Byte Order Mark), если он есть (для надежности)
+            if (json.startsWith("\ufeff")) {
+                json = json.substring(1);
+            }
+
+            JSONArray array = new JSONArray(json);
+
+            for (int i = 0; i < array.length(); i++) {
+                //JSONObject obj = array.getJSONObject(i);
+                // Используем безопасный метод получения объекта
+                JSONObject obj = safeGetJSONObject(array, i);
+
+                String imgUrl = obj.optString("img_url", null);
+                String word = obj.optString("word", null);
+                JSONArray tagsArray = obj.optJSONArray("tags");
+                List<String> tags = new ArrayList<>();
+                if (tagsArray != null) {
+                    for (int j = 0; j < tagsArray.length(); j++) {
+                        tags.add(tagsArray.getString(j));
+                    }
+                }
+                if (imgUrl != null && word != null && !imgUrl.isEmpty() && !word.isEmpty()) {
+                    photos.add(new PhotoData(imgUrl, word, tags));
+                }
+            }
         } catch (Exception e) {
             Log.e(TAG, "Error loading images.json", e);
-        }
+        }*/
         return photos;
     }
 
@@ -183,7 +250,71 @@ public class DataManager {
         List<TriggerItem> tags = new ArrayList<>();
         File tagsFile = new File(context.getFilesDir(), "content/tags.json");
 
-        if (!tagsFile.exists()) {
+        // Попытка загрузить из локального файла
+        if (tagsFile.exists()) {
+            try {
+                String json = readFileToString(tagsFile);
+                if (json != null && !json.isEmpty()) {
+                    JSONArray array = new JSONArray(json);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject obj = safeGetJSONObject(array, i);
+
+                        String imgTag = obj.optString("img_tag", null);
+                        boolean isParent = obj.optBoolean("is_parent", false);
+                        String parentTag = obj.optString("parent_tag", "");
+                        String nameRus = obj.optString("name_rus", "");
+
+                        if (imgTag != null && !imgTag.isEmpty()) {
+                            tags.add(new TriggerItem(imgTag, isParent, parentTag, nameRus));
+                        }
+                    }
+                    Log.d(TAG, "Загружено " + tags.size() + " тегов из локального файла");
+                    return tags;
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Ошибка парсинга локального tags.json. Файл поврежден.", e);
+                // Логируем начало файла для диагностики
+                try {
+                    String badContent = readFileToString(tagsFile);
+                    if (badContent != null) {
+                        Log.e(TAG, "Содержимое поврежденного файла (первые 200 сим): " +
+                                badContent.substring(0, Math.min(200, badContent.length())));
+                    }
+                } catch (Exception ex) { /* ignore */ }
+
+                // Удаляем поврежденный файл
+                tagsFile.delete();
+                Log.w(TAG, "Поврежденный файл tags.json удален. Восстановление из Assets...");
+            }
+        }
+
+        // Если локального файла нет или он был удален, загружаем из Assets
+        Log.d(TAG, "Загрузка тегов из Assets");
+        try {
+            InputStream is = context.getAssets().open("tags.json");
+            String json = streamToString(is);
+            JSONArray array = new JSONArray(json);
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject obj = array.getJSONObject(i);
+                String imgTag = obj.optString("img_tag", null);
+                boolean isParent = obj.optBoolean("is_parent", false);
+                String parentTag = obj.optString("parent_tag", "");
+                String nameRus = obj.optString("name_rus", "");
+
+                if (imgTag != null && !imgTag.isEmpty()) {
+                    tags.add(new TriggerItem(imgTag, isParent, parentTag, nameRus));
+                }
+            }
+
+            // Сохраняем корректную копию в локальную папку
+            copyAssetToFile("tags.json", new File(context.getFilesDir(), "content/tags.json"));
+            Log.d(TAG, "Теги успешно загружены из Assets и сохранены локально");
+
+        } catch (Exception e) {
+            Log.e(TAG, "Критическая ошибка: не удалось загрузить теги даже из Assets", e);
+        }
+
+        /*if (!tagsFile.exists()) {
             Log.w(TAG, "Local tags.json not found");
             return tags;
         }
@@ -197,22 +328,31 @@ public class DataManager {
             }
 
             String json = bos.toString("UTF-8");
+            // Удаляем BOM (Byte Order Mark), если он есть (для надежности)
+            if (json.startsWith("\ufeff")) {
+                json = json.substring(1);
+            }
+
             JSONArray array = new JSONArray(json);
 
             for (int i = 0; i < array.length(); i++) {
-                JSONObject obj = array.getJSONObject(i);
+                //JSONObject obj = array.getJSONObject(i);
+                JSONObject obj = safeGetJSONObject(array, i);
+
                 String imgTag = obj.optString("img_tag", null);
                 Boolean isParent = obj.optBoolean("is_parent", false);
                 String parentTag = obj.optString("parent_tag", "");
                 String nameRus = obj.optString("name_rus", "");
 
-                if (imgTag != null) {
+                if (imgTag != null && !imgTag.isEmpty()) {
                     tags.add(new TriggerItem(imgTag, isParent, parentTag, nameRus));
                 }
             }
         } catch (Exception e) {
             Log.e(TAG, "Error loading tags.json", e);
-        }
+            // Можно удалить поврежденный файл, чтобы при следующем запуске он скопировался из assets
+            // tagsFile.delete()
+        }*/
         return tags;
     }
 
@@ -242,10 +382,6 @@ public class DataManager {
 
     public boolean getUseFavesOnly() {
         return prefs.getBoolean(KEY_USE_FAVES_ONLY, false);
-    }
-
-    public boolean getGroundOnLaunch() {
-        return prefs.getBoolean(KEY_GROUND_ON_LAUNCH, false);
     }
 
     public List<String> getTriggers() {
@@ -357,14 +493,6 @@ public class DataManager {
                 }
             }
         }
-        /*try (InputStream is = context.getAssets().open(assetPath);
-             OutputStream os = new FileOutputStream(destFile)) {
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = is.read(buffer)) > 0) {
-                os.write(buffer, 0, length);
-            }
-        }*/
     }
 
     private void copyAssetsPhotos() throws IOException {
@@ -378,15 +506,16 @@ public class DataManager {
     }
 
 
-    // === 2. Проверка и обновление контента ===
+    // 2. Проверка и обновление контента
 
     private void checkForContentUpdates(Runnable onReady) {
         if (!isNetworkAvailable()) {
-            // Нет интернета — работаем с тем, что есть
+            Log.d(TAG, "[SYNC] Нет интернета. Используются локальные данные.");
             onReady.run();
             return;
         }
 
+        Log.d(TAG, "[SYNC] Проверка версии контента в облаке...");
         // Загружаем версию из Firestore
         db.collection("meta").document("version")
                 .get()
@@ -394,42 +523,51 @@ public class DataManager {
                     if (snapshot.exists() && snapshot.contains("version")) {
                         long remoteVersion = snapshot.getLong("version");
                         int localVersion = prefs.getInt(KEY_LOCAL_CONTENT_VERSION, 1);
-
+                        Log.d(TAG, "[SYNC] Облачная версия: " + remoteVersion + ", Локальная: " + localVersion);
                         if (remoteVersion > localVersion) {
+                            Log.d(TAG, "[SYNC] Найдено обновление. Запуск загрузки...");
                             downloadAndApplyContentUpdate((int) remoteVersion, onReady);
                         } else {
+                            Log.d(TAG, "[SYNC] Контент актуален.");
                             onReady.run();
                         }
                     } else {
-                        onReady.run(); // нет мета-данных — работаем локально
+                        Log.w(TAG, "[SYNC] Документ meta/version не содержит поле 'version'");
+                        onReady.run();
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.w(TAG, "Не удалось проверить обновления контента", e);
-                    onReady.run(); // продолжаем без обновления
+                    Log.e(TAG, "[SYNC] Ошибка подключения к Firestore. Код: " +
+                            (e.getCause() != null ? e.getCause().getMessage() : e.getMessage()));
+                    onReady.run(); // продолжаем работу с лок. данными без обновления
                 });
     }
 
     private void downloadAndApplyContentUpdate(int newVersion, Runnable onReady) {
         // Скачиваем tags
         db.collection("tags_collection").get().addOnSuccessListener(tagsSnapshot -> {
+            Log.d(TAG, "[SYNC] Теги получены (количество: " + tagsSnapshot.size() + ")");
             saveCollectionAsJson("tags.json", tagsSnapshot, () -> {
                 // Скачиваем images
                 db.collection("images").get().addOnSuccessListener(imagesSnapshot -> {
+                    Log.d(TAG, "[SYNC] Изображения получены (количество: " + imagesSnapshot.size() + ")");
                     saveCollectionAsJson("images.json", imagesSnapshot, () -> {
                         // Скачиваем недостающие фото
                         downloadMissingPhotos(imagesSnapshot, () -> {
                             // Обновляем версию
                             prefs.edit().putInt(KEY_LOCAL_CONTENT_VERSION, newVersion).apply();
-                            Log.d(TAG, "Контент обновлён до версии " + newVersion);
+                            Log.d(TAG, "[SYNC] Контент успешно обновлён до версии " + newVersion);
                             onReady.run();
                         });
                     });
+                }).addOnFailureListener(e ->{
+                    Log.e(TAG, "[SYNC] Ошибка загрузки коллекции images: ", e);
+                    onReady.run();
                 });
             });
         }).addOnFailureListener(e -> {
-            Log.e(TAG, "Ошибка загрузки tags при обновлении", e);
-            onReady.run(); // всё равно продолжаем
+            Log.e(TAG, "[SYNC] Ошибка загрузки коллекции tags: ", e);
+            onReady.run();
         });
     }
 
@@ -438,15 +576,42 @@ public class DataManager {
             try {
                 JSONArray array = new JSONArray();
                 for (DocumentSnapshot doc : snapshot) {
-                    array.put(doc.getData()); // сохраняем только данные, без ID
+                    // Явно создаем JSONObject из Map данных документа
+                    // Это гарантирует, что в файл запишется корректный JSON, а не toString() Map
+                    JSONObject jsonObj = new JSONObject(doc.getData());
+                    array.put(jsonObj);
+                    //array.put(doc.getData());
                 }
                 File file = new File(contentDir, filename);
-                try (FileOutputStream fos = new FileOutputStream(file)) {
+                // Записываем файл атомарно (сначала во временный, потом переименовываем),
+                // чтобы избежать повреждения при обрыве записи
+                File tempFile = new File(contentDir, filename + ".tmp");
+                // Пишем данные во временный файл
+                try (FileOutputStream fos = new FileOutputStream(tempFile)) {
                     fos.write(array.toString(2).getBytes(java.nio.charset.StandardCharsets.UTF_8));
                 }
+                // Если запись успешна, заменяем старый файл новым
+                if (file.exists()) {
+                    file.delete();
+                }
+                boolean success = tempFile.renameTo(file);
+
+                if (success) {
+                    Log.d(TAG, "Файл " + filename + " успешно сохранен (" + array.length() + " записей)");
+                } else {
+                    Log.w(TAG, "Переименование не сработало. Файл сохранен напрямую.");
+                    // Fallback на случай, если rename запрещен на некоторых устройствах
+                    try (FileOutputStream fos = new FileOutputStream(file)) {
+                        fos.write(array.toString(2).getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                    }
+                }
+
                 onComplete.run();
             } catch (Exception e) {
                 Log.e(TAG, "Ошибка сохранения JSON: " + filename, e);
+                // Удаляем временный файл, если он остался
+                File tempFile = new File(contentDir, filename + ".tmp");
+                if (tempFile.exists()) tempFile.delete();
                 onComplete.run();
             }
         }).start();
@@ -518,7 +683,7 @@ public class DataManager {
         }
     }
 
-    //=== 3. Работа с пользователем и настройками ===
+    // 3. Работа с пользователем и настройками
 
     // Проверяет, авторизован ли пользователь в Firebase
     public boolean isUserLoggedIn() {
@@ -640,75 +805,6 @@ public class DataManager {
                             .apply();
                     onSyncComplete.run();
                 });
-
-        /*FirebaseUser firebaseUser = mAuth.getCurrentUser();
-        if (firebaseUser == null) {
-            onSyncComplete.run();
-            return;
-        }
-
-        String firebaseUid = firebaseUser.getUid();
-        String currentLocalUserId = getUserId();
-        boolean wasGuest = isGuest();
-        long localLastModified = prefs.getLong(KEY_LAST_MODIFIED_LOCAL, System.currentTimeMillis());
-
-        // Загружаем данные из Firestore
-        db.collection("users").document(firebaseUid).get()
-                .addOnSuccessListener(snapshot -> {
-                    if (snapshot.exists()) {
-                        // Есть данные в облаке — сравниваем время
-                        long remoteLastModified = snapshot.getLong("last_modified");
-
-                        if (localLastModified >= remoteLastModified && wasGuest) {
-                            // Локальные новее — загружаем их в облако
-                            saveLocalUserSettingsToFirestore(firebaseUid, localLastModified, () -> {
-                                prefs.edit()
-                                        .putString(KEY_USER_ID, firebaseUid)
-                                        .putBoolean(KEY_IS_GUEST, false)
-                                        .apply();
-
-                                // Также синхронизируем историю
-                                syncExerciseHistoryToFirestore();
-
-                                onSyncComplete.run();
-                            });
-                        } else {
-                            // Облачные новее — загружаем их локально
-                            loadUserSettingsFromSnapshot(snapshot);
-                            // Загружаем историю из облака
-                            syncExerciseHistoryFromFirestore(() -> {
-                                prefs.edit()
-                                        .putString(KEY_USER_ID, firebaseUid)
-                                        .putBoolean(KEY_IS_GUEST, false)
-                                        .putLong(KEY_LAST_MODIFIED_LOCAL, remoteLastModified)
-                                        .apply();
-                                onSyncComplete.run();
-                            });
-                        }
-                    } else {
-                        // Нет данных в облаке — сохраняем локальные
-                        saveLocalUserSettingsToFirestore(firebaseUid, localLastModified, () -> {
-                            prefs.edit()
-                                    .putString(KEY_USER_ID, firebaseUid)
-                                    .putBoolean(KEY_IS_GUEST, false)
-                                    .apply();
-
-                            // Также синхронизируем историю
-                            syncExerciseHistoryToFirestore();
-
-                            onSyncComplete.run();
-                        });
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Log.w(TAG, "Не удалось загрузить данные пользователя", e);
-                    // В случае ошибки — остаёмся гостем, но меняем ID на firebaseUid
-                    prefs.edit()
-                            .putString(KEY_USER_ID, firebaseUid)
-                            .putBoolean(KEY_IS_GUEST, false)
-                            .apply();
-                    onSyncComplete.run();
-                });*/
     }
 
     /**
@@ -741,7 +837,6 @@ public class DataManager {
         editor.putBoolean(KEY_USE_MATH, true);
         editor.putBoolean(KEY_USE_COLOR_SEARCH, true);
         editor.putInt(KEY_GROUND_PHOTO_AMOUNT, 2);
-        editor.putBoolean(KEY_GROUND_ON_LAUNCH, false);
         editor.putBoolean(KEY_USE_FAVES_ONLY, false);
         editor.putLong(KEY_LAST_MODIFIED_LOCAL, System.currentTimeMillis());
 
@@ -753,7 +848,7 @@ public class DataManager {
     }
 
 
-    // === 4. Сохранение и загрузка настроек ===
+    // 4. Сохранение и загрузка настроек
 
     // Сохраняет настройку и обновляет временную метку.
     public void saveUserSetting(String key, Object value) {
@@ -790,7 +885,6 @@ public class DataManager {
         if (isGuest())
             return;
 
-        //JSONObject data = new JSONObject();
         Map<String, Object> data = new HashMap<>();
         try {
             data.put("email", prefs.getString("email", ""));
@@ -800,7 +894,6 @@ public class DataManager {
             data.put("use_math", prefs.getBoolean(KEY_USE_MATH, true));
             data.put("use_search_objects_color", prefs.getBoolean(KEY_USE_COLOR_SEARCH, true));
             data.put("ground_photo_ex_amount", prefs.getInt(KEY_GROUND_PHOTO_AMOUNT, 2));
-            data.put("ground_on_launch", prefs.getBoolean(KEY_GROUND_ON_LAUNCH, false));
             data.put("use_faves_only", prefs.getBoolean(KEY_USE_FAVES_ONLY, false));
             data.put("last_modified", lastModified);
 
@@ -822,7 +915,6 @@ public class DataManager {
             return;
         }
 
-        //JSONObject data = new JSONObject();
         Map<String, Object> data = new HashMap<>();
         try {
             // Собираем все текущие настройки
@@ -833,7 +925,6 @@ public class DataManager {
             data.put("use_math", prefs.getBoolean(KEY_USE_MATH, true));
             data.put("use_search_objects_color", prefs.getBoolean(KEY_USE_COLOR_SEARCH, true));
             data.put("ground_photo_ex_amount", prefs.getInt(KEY_GROUND_PHOTO_AMOUNT, 2));
-            data.put("ground_on_launch", prefs.getBoolean(KEY_GROUND_ON_LAUNCH, false));
             data.put("use_faves_only", prefs.getBoolean(KEY_USE_FAVES_ONLY, false));
             data.put("last_modified", lastModified);
 
@@ -867,7 +958,6 @@ public class DataManager {
         editor.putBoolean(KEY_USE_MATH, snapshot.getBoolean("use_math"));
         editor.putBoolean(KEY_USE_COLOR_SEARCH, snapshot.getBoolean("use_search_objects_color"));
         editor.putInt(KEY_GROUND_PHOTO_AMOUNT, snapshot.getLong("ground_photo_ex_amount").intValue());
-        editor.putBoolean(KEY_GROUND_ON_LAUNCH, snapshot.getBoolean("ground_on_launch"));
         editor.putBoolean(KEY_USE_FAVES_ONLY, snapshot.getBoolean("use_faves_only"));
 
         editor.apply();
@@ -921,7 +1011,6 @@ public class DataManager {
         editor.putBoolean(KEY_USE_MATH, true);
         editor.putBoolean(KEY_USE_COLOR_SEARCH, true);
         editor.putInt(KEY_GROUND_PHOTO_AMOUNT, 2);
-        editor.putBoolean(KEY_GROUND_ON_LAUNCH, false);
         editor.putBoolean(KEY_USE_FAVES_ONLY, false);
 
         // Сбрасываем историю упражнений
@@ -1196,7 +1285,7 @@ public class DataManager {
 
 
 
-    // === Вспомогательные методы ===
+    // Вспомогательные методы
 
     public static String getFilenameFromUrl(String url) {
         if (url == null || url.isEmpty()) return null;
@@ -1224,6 +1313,60 @@ public class DataManager {
         } catch (Exception e) {
             return new ArrayList<>(); // возвращаем пустой список при ошибке
         }
+    }
+
+    /**
+     * Вспомогательный метод для безопасного получения JSONObject из JSONArray.
+     * Если элемент является строкой, пытается распарсить её как JSON.
+     */
+    private JSONObject safeGetJSONObject(JSONArray array, int index) throws JSONException {
+        Object item = array.get(index);
+        if (item instanceof JSONObject) {
+            return (JSONObject) item;
+        } else if (item instanceof String) {
+            String str = (String) item;
+            // Если строка начинается с '{', пытаемся распарсить её как JSON
+            if (str.trim().startsWith("{")) {
+                return new JSONObject(str);
+            }
+        }
+        throw new JSONException("Неожиданный тип элемента в массиве по индексу " + index + ": " + item.getClass().getName());
+    }
+
+    // Читает файл в строку.
+    private String readFileToString(File file) throws IOException {
+        try (FileInputStream fis = new FileInputStream(file);
+             ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = fis.read(buffer)) != -1) {
+                bos.write(buffer, 0, length);
+            }
+            String content = bos.toString("UTF-8");
+            // Удаляем BOM, если есть
+            if (content.startsWith("\ufeff")) {
+                content = content.substring(1);
+            }
+            return content;
+        }
+    }
+
+    // Читает InputStream в строку.
+    private String streamToString(InputStream is) throws IOException {
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) != -1) {
+                bos.write(buffer, 0, length);
+            }
+            return bos.toString("UTF-8");
+        }
+    }
+
+    public void testFirestoreConnection() {
+        db.collection("meta").document("version").get()
+                .addOnSuccessListener(s -> Log.d("FIREBASE_TEST", "[ПРОВЕРКА FIREBASE] Подключение успешно! Версия: " + s.getLong("version")))
+                .addOnFailureListener(e -> Log.e("FIREBASE_TEST", "[ПРОВЕРКА FIREBASE] Ошибка подключения: " + e.getMessage()));
     }
 
 }

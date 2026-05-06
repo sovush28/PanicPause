@@ -493,11 +493,6 @@ public class GroundActivity extends AppCompatActivity {
         return currentFragmentIndex == fragmentClasses.size() - 1;
     }
 
-    // Геттер для фрагментов (альтернатива, если не передавать через setUseDefaultSettings)
-    public boolean isUsingDefaultSettings() {
-        return useDefaultSettings;
-    }
-
     /*public int getTotalExercisesCount() {
         return fragmentClasses.size();
     }*/

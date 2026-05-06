@@ -129,7 +129,7 @@
     <string name="count_color_title">Поиск предметов вокруг себя</string>
     <string name="include_count_color">Включать поиск предметов вокруг</string>
 
-    <string name="auto_ground_on_launch">Автоматически запускать Заземление при входе в приложение</string>
+    <!--<string name="auto_ground_on_launch">Автоматически запускать Заземление при входе в приложение</string>-->
 
     <string name="reset_settings">Сбросить настройки</string>
     <string name="reset_settings_question">Вы уверены, что хотите <b>сбросить настройки?</b></string>

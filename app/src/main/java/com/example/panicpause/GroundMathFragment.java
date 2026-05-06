@@ -164,21 +164,21 @@ public class GroundMathFragment extends Fragment {
                 operation = "+";
                 number1 = random.nextInt(199) - 99; // -99 to 99
                 number2 = random.nextInt(199) - 99; // -99 to 99
-                correctAnswer = number1 + number2; //////////////////
+                //correctAnswer = number1 + number2; //////////////////
                 break;
                 
             case 1: // Subtraction
                 operation = "-";
                 number1 = random.nextInt(199) - 99; // -99 to 99
                 number2 = random.nextInt(199) - 99; // -99 to 99
-                correctAnswer = number1 - number2; ///////////////////////
+                //correctAnswer = number1 - number2; ///////////////////////
                 break;
                 
             case 2: // Multiplication
                 operation = "×";
                 number1 = random.nextInt(199) - 99; // -99 to 99
                 number2 = random.nextInt(19) - 9;    // -9 to 9
-                correctAnswer = number1 * number2; //////////////////////
+                //correctAnswer = number1 * number2; //////////////////////
                 break;
         }
         

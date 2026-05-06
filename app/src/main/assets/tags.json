@@ -1,7 +1,6 @@
-[
+﻿[
   {
     "img_tag": "animal",
-    "str_res": "tr_animals",
     "parent_tag": "",
     "is_parent": true,
     "name_rus": "Животные"
@@ -10,160 +9,137 @@
     "img_tag": "berry",
     "is_parent": true,
     "parent_tag": "food",
-    "str_res": "tr_berries",
     "name_rus": "Ягоды"
   },
   {
     "img_tag": "bird",
     "is_parent": true,
     "parent_tag": "animal",
-    "str_res": "tr_birds",
     "name_rus": "Птицы"
   },
   {
     "img_tag": "blueberry",
     "is_parent": false,
     "parent_tag": "berry",
-    "str_res": "tr_blueberries",
     "name_rus": "Черника"
   },
   {
     "img_tag": "bunny",
     "is_parent": false,
     "parent_tag": "animal",
-    "str_res": "tr_bunnies",
     "name_rus": "Кролики"
   },
   {
     "img_tag": "capybara",
     "is_parent": false,
     "parent_tag": "animal",
-    "str_res": "tr_capybaras",
     "name_rus": "Капибары"
   },
   {
     "img_tag": "cat",
     "is_parent": false,
     "parent_tag": "animal",
-    "str_res": "tr_cats",
     "name_rus": "Кошки"
   },
   {
     "img_tag": "cheetah",
     "is_parent": false,
     "parent_tag": "animal",
-    "str_res": "tr_cheetahs",
     "name_rus": "Гепарды"
   },
   {
     "img_tag": "child",
     "is_parent": false,
     "parent_tag": "human",
-    "str_res": "tr_children",
     "name_rus": "Дети"
   },
   {
     "img_tag": "cow",
     "is_parent": false,
     "parent_tag": "animal",
-    "str_res": "tr_cows",
     "name_rus": "Коровы"
   },
   {
     "img_tag": "dessert",
     "is_parent": false,
     "parent_tag": "food",
-    "str_res": "tr_desserts",
     "name_rus": "Сладости"
   },
   {
     "img_tag": "dog",
     "is_parent": false,
     "parent_tag": "animal",
-    "str_res": "tr_dogs",
     "name_rus": "Собаки"
   },
   {
     "img_tag": "duck",
     "is_parent": false,
     "parent_tag": "bird",
-    "str_res": "tr_ducks",
     "name_rus": "Утки"
   },
   {
     "img_tag": "egg",
     "is_parent": false,
     "parent_tag": "food",
-    "str_res": "tr_eggs",
     "name_rus": "Яйца"
   },
   {
     "img_tag": "fish",
     "is_parent": false,
     "parent_tag": "animal",
-    "str_res": "tr_fish",
     "name_rus": "Рыбы"
   },
   {
     "img_tag": "food",
     "is_parent": true,
     "parent_tag": "",
-    "str_res": "tr_food",
     "name_rus": "Еда"
   },
   {
     "img_tag": "goat",
     "is_parent": false,
     "parent_tag": "animal",
-    "str_res": "tr_goats",
     "name_rus": "Козы"
   },
   {
     "img_tag": "guinea pig",
     "is_parent": false,
     "parent_tag": "animal",
-    "str_res": "tr_guinea_pigs",
     "name_rus": "Морские свинки"
   },
   {
     "img_tag": "human",
     "is_parent": true,
     "parent_tag": "",
-    "str_res": "tr_people",
     "name_rus": "Люди"
   },
   {
     "img_tag": "man",
     "is_parent": false,
     "parent_tag": "human",
-    "str_res": "tr_men",
     "name_rus": "Мужчины"
   },
   {
     "img_tag": "otter",
     "is_parent": false,
     "parent_tag": "animal",
-    "str_res": "tr_otters",
     "name_rus": "Выдры"
   },
   {
     "img_tag": "owl",
     "is_parent": false,
     "parent_tag": "bird",
-    "str_res": "tr_owls",
     "name_rus": "Совы"
   },
   {
     "img_tag": "parrot",
     "is_parent": false,
     "parent_tag": "bird",
-    "str_res": "tr_parrots",
     "name_rus": "Попугаи"
   },
   {
     "img_tag": "pigeon",
     "is_parent": false,
-    "str_res": "tr_pigeons",
     "parent_tag": "bird",
     "name_rus": "Голуби"
   },
@@ -171,63 +147,54 @@
     "img_tag": "porridge",
     "is_parent": false,
     "parent_tag": "food",
-    "str_res": "tr_porridges",
     "name_rus": "Каши"
   },
   {
     "img_tag": "raccoon",
     "is_parent": false,
     "parent_tag": "animal",
-    "str_res": "tr_raccoons",
     "name_rus": "Еноты"
   },
   {
     "img_tag": "sea lion",
     "is_parent": false,
     "parent_tag": "animal",
-    "str_res": "tr_sea_lions",
     "name_rus": "Морские львы"
   },
   {
     "img_tag": "seal",
     "is_parent": false,
     "parent_tag": "animal",
-    "str_res": "tr_seals",
     "name_rus": "Тюлени"
   },
   {
     "img_tag": "sheep",
     "is_parent": false,
     "parent_tag": "animal",
-    "str_res": "tr_sheep",
     "name_rus": "Овцы"
   },
   {
     "img_tag": "strawberry",
     "is_parent": false,
     "parent_tag": "berry",
-    "str_res": "tr_strawberries",
     "name_rus": "Клубника"
   },
   {
     "img_tag": "tomato",
     "is_parent": false,
     "parent_tag": "vegetable",
-    "str_res": "tr_tomatoes",
     "name_rus": "Помидоры"
   },
   {
     "img_tag": "vegetable",
     "is_parent": true,
     "parent_tag": "food",
-    "str_res": "tr_vegetables",
     "name_rus": "Овощи"
   },
   {
     "img_tag": "woman",
     "is_parent": false,
     "parent_tag": "human",
-    "str_res": "tr_women",
     "name_rus": "Женщины"
   }
 ]

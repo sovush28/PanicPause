@@ -21,12 +21,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SignInActivity extends AppCompatActivity {
 
@@ -237,50 +235,10 @@ public class SignInActivity extends AppCompatActivity {
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
                             progressDialog.dismiss();
                         }
-                    }/*
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        String errorMessage = getErrorMessage(e);
-                        Toast.makeText(SignInActivity.this, errorMessage, Toast.LENGTH_LONG).show();
-                        Log.e(TAG, "Registration failed", e);
-                        progressDialog.dismiss();
-                    }*/
+                    }
                 });
 
     }
-
-    /////
-
-    /*private void saveUserToFirestore(FirebaseUser user) { //, OnUserSavedListener listener
-        Map<String, Object> userData = new HashMap<>();
-        userData.put("email", user.getEmail());
-        userData.put("created_at", System.currentTimeMillis());
-        userData.put("triggers", new ArrayList<String>());
-        userData.put("faves", new ArrayList<String>());
-        userData.put("ground_photo_ex_amount", 2); //?
-        userData.put("breath_repeat_amount", 1);
-        userData.put("use_faves_only", false);
-        userData.put("use_math", true);
-        userData.put("use_search_objects_color", true);
-        userData.put("ground_on_launch", false);
-
-        db.collection("users")
-                .document(user.getUid())
-                .set(userData)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "User data saved to Firestore");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error saving user data", e);
-                    }
-                });
-    }*/
 
     /////
 

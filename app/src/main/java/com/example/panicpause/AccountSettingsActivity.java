@@ -2,11 +2,9 @@ package com.example.panicpause;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
-import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -57,19 +55,17 @@ public class AccountSettingsActivity extends AppCompatActivity {
         });
     }
 
-    ///////
-
     private void updateUI() {
         if (dataManager == null) {
             dataManager = new DataManager(this);
         }
         if (dataManager.isGuest()) {
-            // Гость
+            // гость
             guestMsgLayout.setVisibility(View.VISIBLE);
             emailPasswResetLayout.setVisibility(View.GONE);
             signOutDeleteAccLayout.setVisibility(View.GONE);
         } else {
-            // Авторизованный
+            // авторизованный
             guestMsgLayout.setVisibility(View.GONE);
             emailPasswResetLayout.setVisibility(View.VISIBLE);
             signOutDeleteAccLayout.setVisibility(View.VISIBLE);
@@ -102,11 +98,11 @@ public class AccountSettingsActivity extends AppCompatActivity {
         goToLogInSignInLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // go to sign in activity with intent Extra
+                // запуск SignInActivity с extra
                 Intent intent=new Intent(AccountSettingsActivity.this, SignInActivity.class);
                 intent.putExtra("from_acc_settings", true);
                 startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out); // Плавное появление/исчезание
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out); // плавное появление/исчезание
                 finish();
             }
         });
@@ -123,7 +119,6 @@ public class AccountSettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/yuureisen"));
-                //Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://vk.com/im/convo/-237456249"));
                 //startActivity(browserIntent);
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                 android.content.ClipData clip = android.content.ClipData.newPlainText("Email","ign_yu103@mail.ru");
@@ -163,21 +158,21 @@ public class AccountSettingsActivity extends AppCompatActivity {
                 progressDialog.show(getSupportFragmentManager(), "progress_dialog");
             }
             catch(IllegalStateException ex){
-                // Обработка случая, когда Activity уничтожается
+                // обработка случая, когда Activity уничтожается
                 Log.e("Dialog", "Cannot show dialog - activity state invalid");
             }
 
-            // Выход из Firebase Auth
+            // выход из Firebase Auth
             mAuth.signOut();
 
-            // Обновление локального состояния через DataManager
+            // обновление локального состояния через DataManager
             dataManager.handleUserLogout();
 
             Toast.makeText(AccountSettingsActivity.this, R.string.signout_success, LENGTH_SHORT).show();
 
             progressDialog.dismiss();
 
-            // Перезапуск активности для обновления UI
+            // перезапуск активности для обновления UI
             Intent intent = getIntent();
             finish();
             startActivity(intent);
@@ -194,14 +189,13 @@ public class AccountSettingsActivity extends AppCompatActivity {
             dialog.setOnSignOutListener(new SignOutDialogFragment.OnSignOutListener() {
                 @Override
                 public void onSignOutConfirmed() {
-                    // Пользователь подтвердил выход
+                    // пользователь подтвердил выход
                     signOutUser();
                 }
 
                 @Override
                 public void onSignOutCancelled() {
-                    // Пользователь отменил выход
-                    //Toast.makeText(AccountSettingsActivity.this, "Выход отменен", LENGTH_SHORT).show();
+                    // пользователь отменил выход
                     dialog.dismiss();
                 }
             });
@@ -209,7 +203,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
             dialog.show(getSupportFragmentManager(), "sign_out_dialog");
         }
         catch(IllegalStateException ex){
-            // Обработка случая, когда Activity уничтожается
+            // обработка случая, когда Activity уничтожается
             Log.e("Dialog", "Cannot show dialog - activity state invalid");
         }
     }
@@ -225,7 +219,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Обновляем UI при возврате в активность (важно после удаления аккаунта)
+        // обновление UI при возврате в активность (важно после удаления аккаунта)
         updateUI();
     }
 

@@ -37,6 +37,9 @@ public class MainActivity extends AppCompatActivity{
         setupBottomNavigation();
 
         dataManager=new DataManager(this);
+
+        dataManager.testFirestoreConnection();
+
         // Инициализируем контент (фото + JSON)
         dataManager.initializeContent(this::onContentReady);
 
@@ -67,7 +70,7 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        setIntent(intent); // важно: обновить текущий intent
+        setIntent(intent); // важно обновить текущий intent
 
         if (intent.getBooleanExtra("go_to_profile", false)) {
             // Переключиться на ProfileFragment

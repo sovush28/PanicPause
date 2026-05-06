@@ -104,7 +104,7 @@ public class FavGroundActivity extends AppCompatActivity {
     private void prepareExSequence(){
         // get userFavesPhotoData list
         userFaves = dataManager.getFaves();
-        //List<DataManager.PhotoData> localImages = dataManager.getLocalImagesList();
+
         for (DataManager.PhotoData photo : dataManager.getLocalImagesList()){
             if(userFaves.contains(photo.imgUrl)){
                 userFavesPhotoData.add(photo);
@@ -143,7 +143,6 @@ public class FavGroundActivity extends AppCompatActivity {
             String instruction = getString(R.string.ground_count_img1) +
                     " " + currentPhoto.word + " " + getString(R.string.ground_count_img2);
             instructionTB.setText(instruction);
-
         }
         catch(Exception ex){
             Log.e("FavGroundActivity", "Не найдено упражнение с индексом " + currentExIndex);

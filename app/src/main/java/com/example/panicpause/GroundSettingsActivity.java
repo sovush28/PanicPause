@@ -30,7 +30,7 @@ public class GroundSettingsActivity extends AppCompatActivity {
     private DataManager dataManager;
 
     private long userBreathRepeatAmount, userPhotoExAmount;
-    private boolean userUseMath, userUseCountColor, userUseFavesOnly, userGroundOnLaunch;
+    private boolean userUseMath, userUseCountColor, userUseFavesOnly;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -282,7 +282,6 @@ public class GroundSettingsActivity extends AppCompatActivity {
         userUseCountColor=true;
         userPhotoExAmount=2;
         userUseFavesOnly=false;
-        userGroundOnLaunch=false;
     }
 
     private void saveAllSettings(){
@@ -291,7 +290,6 @@ public class GroundSettingsActivity extends AppCompatActivity {
         dataManager.saveUserSetting("use_search_objects_color", userUseCountColor);
         dataManager.saveUserSetting("ground_photo_ex_amount", userPhotoExAmount);
         dataManager.saveUserSetting("use_faves_only", userUseFavesOnly);
-        dataManager.saveUserSetting("ground_on_launch", userGroundOnLaunch);
     }
 
     private void showNoExsExceptBreathDialog(){

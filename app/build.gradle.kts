@@ -51,7 +51,7 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 
     // Importing the Firebase BoM (Bill of Materials)
-    implementation (platform("com.google.firebase:firebase-bom:33.1.0"))
+    implementation (platform(libs.firebase.bom.v3310))
 
     implementation (libs.material.v100)
 
