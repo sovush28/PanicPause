@@ -149,7 +149,6 @@ public class AccountSettingsActivity extends AppCompatActivity {
         });
     }
 
-    // выход из аккаунта
     private void signOutUser() {
         FirebaseUser user = mAuth.getCurrentUser();
         if(user!=null){
@@ -210,7 +209,6 @@ public class AccountSettingsActivity extends AppCompatActivity {
 
     private void showDeleteAccountConfirmationDialog(){
         DeleteAccountDialogFragment dialog = new DeleteAccountDialogFragment();
-
         if (getSupportFragmentManager() != null) {
             dialog.show(getSupportFragmentManager(), "delete_account_dialog");
         }

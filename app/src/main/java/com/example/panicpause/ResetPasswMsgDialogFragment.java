@@ -34,7 +34,7 @@ public class ResetPasswMsgDialogFragment extends DialogFragment {
         view.findViewById(R.id.dialog_content).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                // игнорировать
             }
         });
 

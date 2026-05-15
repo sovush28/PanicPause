@@ -6,9 +6,11 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+/**
+ * Класс GridSpacingItemDecoration предназначен для оформления списка избранных упражнений.
+ */
 public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
     private final int spacing;
-
     public GridSpacingItemDecoration(int spacing) {
         this.spacing = spacing;
     }

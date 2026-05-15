@@ -20,7 +20,6 @@ public class NotEnoughFavesDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // "Надуваем" кастомный макет
         View view = inflater.inflate(R.layout.dialog_no_faves_for_ground, container, false);
 
         Button turnOffFavesOnlyBtn=view.findViewById(R.id.turn_off_faves_only_btn);

@@ -28,12 +28,11 @@ import com.google.firebase.auth.FirebaseUser;
 
 /*
 После входа/регистрации вызывается dataManager.handleUserLogin().
-Все переходы в MainActivity — только после завершения синхронизации.
-Гость — просто закрытие активности (локальные данные уже управляются DataManager).
+Все переходы в MainActivity осущ-ся только после завершения синхронизации.
+Гость - просто закрытие активности (локальные данные уже управляются DataManager).
  */
 
 public class LoginActivity extends AppCompatActivity {
-
     ImageButton backBtn;
     EditText emailET, passwET;
     TextView forgotPasswTV, createAccTV;
@@ -45,7 +44,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean fromAccSettings=false;
 
-
     private ProgressDialogFragment progressDialog;
 
     @Override
@@ -54,7 +52,6 @@ public class LoginActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
 
-        // Инициализация Firebase
         mAuth = FirebaseAuth.getInstance();
         dataManager=new DataManager(this);
 
@@ -153,11 +150,10 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        finish(); // чтобы пользователь не вернулся сюда нажав назад
+        finish(); // чтобы пользователь не вернулся сюда, нажав назад
     }
 
     private String getErrorMessage(Exception exception) {
-
         if (exception == null || exception.getMessage() == null) {
             return getString(R.string.unknown_error);
         }
@@ -181,18 +177,17 @@ public class LoginActivity extends AppCompatActivity {
         String email = emailET.getText().toString().trim();
         String password = passwET.getText().toString().trim();
 
-        // Валидация полей
+        // валидация полей
         if(email.isEmpty() || password.isEmpty()){
             Toast.makeText(LoginActivity.this, R.string.enter_all, Toast.LENGTH_SHORT).show();
-            emailET.requestFocus(); // Фокус на поле email
+            emailET.requestFocus(); // фокус на поле email
             return;
         } else if (password.length() < 8) {
             Toast.makeText(LoginActivity.this, R.string.passw_length, Toast.LENGTH_SHORT).show();
             passwET.requestFocus();
             return;
         }
-
-        // Дополнительная проверка формата email
+        // дополнительная проверка формата email
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             Toast.makeText(LoginActivity.this, R.string.invalid_email, Toast.LENGTH_SHORT).show();
             emailET.requestFocus();
@@ -204,7 +199,7 @@ public class LoginActivity extends AppCompatActivity {
             progressDialog.show(getSupportFragmentManager(), "progress_dialog");
         }
         catch(IllegalStateException ex){
-            // Обработка случая, когда Activity уничтожается
+            // обработка случая, когда Activity уничтожается
             Log.e("Dialog", "Cannot show dialog - activity state invalid");
         }
 
@@ -222,7 +217,6 @@ public class LoginActivity extends AppCompatActivity {
 
                                 Toast.makeText(LoginActivity.this, R.string.login_success, Toast.LENGTH_SHORT).show();
 
-                                //dataManager.handleUserLogin(LoginActivity.this::goToMainActivity);
                                 dataManager.handleUserLogin(() -> {
                                     dataManager.markOnboardingCompleted();
                                     progressDialog.dismiss();

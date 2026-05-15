@@ -1,35 +1,29 @@
 package com.example.panicpause;
 
-// Model class to represent each trigger item in the hierarchy
+/**
+ * TriggerItem - класс для представления каждого тега/триггера
+ */
 public class TriggerItem {
-    private String imgTag;      // trigger name (cat, dog, bird, etc)
-    private boolean isParent;   // is this trigger also a name of a group of triggers (eg bird - true)
-    private String parentTag;   // name of the parent trigger; if the highest in the hierarchy then ""
+    private String imgTag;      // cat, dog, bird, etc
+    private boolean isParent;   // является ли также названием группы тегов (напр. bird - true)
+    private String parentTag;   // название тега-родителя ("" если высший в иерархии)
     private String nameRus;
 
-    private boolean isExpanded;    // track if category is expanded
-    private int level;     // Hierarchy level (0=root, 1=subcategory, 2=sub-subcategory)
+    private boolean isExpanded;    // раскрыта ли группа тегов
+    private int level;     // уровень иерархии (0=root, 1=subcategory, 2=sub-subcategory)
 
     public TriggerItem(){
         // Default constructor for Firestore
         // (не используется напрямую, но требуется для совместимости)
     }
 
-    /**
-     * Основной конструктор с поддержкой нового поля nameRus.
-     *
-     * @param imgTag техническое имя тега
-     * @param isParent флаг родительского тега
-     * @param parentTag имя родительского тега
-     * @param nameRus реальное название тега из БД (приоритет для отображения)
-     */
     public TriggerItem(String imgTag, boolean isParent, String parentTag, String nameRus){
         this.imgTag = imgTag;
         this.isParent = isParent;
         this.parentTag = parentTag;
         this.nameRus = nameRus != null ? nameRus : "";
         this.isExpanded = false;
-        this.level = -1; // Will be calculated based on parent hierarchy
+        this.level = -1; // будет вычисляться на основе иерархии родителя
     }
 
     public String getImgTag() { return imgTag; }
@@ -56,11 +50,6 @@ public class TriggerItem {
         this.level = level;
     }
 
-    // МЕТОДЫ ДЛЯ РАБОТЫ С nameRus
-    /**
-     * Возвращает название тега из БД (поле name_rus).
-     * Может быть пустой строкой для старых данных.
-     */
     public String getNameRus() {
         return nameRus != null ? nameRus : "";
     }

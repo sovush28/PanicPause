@@ -17,7 +17,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
 public class MainActivity extends AppCompatActivity{
-
     private ViewPager2 viewPager;
     private BottomNavigationView bottomNavigationV;
     private DataManager dataManager;
@@ -40,7 +39,7 @@ public class MainActivity extends AppCompatActivity{
 
         dataManager.testFirestoreConnection();
 
-        // Инициализируем контент (фото + JSON)
+        // инициализация контента (фото и файлы JSON)
         dataManager.initializeContent(this::onContentReady);
 
         Intent intent = getIntent();
@@ -54,41 +53,38 @@ public class MainActivity extends AppCompatActivity{
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            // v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
             return insets;
         });
-        
-        // Exclude bottom navigation from window insets to prevent extra padding
+        //да, обе настройки нужны
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.bottom_navigation), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(0, 0, 0, systemBars.bottom);
             return insets;
         });
+
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent); // важно обновить текущий intent
-
         if (intent.getBooleanExtra("go_to_profile", false)) {
-            // Переключиться на ProfileFragment
+            // переключиться на ProfileFragment
             viewPager.setCurrentItem(1, false); // false = без анимации
         }
         else if (intent.getBooleanExtra("go_to_home", false)) {
-            // Переключиться на HomeFragment
+            // переключиться на HomeFragment
             viewPager.setCurrentItem(0, false);
         }
-
-        // проверка нет ли новых фото в базе
+        // проверка, нет ли новых данных в базе
         dataManager.initializeContent(this::onContentReady);
     }
 
     private void onContentReady() {
         if (dataManager.isOnboardingCompleted()) {
             if(dataManager.isAppInfoViewed()){
-                // Пользователь уже прошёл онбординг — показываем главное меню
+                // пользователь уже прошёл онбординг - показать главное меню
                 viewPager.setCurrentItem(0);
             }
             else{
@@ -96,7 +92,6 @@ public class MainActivity extends AppCompatActivity{
                     progressDialog.show(getSupportFragmentManager(), "progress_dialog");
                 }
                 catch(IllegalStateException ex){
-                    // Обработка случая, когда Activity уничтожается
                     Log.e("Dialog", "Cannot show dialog - activity state invalid");
                 }
                 Intent intent = new Intent(this, AppInfoActivity.class);
@@ -109,10 +104,9 @@ public class MainActivity extends AppCompatActivity{
                 progressDialog.show(getSupportFragmentManager(), "progress_dialog");
             }
             catch(IllegalStateException ex){
-                // Обработка случая, когда Activity уничтожается
                 Log.e("Dialog", "Cannot show dialog - activity state invalid");
             }
-            // Первый запуск — показываем выбор: гость или вход
+            // первый запуск
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             progressDialog.dismiss();
@@ -124,10 +118,7 @@ public class MainActivity extends AppCompatActivity{
         ViewPagerAdapter adapter = new ViewPagerAdapter(this);
         viewPager.setAdapter(adapter);
 
-        // отключение свайпов
-        // viewPager.setUserInputEnabled(false);
-
-        // Слушатель изменения страницы для синхронизации с BottomNavigationV
+        // слушатель изменения страницы для синхронизации с BottomNavigationV
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
@@ -161,14 +152,13 @@ public class MainActivity extends AppCompatActivity{
         });
     }
 
-    // Блокируем кнопку "Назад" на главном экране
     @Override
     public void onBackPressed() {
         if (viewPager.getCurrentItem() == 0) {
-            // Если на главной - выходим из приложения
+            // если на главной - выход из приложения
             super.onBackPressed();
         } else {
-            // Если на профиле - возвращаем на главную
+            // если на профиле - возвращать на главную
             viewPager.setCurrentItem(0, true);
         }
     }
@@ -177,11 +167,10 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onResume() {
         super.onResume();
-        // Проверяем состояние пользователя при возврате в активность
+        // проверить состояние пользователя при возврате в активность
         if (dataManager != null) {
             boolean isGuest = dataManager.isGuest();
             boolean isLoggedIn = dataManager.isUserLoggedIn();
-
             Log.d("MainActivity", "onResume: isGuest=" + isGuest + ", isLoggedIn=" + isLoggedIn);
         }
     }

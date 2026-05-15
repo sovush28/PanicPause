@@ -9,6 +9,9 @@ import android.graphics.PathMeasure;
 import android.util.AttributeSet;
 import android.view.View;
 
+/**
+ * Класс AnimatedSquareView рисует и анимирует квадрат для упражнения "Дыхание по квдрату".
+ */
 public class AnimatedSquareView extends View {
     private Paint squarePaint;
     private Paint animatedPaint;
@@ -17,10 +20,10 @@ public class AnimatedSquareView extends View {
     private PathMeasure pathMeasure;
     private float pathLength;
     private float animatedLength = 0;
-    private float cornerRadius = 30f; // Должно совпадать с радиусом из XML
-    private int squareColor = Color.parseColor("#CDC6A5"); // Цвет исходного квадрата
-    private int animatedColor = Color.parseColor("#6F9283"); // Цвет анимации
-    private float strokeWidth = 15f; // Толщина обводки
+    private float cornerRadius = 30f; // должно совпадать с радиусом из XML
+    private int squareColor = Color.parseColor("#CDC6A5"); // цвет исходного квадрата
+    private int animatedColor = Color.parseColor("#6F9283"); // цвет анимации
+    private float strokeWidth = 15f; // толщина обводки
 
     public AnimatedSquareView(Context context) {
         super(context);
@@ -38,14 +41,14 @@ public class AnimatedSquareView extends View {
     }
 
     private void init() {
-        // Основной квадрат
+        // основной квадрат
         squarePaint = new Paint();
         squarePaint.setColor(squareColor);
         squarePaint.setStyle(Paint.Style.STROKE);
         squarePaint.setStrokeWidth(30);
         squarePaint.setAntiAlias(true);
 
-        // Анимированный квадрат
+        // анимированный квадрат
         animatedPaint = new Paint();
         animatedPaint.setColor(animatedColor);
         animatedPaint.setStyle(Paint.Style.STROKE);
@@ -53,7 +56,7 @@ public class AnimatedSquareView extends View {
         animatedPaint.setStrokeWidth(30);
         animatedPaint.setAntiAlias(true);
 
-        // Инициализация путей
+        // инициализация путей
         squarePath = new Path();
         animatedPath = new Path();
         pathMeasure = new PathMeasure();
@@ -70,7 +73,7 @@ public class AnimatedSquareView extends View {
         float height = getHeight();
         float padding = 15;
 
-        // Начинаем с левого нижнего угла и идем по часовой стрелке
+        // начинает с левого нижнего угла и идет по часовой стрелке
         squarePath.reset();
         squarePath.moveTo(padding , height - padding - cornerRadius ); // Левый нижний угол
         squarePath.lineTo(padding , padding + cornerRadius); // Вверх к левому верхнему углу
@@ -83,7 +86,7 @@ public class AnimatedSquareView extends View {
         squarePath.arcTo(padding, height - padding - cornerRadius * 2, padding + cornerRadius * 2, height - padding, 90, 90, false); // Замыкание
         squarePath.close();
 
-        // Измеряем длину пути
+        // измерение длины пути
         pathMeasure.setPath(squarePath, false);
         pathLength = pathMeasure.getLength();
     }
@@ -92,10 +95,10 @@ public class AnimatedSquareView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        // Рисуем основной квадрат
+        // нарисовать основной квадрат
         canvas.drawPath(squarePath, squarePaint);
 
-        // Рисуем анимированный квадрат
+        // нарисовать анимированный квадрат
         if (animatedLength > 0) {
             animatedPath.reset();
             pathMeasure.getSegment(0, animatedLength, animatedPath, true);
@@ -103,81 +106,19 @@ public class AnimatedSquareView extends View {
         }
     }
 
-    // Устанавливает прогресс анимации (0.0 - 0%, 1.0 - 100%)
+    /**
+     * Метод setProgress устанавливает прогресс анимации (0.0 - 0%, 1.0 - 100%)
+     */
     public void setProgress(float progress) {
         animatedLength = progress * pathLength;
         invalidate(); // Перерисовка View
     }
 
-    // Возвращает текущий прогресс анимации
+    /**
+     * Метод getProgress возвращает текущий прогресс анимации
+     * @return рогресс анимации (0.0 - 0%, 1.0 - 100%)
+     */
     public float getProgress() {
         return animatedLength / pathLength;
     }
 }
-
-
-
-
-/*
-
-public class AnimatedSquareView extends View {
-    private Paint strokePaint;
-    private Paint fillPaint;
-    private Path squarePath;
-    private float strokeWidth = 15f;
-    private float lengthAnimated = 0f; // Length of the stroke animated so far
-
-    public AnimatedSquareView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
-    }
-
-    private void init() {
-        strokePaint = new Paint();
-        strokePaint.setColor(getResources().getColor(R.color.colorLightGreen));  // Initial stroke color
-        strokePaint.setStyle(Paint.Style.STROKE);
-        strokePaint.setStrokeWidth(strokeWidth);
-        strokePaint.setAntiAlias(true);
-
-        fillPaint = new Paint();
-        fillPaint.setColor(getResources().getColor(R.color.colorSoftGreen)); // Fill color
-        fillPaint.setStyle(Paint.Style.FILL);
-        fillPaint.setAntiAlias(true);
-
-        squarePath = new Path();
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-
-        // Draw the filled square
-        canvas.drawRect(0, 0, getWidth(), getHeight(), fillPaint);
-
-        // Draw the path for the stroke
-        squarePath.reset();
-        // Move to the bottom-left corner
-        squarePath.moveTo(0, getHeight());
-
-        // Draw the current stroke length based on how much has animated
-        if (lengthAnimated <= getWidth()) {
-            squarePath.lineTo(lengthAnimated, getHeight()); // Bottom edge
-        } else if (lengthAnimated <= getWidth() + getHeight()) {
-            squarePath.lineTo(getWidth(), getHeight() - (lengthAnimated - getWidth())); // Left edge
-        } else if (lengthAnimated <= 2 * getWidth() + getHeight()) {
-            squarePath.lineTo(getWidth() - (lengthAnimated - (getWidth() + getHeight())), 0); // Top edge
-        } else if (lengthAnimated <= 3 * getWidth() + getHeight()) {
-            squarePath.lineTo(0, (lengthAnimated - (2 * getWidth() + getHeight()))); // Right edge
-        } else {
-            squarePath.lineTo(0, getHeight()); // Close to bottom-left corner again
-        }
-
-        canvas.drawPath(squarePath, strokePaint);
-    }
-
-    public void animateStroke(float length) {
-        this.lengthAnimated = length;
-        invalidate(); // Request to redraw the view
-    }
-}
-*/

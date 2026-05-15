@@ -4,8 +4,6 @@
     <string name="in_development">В разработке</string>
 
     <string name="loading">Загрузка...</string>
-    <!--<string name="data_preparing">Подготовка данных...</string>
-    <string name="app_ready">Приложение готово к работе</string>-->
 
     <!--Вход-->
     <string name="welcome_to">Добро пожаловать в</string>
@@ -129,8 +127,6 @@
     <string name="count_color_title">Поиск предметов вокруг себя</string>
     <string name="include_count_color">Включать поиск предметов вокруг</string>
 
-    <!--<string name="auto_ground_on_launch">Автоматически запускать Заземление при входе в приложение</string>-->
-
     <string name="reset_settings">Сбросить настройки</string>
     <string name="reset_settings_question">Вы уверены, что хотите <b>сбросить настройки?</b></string>
     <string name="yes_reset">Да, сбросить</string>
@@ -221,42 +217,6 @@
         Настоятельно рекомендуем выбрать сущности (предметы, животные и т. д.),
         которые вам <b>неприятны</b>. Изображения с ними будут <b>исключены</b> из вашей подборки.</string>
     <string name="set_triggers_info2">Вы можете изменять ваш выбор\nв любое время</string>
-
-    <!--<string name="tr_people">Люди</string>
-    <string name="tr_men">Мужчины</string>
-    <string name="tr_women">Женщины</string>
-    <string name="tr_children">Дети</string>
-
-    <string name="tr_animals">Животные</string>
-    <string name="tr_birds">Птицы</string>
-    <string name="tr_pigeons">Голуби</string>
-    <string name="tr_parrots">Попугаи</string>
-    <string name="tr_owls">Совы</string>
-    <string name="tr_ducks">Утки</string>
-    <string name="tr_cats">Кошки</string>
-    <string name="tr_dogs">Собаки</string>
-    <string name="tr_bunnies">Кролики</string>
-    <string name="tr_guinea_pigs">Морские свинки</string>
-    <string name="tr_capybaras">Капибары</string>
-    <string name="tr_otters">Выдры</string>
-    <string name="tr_raccoons">Еноты</string>
-    <string name="tr_cheetahs">Гепарды</string>
-    <string name="tr_cows">Коровы</string>
-    <string name="tr_sheep">Овцы</string>
-    <string name="tr_goats">Козы</string>
-    <string name="tr_fish">Рыбы</string>
-    <string name="tr_seals">Тюлени</string>
-    <string name="tr_sea_lions">Морские львы</string>
-
-    <string name="tr_food">Еда</string>
-    <string name="tr_desserts">Сладости</string>
-    <string name="tr_berries">Ягоды</string>
-    <string name="tr_strawberries">Клубника</string>
-    <string name="tr_blueberries">Черника</string>
-    <string name="tr_vegetables">Овощи</string>
-    <string name="tr_tomatoes">Помидоры</string>
-    <string name="tr_porridges">Каши</string>
-    <string name="tr_eggs">Яйца</string>-->
 
 
     <!--Настройки учетной записи-->
@@ -358,8 +318,6 @@
     <string name="one_more_time">Ещё раз</string>
     <string name="finish">Завершить</string>
 
-
-    <!---->
 
     <!--    <string><b>Bold Text</b><i>italic</i>Normal Text</string>   <u>underline</u>-->
 

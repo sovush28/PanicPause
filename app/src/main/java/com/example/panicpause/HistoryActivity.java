@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class HistoryActivity extends AppCompatActivity {
-
     private ImageButton backBtn;
     private RecyclerView historyRV;
 
@@ -33,18 +32,16 @@ public class HistoryActivity extends AppCompatActivity {
 
         dataManager = new DataManager(this);
 
-        // Настройка списка
+        // настройка списка
         historyRV.setLayoutManager(new LinearLayoutManager(this));
 
         dataManager.syncExerciseHistoryFromFirestore(()->{
-            // Загружаем историю из локального хранилища
+            // загрузка истории из локального хранилища
             List<DataManager.ExerciseSession> sessions = dataManager.loadExerciseHistory();
-
             if (sessions.isEmpty()) {
-                // Если история пуста — показываем сообщение
                 Toast.makeText(this, getText(R.string.history_empty), Toast.LENGTH_SHORT).show();
             } else {
-                // Создаём адаптер и устанавливаем его
+                // создание и установка адаптера
                 HistoryRVAdapter historyRVAdapter = new HistoryRVAdapter(
                         sessions,
                         this,
@@ -76,11 +73,10 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     /**
-     * Показывает диалог с деталями выбранной сессии.
-     * @param session Сессия для отображения
+     * Метод showHistorySessionDetailsDialog показывает диалог с деталями выбранной сессии.
+     * @param session сессия для отображения
      */
     private void showHistorySessionDetailsDialog(DataManager.ExerciseSession session) {
-        // Создаём и показываем диалог
         HistorySessionDetailsDialogFragment dialog = HistorySessionDetailsDialogFragment.newInstance(session, dataManager);
         dialog.show(getSupportFragmentManager(), "history_session_details");
     }

@@ -9,7 +9,6 @@
     android:background="@color/colorBeige"
     >
 
-    <!-- ViewPager2 для свайпов -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
@@ -18,34 +17,6 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         />
-
-<!--    android:layout_weight="1"-->
-
-    <!--<TextView
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        style="@style/normalTextGreen"
-        android:textStyle="bold"
-        android:text="@string/main"
-        android:layout_marginTop="50dp"
-        android:layout_marginBottom="30dp"
-        android:layout_gravity="center_horizontal"
-        />
-
-    <Button
-        android:id="@+id/panic_btn"
-        style="@style/normalTextLight"
-        android:layout_width="270dp"
-        android:layout_height="280dp"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_horizontal"
-        android:padding="10dp"
-        android:text="@string/Im_panicking"
-        android:textAlignment="center"
-        android:textSize="32dp"
-        android:textStyle="bold"
-        app:backgroundTint="@null"
-        android:background="@drawable/panic_btn_shape"/>-->
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
@@ -63,6 +34,5 @@
         android:layout_margin="0dp"
         />
 <!--ripple - расходящаяся волна от нажатия    -->
-<!--    app:itemActiveIndicatorStyle="@null"   does nothing?-->
 
 </RelativeLayout>

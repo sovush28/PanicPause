@@ -19,11 +19,8 @@ public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
     Button panicBtn;
     LinearLayout historyLayout, groundSettingsLayout, whatsPALayout, howHelpYourselfLayout, whatsTriggerLayout;
-
     private DataManager dataManager;
 
-
-    // метод создает внешний вид фрагмента
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -58,35 +55,30 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
-
         historyLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 goToHistoryActivity();
             }
         });
-
         groundSettingsLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 goToGroundSettingsActivity();
             }
         });
-
         whatsPALayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showWhatsPADialog();
             }
         });
-
         howHelpYourselfLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 goToSelfHelpActivity();
             }
         });
-
         whatsTriggerLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,15 +110,15 @@ public class HomeFragment extends Fragment {
 
     private void checkIfEnoughPhotos(){
         try {
-            // 1. Получаем настройки пользователя
+            // 1. получичть настройки пользователя
             int requiredCount = dataManager.getGroundPhotoExAmount();
             List<String> userTriggers = dataManager.getTriggers();
 
-            // 2. Загружаем все фото локально
+            // 2. загрузить все фото локально
             List<DataManager.PhotoData> allPhotos = dataManager.getLocalImagesList();
 
             List<DataManager.PhotoData> safePhotos = new ArrayList<>(allPhotos);
-            // 3. Фильтруем, если есть триггеры
+            // 3. отфильтровать, если есть триггеры
             if (userTriggers != null && !userTriggers.isEmpty()) {
                 Iterator<DataManager.PhotoData> iterator = safePhotos.iterator();
                 while (iterator.hasNext()) {
@@ -140,7 +132,7 @@ public class HomeFragment extends Fragment {
                 }
             }
 
-            // 4. Проверяем количество
+            // 4. проверить количество
             if (safePhotos.size() >= requiredCount) {
                 Intent intent = new Intent(getActivity(), GroundActivity.class);
                 intent.putExtra("default_settings", false);
@@ -149,8 +141,8 @@ public class HomeFragment extends Fragment {
                 showNotEnoughPhotosDialog();
             }
         } catch (Exception e) {
-            Log.e(TAG, "Error checking photos", e);
-            // На всякий случай — разрешаем вход, если что-то пошло не так
+            Log.e(TAG, "Ошибка при проверке безопасных фото", e);
+            // на всякий случай - разрешить вход, если что-то пошло не так
             Intent intent = new Intent(getActivity(), GroundActivity.class);
             intent.putExtra("default_settings", true);
             startActivity(intent);
@@ -163,6 +155,7 @@ public class HomeFragment extends Fragment {
             dialog.show(getChildFragmentManager(),"dialog_no_photos_for_ground");
         }
         catch (IllegalStateException e){
+            // обработка случая, когда Activity уничтожается
             Log.e("Dialog", "Cannot show dialog - activity state invalid");
         }
     }
@@ -173,7 +166,6 @@ public class HomeFragment extends Fragment {
             dialog.show(getActivity().getSupportFragmentManager(), "whats_pa_dialog");
         }
         catch(IllegalStateException ex){
-            // Обработка случая, когда Activity уничтожается
             Log.e("Dialog", "Cannot show dialog - activity state invalid");
         }
     }
@@ -184,7 +176,6 @@ public class HomeFragment extends Fragment {
             dialog.show(getActivity().getSupportFragmentManager(), "whats_trigger_dialog");
         }
         catch(IllegalStateException ex){
-            // Обработка случая, когда Activity уничтожается
             Log.e("Dialog", "Cannot show dialog - activity state invalid");
         }
     }

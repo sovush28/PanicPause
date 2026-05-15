@@ -10,13 +10,11 @@
     android:orientation="vertical"
     >
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         >
-
 
         <LinearLayout
             android:id="@+id/linearLayout3"
@@ -83,17 +81,6 @@
                     android:id="@+id/signin_passw_et"
                     />
             </com.google.android.material.textfield.TextInputLayout>
-            <!--
-            <EditText
-                android:id="@+id/signin_passw_et"
-                android:hint="@string/create_passw"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_marginTop="30dp"
-                android:background="@drawable/et_light_border"
-                android:textColor="@color/colorBeige"
-                android:textColorHint="@color/colorTransparentBeige"/>
-            -->
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -104,7 +91,7 @@
                 app:passwordToggleTint="@color/colorTransparentBeige"
                 app:hintEnabled="false"
                 >
-                <!--    app:hintEnabled="false" - убирает анимацию хинта при фокусе  -->
+                <!--app:hintEnabled="false" - убирает анимацию хинта при фокусе  -->
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="55dp"
@@ -117,18 +104,7 @@
                     android:id="@+id/signin_repeat_passw_et"
                     />
             </com.google.android.material.textfield.TextInputLayout>
-            <!--
-            <EditText
-                android:id="@+id/signin_repeat_passw_et"
-                android:hint="@string/repeat_passw"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_marginTop="30dp"
-                android:background="@drawable/et_light_border"
-                android:textColor="@color/colorBeige"
-                android:textColorHint="@color/colorTransparentBeige"
-                />
-    -->
+
             <Button
                 android:id="@+id/sign_in_btn"
                 style="@style/normalTextDark"
@@ -167,10 +143,8 @@
             </LinearLayout>
 
 
-
         </LinearLayout>
 
-        <!--    app:layout_constraintTop_toBottomOf="@+id/linearLayout3"-->
         <LinearLayout
             android:id="@+id/linearLayout4"
             android:layout_width="match_parent"
@@ -195,9 +169,7 @@
                 android:text="@string/log_in_underline" />
         </LinearLayout>
 
-
     </LinearLayout>
-
 
     <ImageView
         android:layout_width="48dp"
@@ -210,6 +182,5 @@
         app:tint="@color/colorBeige"
         android:id="@+id/back_iv"
         />
-
 
 </RelativeLayout>

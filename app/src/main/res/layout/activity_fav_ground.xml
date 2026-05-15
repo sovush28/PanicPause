@@ -53,7 +53,6 @@
             app:shapeAppearanceOverlay="@style/GroundImageViewCorner"
             />
 
-        <!-- Instruction text -->
         <TextView
             android:id="@+id/count_things_tv"
             android:layout_width="match_parent"
@@ -67,7 +66,6 @@
             android:text="Загрузка фотографии..."
             />
 
-        <!-- Next button -->
         <Button
             android:layout_width="match_parent"
             android:layout_height="55dp"
@@ -82,8 +80,6 @@
             android:id="@+id/next_btn"
             />
 
-
     </LinearLayout>
-
 
 </RelativeLayout>

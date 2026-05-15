@@ -42,8 +42,7 @@ import okhttp3.Response;
  * - инициализации контента (tags, images, фото),
  * - управления пользовательскими настройками (гость / авторизованный),
  * - синхронизации с Firestore при наличии интернета.
- *
- * Работает offline-first: всё хранится локально, облако — опционально.
+ * Приложение работает offline-first: всё хранится локально, облако - опционально.
  */
 public class DataManager {
     private static final String TAG = "DataManager";
@@ -60,7 +59,7 @@ public class DataManager {
     private static final String KEY_ONBOARDING_COMPLETED = "onboarding_completed";
     private static final String KEY_APP_INFO_VIEWED = "app_info_viewed";
 
-    // Поля пользователя (сохраняются как строки/числа/булевы)
+    // Поля пользователя
     private static final String KEY_TRIGGERS = "triggers";
     private static final String KEY_FAVES = "faves";
     private static final String KEY_BREATH_REPEAT = "breath_repeat_amount";
@@ -68,6 +67,11 @@ public class DataManager {
     private static final String KEY_USE_COLOR_SEARCH = "use_search_objects_color";
     private static final String KEY_GROUND_PHOTO_AMOUNT = "ground_photo_ex_amount";
     private static final String KEY_USE_FAVES_ONLY = "use_faves_only";
+
+    // Имя файла для хранения истории
+    private static final String EXERCISE_HISTORY_FILE = "exercise_history.json";
+    // Ключ для временной метки истории
+    private static final String KEY_EXERCISE_HISTORY_LAST_MODIFIED = "exercise_history_last_modified";
 
     private final Context context;
     private final SharedPreferences prefs;
@@ -85,17 +89,21 @@ public class DataManager {
         this.contentDir = new File(context.getFilesDir(), CONTENT_DIR);
         this.photosDir = new File(context.getFilesDir(), PHOTOS_DIR);
         this.httpClient = new OkHttpClient();
-
-        // Создаём папки, если их нет
+        // создать папки для контента и фото, если их нет
         contentDir.mkdirs();
         photosDir.mkdirs();
     }
 
+    /**
+     * PhotoData - класс для описания упражнения с фото.
+     * imgUrl - ссылка на фото
+     * word - слово, вставляемое в текст упражнения (напр. "котят")
+     * tags - список тегов фото
+     */
     public static class PhotoData{
         public final String imgUrl;
         public final String word;
         public final List<String> tags;
-
         public PhotoData(String imgUrl, String word, List<String> tags) {
             this.imgUrl = imgUrl;
             this.word = word;
@@ -103,29 +111,30 @@ public class DataManager {
         }
     }
 
-    // Имя файла для хранения истории
-    private static final String EXERCISE_HISTORY_FILE = "exercise_history.json";
-
-    //Представляет один завершённый набор упражнений (сессию).
-    //Хранит дату/время и список фото, использованных в сессии.
+    /**
+     * Объекты класса ExerciseSession представляют один завершённый набор упражнений (сессию)
+     * Хранят дату/время и список фото, использованных в сессии
+     */
     public static class ExerciseSession {
-        public final long timestamp;          // Время завершения сессии (миллисекунды)
-        public final List<PhotoData> photos;  // Список фото с тегами
-
+        public final long timestamp;          // время завершения сессии (миллисекунды)
+        public final List<PhotoData> photos;  // список фото с тегами (пройденный набор упражнений)
         public ExerciseSession(long timestamp, List<PhotoData> photos) {
             this.timestamp = timestamp;
-            // ВАЖНО: делаем копию списка, чтобы избежать изменений извне
-            this.photos = new ArrayList<>(photos);
+            this.photos = new ArrayList<>(photos); // копия списка (чтобы избежать изменений извне)
         }
-        // Почему копия списка?
-        // Если сохранить ссылку на currentSessionPhotos,
-        // последующие изменения в этом списке
-        // (например, при новой сессии)
-        // повредят сохранённую историю.
-        // Копия гарантирует целостность данных.
+        /*
+        (если сохранить ссылку на currentSessionPhotos, а не копию,
+        то последующие изменения в этом списке (напр., при новой сессии)
+        повредят сохранённую историю.
+        Копия гарантирует целостность данных)
+        */
 
-
-        //Форматирует дату для отображения пользователю (например: "30 января 2026, 14:30")
+        /**
+         * Метод getFormattedDate форматирует дату для отображения пользователю
+         * (напр. "30 января 2026, 14:30")
+         * @param context контекст временной метки
+         * @return отформатированное время прохождения набора упражнений
+         */
         public String getFormattedDate(Context context) {
             java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat("d MMMM yyyy, HH:mm",
                     java.util.Locale.getDefault());
@@ -133,15 +142,18 @@ public class DataManager {
         }
     }
 
-    // Ключ для временной метки истории
-    private static final String KEY_EXERCISE_HISTORY_LAST_MODIFIED = "exercise_history_last_modified";
 
+    // ЗАГРУЗКА СПИСКОВ ИЗОБРАЖЕНИЙ И ТЕГОВ
 
-    //Загружает список изображений из локального файла images.json
+    /**
+     * Метод getLocalImagesList загружает список изображений из локального файла images.json
+     * @return PhotoData-список всех записей о изображениях из локального файла
+     */
     public List<PhotoData> getLocalImagesList(){
         List<PhotoData> photos = new ArrayList<>();
         File imagesFile=new File(context.getFilesDir(), "content/images.json");
 
+        // если файл images.json уже есть готовый к работе, то попытаться достать список из него
         if (imagesFile.exists()) {
             try {
                 String json = readFileToString(imagesFile);
@@ -149,7 +161,6 @@ public class DataManager {
                     JSONArray array = new JSONArray(json);
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject obj = safeGetJSONObject(array, i);
-
                         String imgUrl = obj.optString("img_url", null);
                         String word = obj.optString("word", null);
                         JSONArray tagsArray = obj.optJSONArray("tags");
@@ -159,7 +170,6 @@ public class DataManager {
                                 tags.add(tagsArray.getString(j));
                             }
                         }
-
                         if (imgUrl != null && word != null) {
                             photos.add(new PhotoData(imgUrl, word, tags));
                         }
@@ -174,7 +184,7 @@ public class DataManager {
             }
         }
 
-        // Загрузка из Assets
+        // если файла нет, попытаться достать список из папки assets
         Log.d(TAG, "Загрузка изображений из Assets");
         try {
             InputStream is = context.getAssets().open("images.json");
@@ -195,62 +205,24 @@ public class DataManager {
                     photos.add(new PhotoData(imgUrl, word, tags));
                 }
             }
+            // сохранить корректную копию в локальную папку
             copyAssetToFile("images.json", new File(context.getFilesDir(), "content/images.json"));
             Log.d(TAG, "Изображения успешно загружены из Assets и сохранены локально");
         } catch (Exception e) {
             Log.e(TAG, "Критическая ошибка: не удалось загрузить изображения из Assets", e);
         }
-
-        /*if(!imagesFile.exists()){
-            Log.w(TAG, "Local images.json not found");
-            return photos;
-        }
-        try (FileInputStream fis = new FileInputStream(imagesFile);
-             ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = fis.read(buffer)) != -1) {
-                bos.write(buffer, 0, length);
-            }
-            String json = bos.toString("UTF-8");
-
-            // Удаляем BOM (Byte Order Mark), если он есть (для надежности)
-            if (json.startsWith("\ufeff")) {
-                json = json.substring(1);
-            }
-
-            JSONArray array = new JSONArray(json);
-
-            for (int i = 0; i < array.length(); i++) {
-                //JSONObject obj = array.getJSONObject(i);
-                // Используем безопасный метод получения объекта
-                JSONObject obj = safeGetJSONObject(array, i);
-
-                String imgUrl = obj.optString("img_url", null);
-                String word = obj.optString("word", null);
-                JSONArray tagsArray = obj.optJSONArray("tags");
-                List<String> tags = new ArrayList<>();
-                if (tagsArray != null) {
-                    for (int j = 0; j < tagsArray.length(); j++) {
-                        tags.add(tagsArray.getString(j));
-                    }
-                }
-                if (imgUrl != null && word != null && !imgUrl.isEmpty() && !word.isEmpty()) {
-                    photos.add(new PhotoData(imgUrl, word, tags));
-                }
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error loading images.json", e);
-        }*/
         return photos;
     }
 
-    //Загружает список триггеров из локального файла tags.json
+    /**
+     * Метод getLocalTagsList загружает список записей о тегах из локального файла tags.json
+     * @return TriggerItem-список всех записей о тегах из локального файла
+     */
     public List<TriggerItem> getLocalTagsList(){
         List<TriggerItem> tags = new ArrayList<>();
         File tagsFile = new File(context.getFilesDir(), "content/tags.json");
 
-        // Попытка загрузить из локального файла
+        // попытка загрузить из локального файла
         if (tagsFile.exists()) {
             try {
                 String json = readFileToString(tagsFile);
@@ -258,12 +230,10 @@ public class DataManager {
                     JSONArray array = new JSONArray(json);
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject obj = safeGetJSONObject(array, i);
-
                         String imgTag = obj.optString("img_tag", null);
                         boolean isParent = obj.optBoolean("is_parent", false);
                         String parentTag = obj.optString("parent_tag", "");
                         String nameRus = obj.optString("name_rus", "");
-
                         if (imgTag != null && !imgTag.isEmpty()) {
                             tags.add(new TriggerItem(imgTag, isParent, parentTag, nameRus));
                         }
@@ -273,7 +243,7 @@ public class DataManager {
                 }
             } catch (Exception e) {
                 Log.e(TAG, "Ошибка парсинга локального tags.json. Файл поврежден.", e);
-                // Логируем начало файла для диагностики
+                // логирование начала файла для диагностики
                 try {
                     String badContent = readFileToString(tagsFile);
                     if (badContent != null) {
@@ -282,13 +252,13 @@ public class DataManager {
                     }
                 } catch (Exception ex) { /* ignore */ }
 
-                // Удаляем поврежденный файл
+                // удалить поврежденный файл
                 tagsFile.delete();
                 Log.w(TAG, "Поврежденный файл tags.json удален. Восстановление из Assets...");
             }
         }
 
-        // Если локального файла нет или он был удален, загружаем из Assets
+        // если локального файла нет или он был удален, загрузить из assets
         Log.d(TAG, "Загрузка тегов из Assets");
         try {
             InputStream is = context.getAssets().open("tags.json");
@@ -300,59 +270,16 @@ public class DataManager {
                 boolean isParent = obj.optBoolean("is_parent", false);
                 String parentTag = obj.optString("parent_tag", "");
                 String nameRus = obj.optString("name_rus", "");
-
                 if (imgTag != null && !imgTag.isEmpty()) {
                     tags.add(new TriggerItem(imgTag, isParent, parentTag, nameRus));
                 }
             }
-
-            // Сохраняем корректную копию в локальную папку
+            // сохранить корректную копию в локальную папку
             copyAssetToFile("tags.json", new File(context.getFilesDir(), "content/tags.json"));
             Log.d(TAG, "Теги успешно загружены из Assets и сохранены локально");
-
         } catch (Exception e) {
-            Log.e(TAG, "Критическая ошибка: не удалось загрузить теги даже из Assets", e);
+            Log.e(TAG, "Критическая ошибка: не удалось загрузить теги из Assets", e);
         }
-
-        /*if (!tagsFile.exists()) {
-            Log.w(TAG, "Local tags.json not found");
-            return tags;
-        }
-
-        try (FileInputStream fis = new FileInputStream(tagsFile);
-             ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = fis.read(buffer)) != -1) {
-                bos.write(buffer, 0, length);
-            }
-
-            String json = bos.toString("UTF-8");
-            // Удаляем BOM (Byte Order Mark), если он есть (для надежности)
-            if (json.startsWith("\ufeff")) {
-                json = json.substring(1);
-            }
-
-            JSONArray array = new JSONArray(json);
-
-            for (int i = 0; i < array.length(); i++) {
-                //JSONObject obj = array.getJSONObject(i);
-                JSONObject obj = safeGetJSONObject(array, i);
-
-                String imgTag = obj.optString("img_tag", null);
-                Boolean isParent = obj.optBoolean("is_parent", false);
-                String parentTag = obj.optString("parent_tag", "");
-                String nameRus = obj.optString("name_rus", "");
-
-                if (imgTag != null && !imgTag.isEmpty()) {
-                    tags.add(new TriggerItem(imgTag, isParent, parentTag, nameRus));
-                }
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error loading tags.json", e);
-            // Можно удалить поврежденный файл, чтобы при следующем запуске он скопировался из assets
-            // tagsFile.delete()
-        }*/
         return tags;
     }
 
@@ -429,51 +356,58 @@ public class DataManager {
     }
 
 
-    // 1. Инициализация контента
+    // ИНИЦИАЛИЗАЦИЯ КОНТЕНТА
 
     /**
-     * Запускает инициализацию контента.
-     * Если контент ещё не скопирован — копирует из assets.
-     * Если есть интернет — проверяет обновления.
-     *
-     * @param onReady вызывается, когда контент готов (всегда, даже без интернета)
+     * Метод initializeContent запускает инициализацию контента.
+     * Если контент ещё не скопирован, копирует из assets.
+     * Если есть интернет, проверяет наличие обновлений в облачной БД.
+     * @param onReady вызывается, когда контент готов (в т. ч. без интернета)
      */
     public void initializeContent(Runnable onReady) {
         boolean contentReady = prefs.getBoolean(KEY_CONTENT_READY, false);
-
         if (!contentReady) {
-            // Первый запуск: копируем стартовый набор из assets
+            // первый запуск: скопировать стартовый набор контента из assets
             copyInitialContent(() -> {
                 prefs.edit().putBoolean(KEY_CONTENT_READY, true).putInt(KEY_LOCAL_CONTENT_VERSION, 1).apply();
-                // После копирования — проверяем обновления (если есть интернет)
+                // после копирования: проверить обновления (если есть интернет)
                 checkForContentUpdates(onReady);
             });
         } else {
-            // Уже есть локальный контент — просто проверяем обновления
+            // уже есть локальный контент: только проверка обновлений
             checkForContentUpdates(onReady);
         }
     }
 
+    /**
+     * Метод copyInitialContent копирует стартовый набор контента из папки assets
+     * @param onComplete вызывается при завершении копирования
+     */
     private void copyInitialContent(Runnable onComplete) {
         new Thread(() -> {
             try {
-                // Копируем tags.json
+                // скопировать tags.json
                 copyAssetToFile("tags.json", new File(contentDir, "tags.json"));
-                // Копируем images.json
+                // скопировать images.json
                 copyAssetToFile("images.json", new File(contentDir, "images.json"));
-                // Копируем все фото из assets/photos
+                // скопировать все фото из assets/photos
                 copyAssetsPhotos();
-
                 Log.d(TAG, "Начальный контент скопирован в " + contentDir.getAbsolutePath());
                 onComplete.run();
             }
             catch (Exception e) {
                 Log.e(TAG, "Ошибка копирования начального контента", e);
-                onComplete.run(); // всё равно продолжаем
+                onComplete.run();
             }
         }).start();
     }
 
+    /**
+     * Метод copyAssetToFile копирует файл (images.json или tags.json) из папки assets в указанный файл
+     * @param assetPath имя файла в папке assets
+     * @param destFile создаваемая копия файла
+     * @throws IOException исключение при копировании
+     */
     private void copyAssetToFile(String assetPath, File destFile) throws IOException {
         try (InputStream is = context.getAssets().open(assetPath);
              OutputStream os = new FileOutputStream(destFile)) {
@@ -482,8 +416,7 @@ public class DataManager {
             while ((length = is.read(buffer)) > 0) {
                 os.write(buffer, 0, length);
             }
-
-            // ПРОВЕРКА: убедиться, что файл содержит валидный UTF-8
+            // проверить, что файл содержит валидный UTF-8
             if (assetPath.equals("tags.json") || assetPath.equals("images.json")) {
                 try (FileInputStream fis = new FileInputStream(destFile)) {
                     byte[] bom = new byte[3];
@@ -495,6 +428,10 @@ public class DataManager {
         }
     }
 
+    /**
+     * Метод copyAssetsPhotos копирует все фото из папки assets/photos
+     * @throws IOException исключение при копировании
+     */
     private void copyAssetsPhotos() throws IOException {
         String[] files = context.getAssets().list("photos");
         if (files != null) {
@@ -506,17 +443,20 @@ public class DataManager {
     }
 
 
-    // 2. Проверка и обновление контента
+    // ПРОВЕРКА И ОБНОВЛЕНИЕ КОНТЕНТА
 
+    /**
+     * Метод checkForContentUpdates сравнивает значение версии контента в облачной БД
+     * с версией локального контента и вызывает загрузку нового контента, если он есть
+     * @param onReady вызывается при завершении проверки (и загрузки, когда нужна)
+     */
     private void checkForContentUpdates(Runnable onReady) {
         if (!isNetworkAvailable()) {
             Log.d(TAG, "[SYNC] Нет интернета. Используются локальные данные.");
             onReady.run();
             return;
         }
-
         Log.d(TAG, "[SYNC] Проверка версии контента в облаке...");
-        // Загружаем версию из Firestore
         db.collection("meta").document("version")
                 .get()
                 .addOnSuccessListener(snapshot -> {
@@ -539,22 +479,27 @@ public class DataManager {
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "[SYNC] Ошибка подключения к Firestore. Код: " +
                             (e.getCause() != null ? e.getCause().getMessage() : e.getMessage()));
-                    onReady.run(); // продолжаем работу с лок. данными без обновления
+                    onReady.run(); // продолжить работу с лок. данными без обновления
                 });
     }
 
+    /**
+     * Метод downloadAndApplyContentUpdate скачивает новый контент из облака
+     * @param newVersion значение новейшей версии контента в облаке
+     * @param onReady вызывается при завершении скачивания
+     */
     private void downloadAndApplyContentUpdate(int newVersion, Runnable onReady) {
-        // Скачиваем tags
+        // скачивание коллекции тегов
         db.collection("tags_collection").get().addOnSuccessListener(tagsSnapshot -> {
             Log.d(TAG, "[SYNC] Теги получены (количество: " + tagsSnapshot.size() + ")");
             saveCollectionAsJson("tags.json", tagsSnapshot, () -> {
-                // Скачиваем images
+                // скачивание коллекции изображений
                 db.collection("images").get().addOnSuccessListener(imagesSnapshot -> {
                     Log.d(TAG, "[SYNC] Изображения получены (количество: " + imagesSnapshot.size() + ")");
                     saveCollectionAsJson("images.json", imagesSnapshot, () -> {
-                        // Скачиваем недостающие фото
+                        // скачивание недостающих фото
                         downloadMissingPhotos(imagesSnapshot, () -> {
-                            // Обновляем версию
+                            // обновление локальной версии контента
                             prefs.edit().putInt(KEY_LOCAL_CONTENT_VERSION, newVersion).apply();
                             Log.d(TAG, "[SYNC] Контент успешно обновлён до версии " + newVersion);
                             onReady.run();
@@ -571,31 +516,35 @@ public class DataManager {
         });
     }
 
+    /**
+     * Метод saveCollectionAsJson сохраняет результат запроса к коллекции Firestore в файл json
+     * @param filename имя файла json
+     * @param snapshot результат запроса к коллекции
+     * @param onComplete вызывается при завершении сохранения
+     */
     private void saveCollectionAsJson(String filename, QuerySnapshot snapshot, Runnable onComplete) {
         new Thread(() -> {
             try {
                 JSONArray array = new JSONArray();
                 for (DocumentSnapshot doc : snapshot) {
-                    // Явно создаем JSONObject из Map данных документа
-                    // Это гарантирует, что в файл запишется корректный JSON, а не toString() Map
+                    // явно создать JSONObject из Map данных документа
+                    // (гарантирует, что в файл запишется корректный JSON, а не toString() Map)
                     JSONObject jsonObj = new JSONObject(doc.getData());
                     array.put(jsonObj);
-                    //array.put(doc.getData());
                 }
                 File file = new File(contentDir, filename);
-                // Записываем файл атомарно (сначала во временный, потом переименовываем),
+                // записывать файл атомарно (сначала во временный, потом переименовывать)
                 // чтобы избежать повреждения при обрыве записи
                 File tempFile = new File(contentDir, filename + ".tmp");
-                // Пишем данные во временный файл
+                // запись данных во временный файл
                 try (FileOutputStream fos = new FileOutputStream(tempFile)) {
                     fos.write(array.toString(2).getBytes(java.nio.charset.StandardCharsets.UTF_8));
                 }
-                // Если запись успешна, заменяем старый файл новым
+                // если запись успешна, заменить старый файл новым
                 if (file.exists()) {
                     file.delete();
                 }
                 boolean success = tempFile.renameTo(file);
-
                 if (success) {
                     Log.d(TAG, "Файл " + filename + " успешно сохранен (" + array.length() + " записей)");
                 } else {
@@ -605,11 +554,10 @@ public class DataManager {
                         fos.write(array.toString(2).getBytes(java.nio.charset.StandardCharsets.UTF_8));
                     }
                 }
-
                 onComplete.run();
             } catch (Exception e) {
                 Log.e(TAG, "Ошибка сохранения JSON: " + filename, e);
-                // Удаляем временный файл, если он остался
+                // удалить временный файл, если он остался
                 File tempFile = new File(contentDir, filename + ".tmp");
                 if (tempFile.exists()) tempFile.delete();
                 onComplete.run();
@@ -617,6 +565,11 @@ public class DataManager {
         }).start();
     }
 
+    /**
+     * Метод downloadMissingPhotos скачивает новые фото из облачного хранилища
+     * @param imagesSnapshot результат результат запроса к коллекции images
+     * @param onComplete вызывается при завершении скачивания
+     */
     private void downloadMissingPhotos(QuerySnapshot imagesSnapshot, Runnable onComplete) {
         List<String> urlsToDownload = new ArrayList<>();
         for (DocumentSnapshot doc : imagesSnapshot) {
@@ -628,13 +581,11 @@ public class DataManager {
                 }
             }
         }
-
         if (urlsToDownload.isEmpty()) {
             onComplete.run();
             return;
         }
 
-        // Скачиваем все недостающие фото
         AtomicBoolean allDone = new AtomicBoolean(false);
         int total = urlsToDownload.size();
         int[] completed = {0};
@@ -642,7 +593,6 @@ public class DataManager {
         for (String url : urlsToDownload) {
             String filename = getFilenameFromUrl(url);
             File destFile = new File(photosDir, filename);
-
             Request request = new Request.Builder().url(url).build();
             httpClient.newCall(request).enqueue(new Callback() {
                 @Override
@@ -656,7 +606,6 @@ public class DataManager {
                         }
                     }
                 }
-
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) {
                     if (response.isSuccessful() && response.body() != null) {
@@ -683,79 +632,74 @@ public class DataManager {
         }
     }
 
-    // 3. Работа с пользователем и настройками
 
-    // Проверяет, авторизован ли пользователь в Firebase
+    // РАБОТА С ПОЛЬЗОВАТЕЛЕМ И НАСТРОЙКАМИ
+
     public boolean isUserLoggedIn() {
         return mAuth.getCurrentUser() != null;
     }
 
-    // Возвращает true, если текущий пользователь — гость
     public boolean isGuest() {
         return prefs.getBoolean(KEY_IS_GUEST, true);
     }
 
-    // Возвращает ID пользователя (guest_... или firebase uid)
+    /**
+     * Метод getUserId возвращает ID пользователя
+     * @return guest_... или firebase UID
+     */
     public String getUserId() {
         String savedId = prefs.getString(KEY_USER_ID, null);
-        if (savedId != null) return savedId;
-
-        // Первый запуск — создаём гостя
+        if (savedId != null)
+            return savedId;
+        // при первом запуске создать гостя
         String guestId = "guest_" + System.currentTimeMillis();
         prefs.edit().putString(KEY_USER_ID, guestId).putBoolean(KEY_IS_GUEST, true).apply();
         return guestId;
     }
 
     /**
-     * Обрабатывает вход пользователя в аккаунт.
+     * Метод handleUserLogin обрабатывает вход пользователя в аккаунт.
      * Логика синхронизации:
-     * - Новый пользователь (нет данных в облаке): сохраняем локальные данные в облако
-     * - Существующий пользователь + гость: ВСЕГДА загружаем из облака (безопасность)
-     * - Существующий пользователь + не гость (тот же пользователь): сравниваем временные метки для синхронизации
-     * */
+     * - Новый пользователь (регистрация; нет данных в облаке): сохраняет локальные данные в облако
+     * - Существующий пользователь: загружает данные из облака
+     * - Существующий пользователь, уже вошедший на другом устройстве: сравнивает временные метки для синхронизации
+     * @param onSyncComplete вызывается при завершении синхронизации данных
+     */
     public void handleUserLogin(Runnable onSyncComplete) {
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
         if (firebaseUser == null) {
             onSyncComplete.run();
             return;
         }
-
         String firebaseUid = firebaseUser.getUid();
         boolean wasGuest = isGuest();
         long localLastModified = prefs.getLong(KEY_LAST_MODIFIED_LOCAL, System.currentTimeMillis());
-
-        // Загружаем данные из Firestore
+        // загрузка данных из Firestore
         db.collection("users").document(firebaseUid).get()
                 .addOnSuccessListener(snapshot -> {
                     if (!snapshot.exists()) {
                         // СЛУЧАЙ 1: НОВЫЙ ПОЛЬЗОВАТЕЛЬ (регистрация)
-                        // Нет данных в облаке — сохраняем текущие локальные настройки (гостевые) в Firestore
+                        // сохранить текущие локальные настройки (гостевые) в Firestore
                         saveLocalUserSettingsToFirestore(firebaseUid, localLastModified, () -> {
-                            // Синхронизируем историю упражнений
+                            // синхронизировать историю упражнений
                             syncExerciseHistoryToFirestore();
-
-                            // Обновляем локальный статус
+                            // обновить локальный статус пользователя
                             prefs.edit()
                                     .putString(KEY_USER_ID, firebaseUid)
                                     .putBoolean(KEY_IS_GUEST, false)
                                     .apply();
-
                             onSyncComplete.run();
                         });
                     } else {
-                        // СЛУЧАЙ 2: СУЩЕСТВУЮЩИЙ ПОЛЬЗОВАТЕЛЬ (есть данные в облаке)
+                        // СЛУЧАЙ 2: СУЩЕСТВУЮЩИЙ ПОЛЬЗОВАТЕЛЬ
                         long remoteLastModified = snapshot.getLong("last_modified");
-
                         if (wasGuest) {
                             // Подслучай 2a: ГОСТЬ входит в существующий аккаунт
-
-                            // очищаем гостевые данные
+                            // очистить гостевые данные
                             clearLocalUserData();
-
-                            // безопасно загружаем данные из облака
+                            // загрузить данные из облака
                             loadUserSettingsFromSnapshot(snapshot);
-
-                            // Загружаем историю упражнений из облака
+                            // загрузить историю упражнений из облака
                             syncExerciseHistoryFromFirestore(() -> {
                                 prefs.edit()
                                         .putString(KEY_USER_ID, firebaseUid)
@@ -764,14 +708,13 @@ public class DataManager {
                                         .apply();
                                 onSyncComplete.run();
                             });
-
                         } else {
-                            // Подслучай 2b: ПОЛЬЗОВАТЕЛЬ (не гость) снова входит в свой аккаунт
-                            // Применяем сравнение временных меток для корректной multi-device синхронизации
+                            // Подслучай 2b: ПОЛЬЗОВАТЕЛЬ снова входит в свой аккаунт (одновременно)
+                            // сравнить временные метки для корректной синхронизации на нескольких устрайствах
                             if (localLastModified >= remoteLastModified) {
-                                // Локальные данные новее или равны — сохраняем их в облако
+                                // локальные данные новее или равны - сохранить их в облако
                                 saveLocalUserSettingsToFirestore(firebaseUid, localLastModified, () -> {
-                                    // Синхронизируем историю упражнений
+                                    // синхронизировать историю упражнений
                                     syncExerciseHistoryToFirestore();
                                     prefs.edit()
                                             .putString(KEY_USER_ID, firebaseUid)
@@ -780,9 +723,9 @@ public class DataManager {
                                     onSyncComplete.run();
                                 });
                             } else {
-                                // Облачные данные новее — загружаем их локально
+                                // облачные данные новее - загрузить их локально
                                 loadUserSettingsFromSnapshot(snapshot);
-                                // Загружаем историю упражнений из облака
+                                // загрузить историю упражнений из облака
                                 syncExerciseHistoryFromFirestore(() -> {
                                     prefs.edit()
                                             .putString(KEY_USER_ID, firebaseUid)
@@ -797,8 +740,7 @@ public class DataManager {
                 })
                 .addOnFailureListener(e -> {
                     Log.w(TAG, "Не удалось загрузить данные пользователя", e);
-                    // При ошибке сохраняем текущие локальные данные, но меняем статус на авторизованный
-                    // (безопасный отказоустойчивый режим)
+                    // при ошибке сохранить текущие локальные данные, но изменить статус на авторизованный
                     prefs.edit()
                             .putString(KEY_USER_ID, firebaseUid)
                             .putBoolean(KEY_IS_GUEST, false)
@@ -808,14 +750,13 @@ public class DataManager {
     }
 
     /**
-     * Обрабатывает выход из аккаунта.
-     * Данные остаются локально, создаётся новый гостевой ID.
+     * Метод handleUserLogout обрабатывает выход пользователя из аккаунта.
+     * Данные остаются локально, создаётся новый гостевой ID
      */
     public void handleUserLogout() {
-        // Полная очистка данных перед созданием нового гостя
+        // полная очистка данных перед созданием нового гостя
         clearLocalUserData();
-
-        // Создаем нового гостя
+        // создание нового гостя
         String guestId = "guest_" + System.currentTimeMillis();
         prefs.edit()
                 .putString(KEY_USER_ID, guestId)
@@ -824,13 +765,12 @@ public class DataManager {
     }
 
     /**
-     * Немедленно очищает ВСЕ пользовательские данные (для нового гостя или при входе в чужой аккаунт).
+     * Метод clearLocalUserData очищает все пользовательские данные (для нового гостя или при входе в чужой аккаунт).
      * Выполняется синхронно, чтобы UI не показывал старые данные.
      */
     private void clearLocalUserData() {
         SharedPreferences.Editor editor = prefs.edit();
-
-        // Сбрасываем настройки к значениям по умолчанию
+        // сброс настроек к значениям по умолчанию
         editor.putString(KEY_TRIGGERS, "[]");
         editor.putString(KEY_FAVES, "[]");
         editor.putInt(KEY_BREATH_REPEAT, 1);
@@ -839,22 +779,23 @@ public class DataManager {
         editor.putInt(KEY_GROUND_PHOTO_AMOUNT, 2);
         editor.putBoolean(KEY_USE_FAVES_ONLY, false);
         editor.putLong(KEY_LAST_MODIFIED_LOCAL, System.currentTimeMillis());
-
-        // Сбрасываем историю упражнений
-        saveExerciseHistory(new ArrayList<>()); // Сохраняем пустой список СРАЗУ
+        // сброс истории упражнений
+        saveExerciseHistory(new ArrayList<>()); // сохранение пустого списка
         editor.putLong(KEY_EXERCISE_HISTORY_LAST_MODIFIED, 0);
-
         editor.apply();
     }
 
 
-    // 4. Сохранение и загрузка настроек
+    // СОХРАНЕНИЕ И ЗАГРУЗКА НАСТРОЕК
 
-    // Сохраняет настройку и обновляет временную метку.
+    /**
+     * Метод saveUserSetting сохраняет пользовательскую настройку и обновляет временную метку
+     * @param key ключ-название настройки
+     * @param value новое значение настройки
+     */
     public void saveUserSetting(String key, Object value) {
         SharedPreferences.Editor editor = prefs.edit();
         long now = System.currentTimeMillis();
-
         if (value instanceof String) {
             editor.putString(key, (String) value);
         } else if (value instanceof Boolean) {
@@ -862,29 +803,28 @@ public class DataManager {
         } else if (value instanceof Integer) {
             editor.putInt(key, (Integer) value);
         } else if (value instanceof List) {
-            // Списки сохраняем как JSON-строки
+            // списки сохраняются как JSON-строки
             JSONArray array = new JSONArray((List<?>) value);
             editor.putString(key, array.toString());
         }
-
         editor.putLong(KEY_LAST_MODIFIED_LOCAL, now);
         editor.apply();
-
-        // Если пользователь не гость — синхронизируем в фоне
         if (!isGuest()) {
             syncUserSettingsToFirestore(now);
         }
     }
 
+    /**
+     * Метод syncUserSettingsToFirestore синхронизирует польз. настройки в фоне
+     * @param lastModified время последнего изменения локальных настроек
+     */
     private void syncUserSettingsToFirestore(long lastModified) {
         if (!isNetworkAvailable()){
             return;
         }
-
         String userId = getUserId();
         if (isGuest())
             return;
-
         Map<String, Object> data = new HashMap<>();
         try {
             data.put("email", prefs.getString("email", ""));
@@ -896,9 +836,8 @@ public class DataManager {
             data.put("ground_photo_ex_amount", prefs.getInt(KEY_GROUND_PHOTO_AMOUNT, 2));
             data.put("use_faves_only", prefs.getBoolean(KEY_USE_FAVES_ONLY, false));
             data.put("last_modified", lastModified);
-
-            //db.collection("users").document(userId).set(data);
-            // set - полная перезапись документа (плохо)
+            // вместо .set(data); использовать .set(data, SetOptions.merge())
+            // (т.к. set - полная перезапись документа)
             db.collection("users").document(userId)
                     .set(data, SetOptions.merge())
                     .addOnFailureListener(e ->
@@ -909,15 +848,19 @@ public class DataManager {
         }
     }
 
+    /**
+     * Метод saveLocalUserSettingsToFirestore сохраняет локальные польз. настройки в БД
+     * @param userId ID пользователя
+     * @param lastModified время последнего изменения локальных настроек
+     * @param onComplete вызывается при завершении синхронизации
+     */
     private void saveLocalUserSettingsToFirestore(String userId, long lastModified, Runnable onComplete) {
         if (!isNetworkAvailable()) {
             onComplete.run();
             return;
         }
-
         Map<String, Object> data = new HashMap<>();
         try {
-            // Собираем все текущие настройки
             data.put("email", prefs.getString("email", ""));
             data.put("triggers", convertJsonStringToList(prefs.getString(KEY_TRIGGERS, "[]")));
             data.put("faves", convertJsonStringToList(prefs.getString(KEY_FAVES, "[]")));
@@ -927,7 +870,6 @@ public class DataManager {
             data.put("ground_photo_ex_amount", prefs.getInt(KEY_GROUND_PHOTO_AMOUNT, 2));
             data.put("use_faves_only", prefs.getBoolean(KEY_USE_FAVES_ONLY, false));
             data.put("last_modified", lastModified);
-
             db.collection("users").document(userId)
                     .set(data, SetOptions.merge())
                     .addOnSuccessListener(unused -> onComplete.run())
@@ -941,70 +883,58 @@ public class DataManager {
         }
     }
 
+    /**
+     * Метод loadUserSettingsFromSnapshot загружает настройки пользователя из БД
+     * @param snapshot результат запроса к коллекции users (документ с данными пользователя
+     */
     private void loadUserSettingsFromSnapshot(DocumentSnapshot snapshot) {
         SharedPreferences.Editor editor = prefs.edit();
-
         editor.putString("email", snapshot.getString("email"));
-
         @SuppressWarnings("unchecked")
         List<String> triggers = (List<String>) snapshot.get("triggers");
         editor.putString(KEY_TRIGGERS, triggers != null ? new JSONArray(triggers).toString() : "[]");
-
         @SuppressWarnings("unchecked")
         List<String> faves = (List<String>) snapshot.get("faves");
         editor.putString(KEY_FAVES, faves != null ? new JSONArray(faves).toString() : "[]");
-
         editor.putInt(KEY_BREATH_REPEAT, snapshot.getLong("breath_repeat_amount").intValue());
         editor.putBoolean(KEY_USE_MATH, snapshot.getBoolean("use_math"));
         editor.putBoolean(KEY_USE_COLOR_SEARCH, snapshot.getBoolean("use_search_objects_color"));
         editor.putInt(KEY_GROUND_PHOTO_AMOUNT, snapshot.getLong("ground_photo_ex_amount").intValue());
         editor.putBoolean(KEY_USE_FAVES_ONLY, snapshot.getBoolean("use_faves_only"));
-
         editor.apply();
     }
 
     /**
-     * Обрабатывает полное удаление аккаунта пользователя.
+     * Метод handleAccountDeletion обрабатывает полное удаление аккаунта пользователя.
      * Вызывается после успешного удаления аккаунта из Firebase Auth и Firestore.
-     * 1. Очищает ВСЕ пользовательские данные из SharedPreferences
-     * 2. Сбрасывает все настройки к значениям по умолчанию
-     * 3. Создаёт нового гостя с новым ID
-     * 4. Очищает историю упражнений
-     * 5. Сбрасывает флаги состояния
-     *
-     * !! метод должен вызываться ТОЛЬКО после подтверждения удаления
-     * из Firebase Auth и Firestore.
+     * 1. Очищает все пользовательские данные из SharedPreferences.
+     * 2. Сбрасывает все настройки к значениям по умолчанию.
+     * 3. Создаёт нового гостя с новым ID.
+     * 4. Очищает историю упражнений.
+     * 5. Сбрасывает флаги состояния.
      */
     public void handleAccountDeletion() {
         Log.d(TAG, "Начало обработки удаления аккаунта");
-
-        // Полная очистка всех пользовательских данных
+        // полная очистка всех пользовательских данных
         clearAllUserData();
-
-        // Создаём нового гостя с новым ID
+        // создание нового гостя с новым ID
         String guestId = "guest_" + System.currentTimeMillis();
         prefs.edit()
                 .putString(KEY_USER_ID, guestId)
                 .putBoolean(KEY_IS_GUEST, true)
                 .putLong(KEY_LAST_MODIFIED_LOCAL, System.currentTimeMillis())
                 .apply();
-
         Log.d(TAG, "Аккаунт удалён, создан новый гость: " + guestId);
     }
 
     /**
-     * Полностью очищает ВСЕ пользовательские данные из SharedPreferences.
-     * В отличие от clearLocalUserData(), этот метод также сбрасывает
-     * флаги онбординга и другие системные настройки.
-     *
-     * Используется при:
-     * - Удалении аккаунта
-     * - Полном сбросе приложения
+     * Метод clearAllUserData полностью очищает все пользовательские данные из SharedPreferences.
+     * В отличие от clearLocalUserData(), этот метод также сбрасывает флаги онбординга и другие системные настройки.
+     * Используется при удалении аккаунта.
      */
     private void clearAllUserData() {
         SharedPreferences.Editor editor = prefs.edit();
-
-        // Сбрасываем все пользовательские настройки к значениям по умолчанию
+        // польз. настройки
         editor.putString(KEY_TRIGGERS, "[]");
         editor.putString(KEY_FAVES, "[]");
         editor.putInt(KEY_BREATH_REPEAT, 1);
@@ -1012,61 +942,51 @@ public class DataManager {
         editor.putBoolean(KEY_USE_COLOR_SEARCH, true);
         editor.putInt(KEY_GROUND_PHOTO_AMOUNT, 2);
         editor.putBoolean(KEY_USE_FAVES_ONLY, false);
-
-        // Сбрасываем историю упражнений
+        // история упражнений
         saveExerciseHistory(new ArrayList<>());
         editor.putLong(KEY_EXERCISE_HISTORY_LAST_MODIFIED, 0);
-
-        // Сбрасываем флаги состояния
+        // флаги состояния
         editor.putBoolean(KEY_ONBOARDING_COMPLETED, false);
         editor.putBoolean(KEY_APP_INFO_VIEWED, false);
-
-        // Очищаем email (если сохранялся)
+        // очистка email
         editor.remove("email");
-
-        // Очищаем старый user_id (будет создан новый)
+        // очистка старого user_id
         editor.remove(KEY_USER_ID);
         editor.remove(KEY_IS_GUEST);
         editor.remove(KEY_LAST_MODIFIED_LOCAL);
-
         editor.apply();
-
         Log.d(TAG, "Все пользовательские данные очищены");
     }
 
 
-    // ИСТОРИЯ
+    // ИСТОРИЯ ПРОЙДЕННЫХ УПРАЖНЕНИЙ С ФОТО
 
-    // Загружает историю сессий из локального файла.
-    // Возвращает список последних сессий (максимум 3) или пустой список при ошибке/отсутствии файла.
+    /**
+     * Метод loadExerciseHistory загружает историю сессий из локального файла.
+     * @return ExerciseSession-список последних сессий (максимум 3) или пустой список при ошибке/отсутствии файла
+     */
     public List<ExerciseSession> loadExerciseHistory() {
         List<ExerciseSession> sessions = new ArrayList<>();
         File historyFile = new File(context.getFilesDir(), EXERCISE_HISTORY_FILE);
-
         if (!historyFile.exists()) {
-            // Файл ещё не создан — возвращаем пустой список
+            // файл ещё не создан - возвратить пустой список
             return sessions;
         }
-
         try (FileInputStream fis = new FileInputStream(historyFile);
              java.io.ByteArrayOutputStream bos = new java.io.ByteArrayOutputStream()) {
-
             byte[] buffer = new byte[1024];
             int length;
             while ((length = fis.read(buffer)) != -1) {
                 bos.write(buffer, 0, length);
             }
-
             String json = bos.toString("UTF-8");
             JSONArray jsonArray = new JSONArray(json);
-
-            // Читаем максимум 3 сессии (защита от повреждённых данных)
+            // читать максимум 3 сессии
             int limit = Math.min(jsonArray.length(), 3);
             for (int i = 0; i < limit; i++) {
                 JSONObject sessionObj = jsonArray.getJSONObject(i);
                 long timestamp = sessionObj.getLong("timestamp");
-
-                // Загружаем фото из сессии
+                // загрузка фото из сессии
                 JSONArray photosArray = sessionObj.getJSONArray("photos");
                 List<PhotoData> photos = new ArrayList<>();
                 for (int j = 0; j < photosArray.length(); j++) {
@@ -1080,34 +1000,32 @@ public class DataManager {
                     }
                     photos.add(new PhotoData(imgUrl, word, tags));
                 }
-
                 sessions.add(new ExerciseSession(timestamp, photos));
             }
-
         } catch (Exception e) {
             Log.e(TAG, "Ошибка загрузки истории упражнений", e);
-            // При ошибке возвращаем пустой список — безопаснее, чем повреждённые данные
+            // возвратить пустой список
             return new ArrayList<>();
         }
-
         return sessions;
     }
 
-    // Сохраняет список сессий в локальный файл.
-    // Автоматически обрезает список до 3 элементов (самые свежие в начале).
+    /**
+     * Метод saveExerciseHistory сохраняет список сессий в локальный файл.
+     * Автоматически обрезает список до 3 элементов (самые свежие в начале).
+     * @param sessions ExerciseSessions-список - пройденный набор упражнений с фото
+     */
     public void saveExerciseHistory(List<ExerciseSession> sessions) {
-        // Обрезаем до 3 самых свежих сессий (они должны быть в начале списка)
+        // обрезать до 3 самых свежих сессий (они должны быть в начале списка)
         if (sessions.size() > 3) {
             sessions = sessions.subList(0, 3);
         }
-
         JSONArray jsonArray = new JSONArray();
         for (ExerciseSession session : sessions) {
             try {
                 JSONObject sessionObj = new JSONObject();
                 sessionObj.put("timestamp", session.timestamp);
-
-                // Сохраняем фото
+                // сохранение фото
                 JSONArray photosArray = new JSONArray();
                 for (PhotoData photo : session.photos) {
                     JSONObject photoObj = new JSONObject();
@@ -1126,8 +1044,7 @@ public class DataManager {
                 Log.e(TAG, "Ошибка сериализации сессии", e);
             }
         }
-
-        // Записываем в файл
+        // запись в файл
         File historyFile = new File(context.getFilesDir(), EXERCISE_HISTORY_FILE);
         try (FileOutputStream fos = new FileOutputStream(historyFile)) {
             fos.write(jsonArray.toString(2).getBytes("UTF-8")); // toString(2) для читаемого формата
@@ -1137,54 +1054,52 @@ public class DataManager {
         }
     }
 
-    // Добавляет новую сессию в историю и сохраняет обновлённый список.
-    // Автоматически ограничивает историю 3 последними сессиями.
+    /**
+     * Метод addExerciseSession добавляет новую сессию в историю и локально сохраняет обновлённый список.
+     * Автоматически ограничивает историю 3 последними сессиями.
+     * @param newSession новый пройденный набор упражнений
+     */
     public void addExerciseSession(ExerciseSession newSession) {
-        // Загружаем существующую историю
+        // загрузка списка существующей истории
         List<ExerciseSession> sessions = loadExerciseHistory();
-
-        // Добавляем новую сессию В НАЧАЛО списка (самые свежие — первые)
+        // добавление новой сессии в начало списка (самые свежие первые)
         sessions.add(0, newSession);
-
-        // Сохраняем обновлённый список
+        // сохранение обновлённого списка
         saveExerciseHistory(sessions);
     }
 
-    //Добавляет новую сессию в историю и синхронизирует с облаком
+    /**
+     * Метод addExerciseSessionAndSync добавляет новую сессию в историю и синхронизирует с облаком.
+     * @param newSession новый пройденный набор упражнений
+     */
     public void addExerciseSessionAndSync(DataManager.ExerciseSession newSession) {
-        // Добавляем сессию в локальную историю
+        // добавление сессии в локальную историю
         addExerciseSession(newSession);
-
-        // Синхронизируем с облаком (если пользователь не гость и есть интернет)
+        // синхронизация с облаком
         if (!isGuest()) {
             syncExerciseHistoryToFirestore();
         }
     }
 
-    // Синхронизирует историю упражнений с Firestore
+    /**
+     * Метод syncExerciseHistoryToFirestore синхронизирует историю упражнений с Firestore.
+     */
     private void syncExerciseHistoryToFirestore() {
-        if (!isNetworkAvailable()) {
+        if (!isNetworkAvailable())
             return;
-        }
-
         String userId = getUserId();
-        if (isGuest()) {
+        if (isGuest())
             return;
-        }
-
-        // Загружаем локальную историю
+        // загрузка локальной истории
         List<ExerciseSession> localHistory = loadExerciseHistory();
-        if (localHistory.isEmpty()) {
+        if (localHistory.isEmpty())
             return;
-        }
-
-        // Подготавливаем данные для отправки
+        // подготавка данных для отправки
         List<Map<String, Object>> historyData = new ArrayList<>();
         for (ExerciseSession session : localHistory) {
             Map<String, Object> sessionMap = new HashMap<>();
             sessionMap.put("timestamp", session.timestamp);
-
-            // Преобразуем фото в формат для Firestore
+            // преобразование фото в формат для Firestore
             List<Map<String, Object>> photosData = new ArrayList<>();
             for (PhotoData photo : session.photos) {
                 Map<String, Object> photoMap = new HashMap<>();
@@ -1196,17 +1111,15 @@ public class DataManager {
             sessionMap.put("photos", photosData);
             historyData.add(sessionMap);
         }
-
-        // Сохраняем в Firestore
+        // сохранение в Firestore
         Map<String, Object> data = new HashMap<>();
         data.put("exercise_history", historyData);
         data.put("exercise_history_last_modified", System.currentTimeMillis());
-
         db.collection("users").document(userId)
                 .update(data)
                 .addOnSuccessListener(unused -> {
                     Log.d(TAG, "История упражнений синхронизирована с облаком");
-                    // Обновляем локальную временную метку
+                    // обновление локальной временной метки
                     prefs.edit()
                             .putLong(KEY_EXERCISE_HISTORY_LAST_MODIFIED, System.currentTimeMillis())
                             .apply();
@@ -1216,30 +1129,30 @@ public class DataManager {
                 });
     }
 
-    //Загружает историю упражнений из облака (если она новее локальной)
+    /**
+     * Метод syncExerciseHistoryFromFirestore загружает историю упражнений из облака (если она новее локальной).
+     * @param onComplete вызывается при завершении загрузки
+     */
     public void syncExerciseHistoryFromFirestore(Runnable onComplete) {
         if (!isNetworkAvailable() || isGuest()) {
             onComplete.run();
             return;
         }
-
         String userId = getUserId();
         long localLastModified = prefs.getLong(KEY_EXERCISE_HISTORY_LAST_MODIFIED, 0);
-
         db.collection("users").document(userId)
                 .get()
                 .addOnSuccessListener(snapshot -> {
                     if (snapshot.exists() && snapshot.contains("exercise_history_last_modified")) {
                         long remoteLastModified = snapshot.getLong("exercise_history_last_modified");
-
-                        // Если облачная версия новее — загружаем её
+                        // если облачная версия новее, загрузить её
                         if (remoteLastModified > localLastModified) {
                             @SuppressWarnings("unchecked")
                             List<Map<String, Object>> remoteHistory =
                                     (List<Map<String, Object>>) snapshot.get("exercise_history");
 
                             if (remoteHistory != null && !remoteHistory.isEmpty()) {
-                                // Преобразуем данные из Firestore в локальный формат
+                                // преобразование данных из Firestore в локальный формат
                                 List<ExerciseSession> sessions = new ArrayList<>();
                                 for (Map<String, Object> sessionMap : remoteHistory) {
                                     long timestamp = (long) sessionMap.get("timestamp");
@@ -1261,16 +1174,13 @@ public class DataManager {
                                             }
                                         }
                                     }
-
                                     sessions.add(new ExerciseSession(timestamp, photos));
                                 }
-
-                                // Сохраняем локально
+                                // сохранить локально
                                 saveExerciseHistory(sessions);
                                 prefs.edit()
                                         .putLong(KEY_EXERCISE_HISTORY_LAST_MODIFIED, remoteLastModified)
                                         .apply();
-
                                 Log.d(TAG, "История упражнений загружена из облака");
                             }
                         }
@@ -1284,9 +1194,16 @@ public class DataManager {
     }
 
 
+    // ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ
 
-    // Вспомогательные методы
-
+    /**
+     * Метод getFilenameFromUrl получает ссылку на изображение и возвращает имя файла.
+     * Пример ссылки:
+     * "https://raw.githubusercontent.com/sovush28/PanicPauseImages/refs/heads/main/michael-myers-FvuisLAN-rA-unsplash.jpg",
+     * где "michael-myers-FvuisLAN-rA-unsplash.jpg" - имя файла.
+     * @param url ссылка на изображение
+     * @return имя файла
+     */
     public static String getFilenameFromUrl(String url) {
         if (url == null || url.isEmpty()) return null;
         try {
@@ -1297,11 +1214,23 @@ public class DataManager {
         }
     }
 
+    /**
+     * Метод isNetworkAvailable проверяет наличие подключения к сети Интернет.
+     * Является заглушкой; проверка подключения осуществляется с помощью onFailure Firebase
+     * при произведении операций с Firebase.
+     * Метод может быть улучшен с помощью ConnectivityManager при необходимости.
+     * @return true, если Интернет доступен; false, если Интернет не доступен
+     */
     private boolean isNetworkAvailable() {
-        // Простая проверка (можно улучшить через ConnectivityManager)
-        return true; // полагаемся на onFailure Firebase
+        return true;
     }
 
+    /**
+     * Метод convertJsonStringToList преобразует json-строку в список строк.
+     * Нужен для обеспечения безопасного преобразования данных.
+     * @param jsonString json-строка
+     * @return список строк или пустой список при ошибке
+     */
     private List<String> convertJsonStringToList(String jsonString) {
         try {
             JSONArray array = new JSONArray(jsonString);
@@ -1311,13 +1240,17 @@ public class DataManager {
             }
             return list;
         } catch (Exception e) {
-            return new ArrayList<>(); // возвращаем пустой список при ошибке
+            return new ArrayList<>();
         }
     }
 
     /**
-     * Вспомогательный метод для безопасного получения JSONObject из JSONArray.
-     * Если элемент является строкой, пытается распарсить её как JSON.
+     * safeGetJSONObject - метод для безопасного получения JSONObject из JSONArray.
+     * Если элемент является строкой, метод пытается распарсить её как JSON.
+     * @param array данный JSONArray
+     * @param index индекс JSONObject в JSONArray
+     * @return требуемый JSONObject
+     * @throws JSONException исключение при возникновении ошибки извлечения элемента из массива
      */
     private JSONObject safeGetJSONObject(JSONArray array, int index) throws JSONException {
         Object item = array.get(index);
@@ -1325,7 +1258,7 @@ public class DataManager {
             return (JSONObject) item;
         } else if (item instanceof String) {
             String str = (String) item;
-            // Если строка начинается с '{', пытаемся распарсить её как JSON
+            // если строка начинается с '{', попытаться распарсить её как JSON
             if (str.trim().startsWith("{")) {
                 return new JSONObject(str);
             }
@@ -1333,7 +1266,13 @@ public class DataManager {
         throw new JSONException("Неожиданный тип элемента в массиве по индексу " + index + ": " + item.getClass().getName());
     }
 
-    // Читает файл в строку.
+    /**
+     * Метод readFileToString читает файл в строку.
+     * Используется в методах getLocalTagsList и getLocalImagesList для чтения файлов json, готовых к работе.
+     * @param file читаемый файл
+     * @return строка - содержание файла
+     * @throws IOException исключение при чтении файла
+     */
     private String readFileToString(File file) throws IOException {
         try (FileInputStream fis = new FileInputStream(file);
              ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
@@ -1343,7 +1282,7 @@ public class DataManager {
                 bos.write(buffer, 0, length);
             }
             String content = bos.toString("UTF-8");
-            // Удаляем BOM, если есть
+            // удалить Byte Order Mark, если есть
             if (content.startsWith("\ufeff")) {
                 content = content.substring(1);
             }
@@ -1351,7 +1290,13 @@ public class DataManager {
         }
     }
 
-    // Читает InputStream в строку.
+    /**
+     * Метод streamToString читает поток InputStream в строку.
+     * Используется в методах getLocalTagsList и getLocalImagesList для чтения файлов json, находящихся в папке assets.
+     * @param is поток InputStream
+     * @return строка
+     * @throws IOException исключение при чтении потока
+     */
     private String streamToString(InputStream is) throws IOException {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
             byte[] buffer = new byte[1024];
@@ -1363,6 +1308,11 @@ public class DataManager {
         }
     }
 
+    /**
+     * Метод testFirestoreConnection проверяет подключение к Firebase
+     * и соответствующе логирует результат проверки.
+     * Необходим для мониторинга подключения во время тестирования приложения.
+     */
     public void testFirestoreConnection() {
         db.collection("meta").document("version").get()
                 .addOnSuccessListener(s -> Log.d("FIREBASE_TEST", "[ПРОВЕРКА FIREBASE] Подключение успешно! Версия: " + s.getLong("version")))

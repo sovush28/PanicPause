@@ -20,7 +20,6 @@ public class NotEnoughPhotosDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                               @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // "Надуваем" кастомный макет
         View view = inflater.inflate(R.layout.dialog_no_photos_for_ground, container, false);
 
         Button setTriggersBtn=view.findViewById(R.id.go_to_set_triggers_from_home_btn);

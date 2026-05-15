@@ -40,10 +40,10 @@ public class FavoritesRVAdapter extends RecyclerView.Adapter<FavoritesRVAdapter.
     public void onBindViewHolder(@NonNull FavoriteViewHolder holder, int position) {
         DataManager.PhotoData photo = photos.get(position);
 
-        // Загружаем фото
+        // загрузка фото
         loadPhoto(photo, holder.photoIV);
 
-        // Обработка клика на info
+        // обработка клика на info
         holder.photoIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,7 +51,7 @@ public class FavoritesRVAdapter extends RecyclerView.Adapter<FavoritesRVAdapter.
                         photo,
                         dataManager,
                         deletedPhoto -> {
-                            // Найдём позицию удалённого элемента
+                            // найти позицию удалённого элемента
                             int position = photos.indexOf(deletedPhoto);
                             if (position != -1) {
                                 photos.remove(position);
@@ -64,7 +64,7 @@ public class FavoritesRVAdapter extends RecyclerView.Adapter<FavoritesRVAdapter.
             }
         });
 
-        // Обработка клика на сердечко (удаление из избранных)
+        // удаление из избранных
         holder.heartIB.setOnClickListener(v -> {
             showDeleteFaveConfirmationDialog(photo, position);
         });
@@ -75,29 +75,34 @@ public class FavoritesRVAdapter extends RecyclerView.Adapter<FavoritesRVAdapter.
         return photos.size();
     }
 
-    // ViewHolder и loadPhoto аналогичны существующим
+    // З
+    //
 
-    // Загружает фото в изображение с помощью Glide.
-    // Сначала пытаемся загрузить локальный файл, если его нет — загружаем по URL.
+    /**
+     * Метод loadPhoto загружает фото в изображение с помощью Glide.
+     * Сначала пытается загрузить локальный файл, если его нет - загружает по URL.
+     * @param photo PhotoData-информация о фото
+     * @param imageView imageView, куда нужно загрузить фото
+     */
     private void loadPhoto(DataManager.PhotoData photo, com.google.android.material.imageview.ShapeableImageView imageView) {
-        // Получаем имя файла из URL
+        // получить имя файла из URL
         String filename = DataManager.getFilenameFromUrl(photo.imgUrl);
         if (filename == null) {
             return;
         }
 
-        // Проверяем наличие локального файла
+        // проверка наличия локального файла
         File photoFile = new File(context.getFilesDir(), "photos/" + filename);
 
         if (photoFile.exists()) {
-            // Загружаем локальный файл
+            // загрузка локального файла
             Glide.with(context)
                     .load(photoFile)
                     //.placeholder(R.drawable.placeholder_image) // Заглушка при загрузке
                     //.error(R.drawable.error_image) // Изображение при ошибке
                     .into(imageView);
         } else {
-            // Загружаем по интернету (если есть)
+            // загрузка по интернету (если есть)
             Glide.with(context)
                     .load(photo.imgUrl)
                     //.placeholder(R.drawable.placeholder_image)
@@ -109,13 +114,11 @@ public class FavoritesRVAdapter extends RecyclerView.Adapter<FavoritesRVAdapter.
 
     static class FavoriteViewHolder extends RecyclerView.ViewHolder {
         com.google.android.material.imageview.ShapeableImageView photoIV;
-        //ImageView infoIV;
         ImageButton heartIB;
 
         FavoriteViewHolder(@NonNull View itemView) {
             super(itemView);
             photoIV=itemView.findViewById(R.id.favorites_rv_iv);
-            //infoIV=itemView.findViewById(R.id.favs_photo_info_iv);
             heartIB=itemView.findViewById(R.id.favs_heart_ib);
         }
     }
@@ -125,14 +128,14 @@ public class FavoritesRVAdapter extends RecyclerView.Adapter<FavoritesRVAdapter.
             DeleteFromFavesDialogFragment dialog = new DeleteFromFavesDialogFragment();
             dialog.setOnDeleteFaveListener(new DeleteFromFavesDialogFragment.OnDeleteFaveListener() {
                 @Override
-                public void onDeleteFaveConfirmed() { // Пользователь подтвердил удаление из избр
+                public void onDeleteFaveConfirmed() {
                     List<String> faves = dataManager.getFaves();
                     faves.remove(photo.imgUrl);
                     dataManager.saveFaves(faves);
 
                     int actualPosition = photos.indexOf(photo);
                     if (actualPosition != -1) {
-                        // Удаляем из списка и обновляем
+                        // Удаляемудаление из списка и обновление
                         photos.remove(actualPosition);
                         notifyItemRemoved(actualPosition);
                         if(photos.isEmpty())
@@ -142,7 +145,6 @@ public class FavoritesRVAdapter extends RecyclerView.Adapter<FavoritesRVAdapter.
 
                 @Override
                 public void onDeleteFaveCancelled() {
-                    // Пользователь отменил удаление
                     dialog.dismiss();
                 }
             });
@@ -150,10 +152,9 @@ public class FavoritesRVAdapter extends RecyclerView.Adapter<FavoritesRVAdapter.
             dialog.show(((AppCompatActivity) context).getSupportFragmentManager(), "delete_fave_dialog");
         }
         catch(IllegalStateException ex){
-            // Обработка случая, когда Activity уничтожается
+            // обработка случая, когда Activity уничтожается
             Log.e("Dialog", "Cannot show dialog - activity state invalid");
         }
     }
-
 
 }

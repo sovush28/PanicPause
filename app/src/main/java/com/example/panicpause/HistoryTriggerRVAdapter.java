@@ -13,21 +13,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-// Адаптер для отображения списка тегов у фото.
-// Показывает теги с разным стилем в зависимости от того, выбраны ли они как триггеры.
+/**
+ * HistoryTriggerRVAdapter - адаптер для отображения списка тегов у фото.
+ * Показывает теги с разным стилем в зависимости от того, выбраны ли они как триггеры.
+ */
 public class HistoryTriggerRVAdapter extends RecyclerView.Adapter<HistoryTriggerRVAdapter.HistoryTriggerRVViewHolder> {
-
-    // Список тегов фото
     private final List<TriggerItem> photoTags;
-    // Список триггеров пользователя
     private List<String> userTriggers;
-    // Слушатель кликов на тегах
-    private final OnHistoryTriggerActionListener listener;
 
-    // Слушатель действий с тегами
+    private final OnHistoryTriggerActionListener listener;
     public interface OnHistoryTriggerActionListener {
         /**
-         * Вызывается при клике на тег.
+         * Метод onTriggerClick вызывается при клике на тег.
          * @param tag Тег, на который кликнули
          * @param isSelected true, если тег уже выбран как триггер
          */
@@ -44,7 +41,6 @@ public class HistoryTriggerRVAdapter extends RecyclerView.Adapter<HistoryTrigger
     @NonNull
     @Override
     public HistoryTriggerRVViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Создаём представление из макета элемента тега
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.history_dialog_trigger_rv_item, parent, false);
         return new HistoryTriggerRVViewHolder(view);
@@ -52,32 +48,15 @@ public class HistoryTriggerRVAdapter extends RecyclerView.Adapter<HistoryTrigger
 
     @Override
     public void onBindViewHolder(@NonNull HistoryTriggerRVViewHolder holder, int position) {
-        TriggerItem tagItem = photoTags.get(position); // Теперь это объект
-
-        // ОТОБРАЖЕНИЕ ЛОКАЛИЗОВАННОЙ СТРОКИ
-        /*String displayText = tagItem.getStrRes(); // Ключ строки, например "animals_label"
-
-        try {
-            // Преобразуем ключ в строку из resources
-            int stringId = holder.itemView.getContext().getResources()
-                    .getIdentifier(displayText, "string", holder.itemView.getContext().getPackageName());
-            if (stringId != 0) {
-                holder.tagTV.setText(stringId);
-            } else {
-                holder.tagTV.setText(displayText); // fallback
-            }
-        } catch (Exception e) {
-            holder.tagTV.setText(displayText);
-        }*/
+        TriggerItem tagItem = photoTags.get(position);
 
         if (tagItem.getNameRus()!=null)
             holder.tagTV.setText(tagItem.getNameRus());
 
-        // ПРОВЕРКА: ВЫБРАН ЛИ ТРИГГЕР
-        // Сравниваем по imgTag (ключу), а не по отображаемому тексту
+        // проверка, выбран ли тег (отмечен ли тег как триггер)
         boolean isSelected = userTriggers.contains(tagItem.getImgTag());
 
-        // === ЦВЕТ И ФОН ===
+        // установка цвета и фона
         if (isSelected) {
             holder.itemView.setBackgroundResource(R.drawable.history_trigger_outlined_selected_shape);
             holder.crossIV.setVisibility(View.VISIBLE);
@@ -88,41 +67,11 @@ public class HistoryTriggerRVAdapter extends RecyclerView.Adapter<HistoryTrigger
             holder.tagTV.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.colorDarkBlueish));
         }
 
-        // === ОБРАБОТКА КЛИКА ===
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
-                listener.onTriggerClick(tagItem.getImgTag(), isSelected); // Передаём ключ
+                listener.onTriggerClick(tagItem.getImgTag(), isSelected);
             }
         });
-
-
-        /*// Получаем тег для текущей позиции
-        String tag = photoTags.get(position);
-
-        // Отображаем текст тега
-        holder.tagTV.setText(tag);
-
-        // Проверяем, является ли тег триггером пользователя
-        boolean isSelected = userTriggers.contains(tag);
-
-        if (isSelected) {
-            // Тег выбран — показываем крестик и другой фон
-            holder.itemView.setBackgroundResource(R.drawable.history_trigger_outlined_selected_shape);
-            holder.crossIV.setVisibility(View.VISIBLE);
-            holder.tagTV.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.colorBeige));
-        } else {
-            // Тег не выбран — скрываем крестик и показываем другой фон
-            holder.itemView.setBackgroundResource(R.drawable.history_trigger_filled_unselected_shape);
-            holder.crossIV.setVisibility(View.GONE);
-            holder.tagTV.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.colorDarkBlueish));
-        }
-
-        // Обработка клика на тег
-        holder.itemView.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onTriggerClick(tag, isSelected);
-            }
-        });*/
     }
 
     @Override
@@ -130,7 +79,6 @@ public class HistoryTriggerRVAdapter extends RecyclerView.Adapter<HistoryTrigger
         return photoTags.size();
     }
 
-    // ViewHolder для элемента тега.
     static class HistoryTriggerRVViewHolder extends RecyclerView.ViewHolder {
         TextView tagTV;
         ImageView crossIV;
@@ -143,8 +91,8 @@ public class HistoryTriggerRVAdapter extends RecyclerView.Adapter<HistoryTrigger
     }
 
     public void updateUserTriggers(List<String> newUserTriggers) {
-        this.userTriggers = new ArrayList<>(newUserTriggers); // Создаём копию для безопасности
-        notifyDataSetChanged(); // Можно использовать notifyItemRangeChanged(0, getItemCount()) для оптимизации
+        this.userTriggers = new ArrayList<>(newUserTriggers); // копия для безопасности
+        notifyDataSetChanged(); // можно использовать notifyItemRangeChanged(0, getItemCount()) для оптимизации
     }
 
 }

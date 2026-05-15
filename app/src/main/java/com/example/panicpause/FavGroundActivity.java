@@ -102,7 +102,6 @@ public class FavGroundActivity extends AppCompatActivity {
     }
 
     private void prepareExSequence(){
-        // get userFavesPhotoData list
         userFaves = dataManager.getFaves();
 
         for (DataManager.PhotoData photo : dataManager.getLocalImagesList()){
@@ -150,14 +149,14 @@ public class FavGroundActivity extends AppCompatActivity {
     }
 
     private void updateBtns(){
-        // если упражнение первое то нет кнопки назад
+        // если упражнение первое, то спрятать кнопку назад
         if(currentExIndex==0){
             backBtn.setVisibility(View.GONE);
         }
         else{
             backBtn.setVisibility(View.VISIBLE);
         }
-        // если упражнение последнее то кнопка дальше -> завершить
+        // если упражнение последнее, то кнопка "дальше" -> "завершить"
         if(isLastExercise()){
             nextBtn.setText(R.string.finish);
         }

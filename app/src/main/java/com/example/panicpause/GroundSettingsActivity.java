@@ -19,7 +19,6 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class GroundSettingsActivity extends AppCompatActivity {
-
     ImageButton backBtn;
     Button resetBtn;
     ImageView breathQIncreaseIV, breathQDecreaseIV, photoQIncreaseIV, photoQDecreaseIV;
@@ -44,7 +43,6 @@ public class GroundSettingsActivity extends AppCompatActivity {
         dataManager=new DataManager(this);
 
         loadUserSettings();
-
         updateUI();
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -119,7 +117,6 @@ public class GroundSettingsActivity extends AppCompatActivity {
         useColorSwitch=findViewById(R.id.use_color_toggle_sc);
         useFavesOnlySwitch =findViewById(R.id.use_faves_only_toggle_sc);
         photoExAmountLayout=findViewById(R.id.photo_ex_amount_layout);
-
         useMathLayout=findViewById(R.id.use_math_toggle_layout);
         useColorLayout=findViewById(R.id.use_color_toggle_layout);
         useFavesOnlyLayout=findViewById(R.id.use_faves_only_toggle_layout);
@@ -138,14 +135,12 @@ public class GroundSettingsActivity extends AppCompatActivity {
                 }
             }
         });
-
         resetBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showResetSettingsConfirmationDialog();
             }
         });
-
         breathQIncreaseIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -166,7 +161,6 @@ public class GroundSettingsActivity extends AppCompatActivity {
                 }
             }
         });
-
         photoQIncreaseIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -189,7 +183,6 @@ public class GroundSettingsActivity extends AppCompatActivity {
                 updateUI();
             }
         });
-
         useMathLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -214,7 +207,6 @@ public class GroundSettingsActivity extends AppCompatActivity {
                 updateUI();
             }
         });
-
         useMathSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -249,7 +241,6 @@ public class GroundSettingsActivity extends AppCompatActivity {
                 updatePhotoQIncreaseArrow();
             }
         });
-
     }
 
     private void showResetSettingsConfirmationDialog(){
@@ -262,7 +253,6 @@ public class GroundSettingsActivity extends AppCompatActivity {
                     saveAllSettings();
                     updateUI();
                 }
-
                 @Override
                 public void onResetSettingsCancelled() {
                     dialog.dismiss();
@@ -271,7 +261,7 @@ public class GroundSettingsActivity extends AppCompatActivity {
             dialog.show(getSupportFragmentManager(), "reset_settings_dialog");
         }
         catch(IllegalStateException ex){
-            // Обработка случая, когда Activity уничтожается
+            // обработка случая, когда Activity уничтожается
             Log.e("Dialog", "Cannot show dialog - activity state invalid");
         }
     }

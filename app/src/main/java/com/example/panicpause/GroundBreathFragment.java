@@ -17,22 +17,10 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 /**
- * GroundBreathFragment - This fragment handles the square breathing exercise.
- * 
- * The square breathing exercise consists of 4 phases, each lasting 4 seconds:
- * 1. Inhale (4 seconds) - Square outline becomes darker from bottom-left corner
- * 2. Hold (4 seconds) - Continue drawing to top-left corner
- * 3. Exhale (4 seconds) - Continue drawing to top-right corner  
- * 4. Hold (4 seconds) - Complete the square by drawing to bottom-right corner
- * 
- * The animation shows a light-colored square outline (#CDC6A5) that gradually becomes
- * darker (#6F9283) as if a second square is being drawn over it.
- * 
- * The text in the center changes to show the current phase and countdown.
+ * GroundBreathFragment - фрагмент, отвечающий за упражнение "Дыхание по квадрату".
+ * Упражнение состоит из 4 фаз, каждая по 4 секунды.
  */
 public class GroundBreathFragment extends Fragment {
-
-    // UI elements
     private Button nextBtn, repeatBtn;
     private ImageButton backBtn;
     private TextView instructionText, countdownText;
@@ -42,13 +30,13 @@ public class GroundBreathFragment extends Fragment {
     private Handler handler;
     private Runnable countdownRunnable;
     
-    // Current phase of the breathing exercise (0-3)
+    // текущая фаза (0-3)
     private int currentPhase = 0;
     
-    // Text resources for each phase - will be initialized in onCreateView
+    // текст для каждой фазы
     private String[] phaseInstructions;
     
-    // Animation duration for each side (4 seconds)
+    // длительность анимации для каждой стороны квадрата
     private static final int ANIMATION_DURATION = 4000;
 
     private boolean breathingStarted = false; // флаг, чтобы не запускать дважды
@@ -85,16 +73,14 @@ public class GroundBreathFragment extends Fragment {
 
         updateButtonVisibility();
 
-        // Запускаем упражнение ТОЛЬКО после создания View
+        // запуск упражнение только после создания View
         if (!breathingStarted) {
             startBreathingExercise();
             squareAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     if (currentPhase == 3) {
-                        // Если последний этап
-
-                        //начинаем анимацию заново
+                        // если последний этап, начинаем анимацию заново
                         startSquareAnimation();
                     }
                 }
@@ -104,27 +90,25 @@ public class GroundBreathFragment extends Fragment {
     }
 
     /**
-     * Initializes the phase instruction strings from resources.
-     * This method must be called after the fragment is attached to the context.
+     * Метод initializePhaseInstructions достает строки для инструкции из strings.res
      */
     private void initializePhaseInstructions() {
-        // Убедимся, что фрагмент прикреплён к активности
+        // убедиться, что фрагмент прикреплён к активности
         if (getActivity() == null) {
-            // Безопасный fallback — но на практике не должно происходить
+            // безопасный fallback
             phaseInstructions = new String[]{
-                    getString(R.string.breath_in),      // Inhale
-                    getString(R.string.breath_hold),    // Hold
-                    getString(R.string.breath_out),     // Exhale
-                    getString(R.string.breath_hold)     // Hold
+                    getString(R.string.breath_in),
+                    getString(R.string.breath_hold),
+                    getString(R.string.breath_out),
+                    getString(R.string.breath_hold)
             };
             return;
         }
-
         phaseInstructions = new String[]{
-            getString(R.string.breath_in),      // Inhale
-            getString(R.string.breath_hold),    // Hold
-            getString(R.string.breath_out),     // Exhale
-            getString(R.string.breath_hold)     // Hold
+            getString(R.string.breath_in),
+            getString(R.string.breath_hold),
+            getString(R.string.breath_out),
+            getString(R.string.breath_hold)
         };
     }
 
@@ -135,8 +119,7 @@ public class GroundBreathFragment extends Fragment {
         instructionText = view.findViewById(R.id.instruction_text);
         countdownText = view.findViewById(R.id.countdown_text);
         squareView = view.findViewById(R.id.square_view);
-        
-        // Initialize handler for countdown updates
+
         handler = new Handler(Looper.getMainLooper());
     }
 
@@ -144,7 +127,6 @@ public class GroundBreathFragment extends Fragment {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Get reference to the parent activity and call its method
                 if (getActivity() instanceof GroundActivity) {
                     GroundActivity activity = (GroundActivity) getActivity();
                     activity.goToPreviousFragment();
@@ -152,11 +134,9 @@ public class GroundBreathFragment extends Fragment {
             }
         });
 
-        // Next button - moves to the next fragment
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Get reference to the parent activity and call its method
                 if (getActivity() instanceof GroundActivity) {
                     GroundActivity activity = (GroundActivity) getActivity();
                     activity.goToNextFragment();
@@ -164,11 +144,9 @@ public class GroundBreathFragment extends Fragment {
             }
         });
 
-        // Repeat button - restarts the entire grounding sequence
         repeatBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Get reference to the parent activity and call its method
                 if (getActivity() instanceof GroundActivity) {
                     GroundActivity activity = (GroundActivity) getActivity();
                     activity.repeatGroundingSequence();
@@ -206,128 +184,82 @@ public class GroundBreathFragment extends Fragment {
         }
     }
 
-    /*private void updateButtonVisibility() {
-        if (getActivity() instanceof GroundActivity) {
-            GroundActivity activity = (GroundActivity) getActivity();
-            if (activity.isLastFragment()) {
-                repeatBtn.setVisibility(View.VISIBLE);
-                nextBtn.setText(getString(R.string.end));
-            } else {
-                repeatBtn.setVisibility(View.GONE);
-                nextBtn.setText(getString(R.string.next));
-            }
-        }
-    }*/
-
     public void onFragmentResumed(){
         super.onResume();
         updateButtonVisibility();
-        //startBreathingExercise();
     }
 
     public void onFragmentPaused() {
-        super.onPause();
-        // Остановка таймеров, анимаций
+        super.onPause(); // остановка таймеров, анимаций
     }
 
-    /**
-     * Starts the square breathing exercise animation.
-     * This method sets up the initial state and begins the animation cycle.
-     */
     private void startBreathingExercise() {
-
-        // Reset the current phase
         currentPhase = 0;
-
-        // Сбрасываем анимацию
         if (squareAnimator != null) {
             squareAnimator.cancel();
         }
-        
-        // Start the first phase
         startPhase(0);
     }
 
-    /**
-     * Starts a specific phase of the breathing exercise.
-     * 
-     * @param phase The phase number (0-3)
-     */
     private void startPhase(int phase) {
         currentPhase = phase;
-        
-        // Update the instruction text
+
         instructionText.setText(phaseInstructions[phase]);
-        
-        // Start the countdown for this phase
+
         startCountdown();
 
-        // Start the square animation for this phase
         startSquareAnimation();
     }
 
     /**
-     * Starts the countdown timer for the current phase.
-     * Updates the countdown text every second.
+     * Метод startCountdown запускает таймер для текущей фазы.
+     * Обновляет отсчет (текст) каждую секунду.
      */
     private void startCountdown() {
-        // Cancel any existing countdown
         if (countdownRunnable != null) {
             handler.removeCallbacks(countdownRunnable);
         }
-        
-        // Create new countdown runnable
+
         countdownRunnable = new Runnable() {
-            int countdown = 4; // Start from 4 seconds
+            int countdown = 4;
             
             @Override
-            public void run() { //TODO плавное затухание и смена текста
+            public void run() {
                 if (countdown > 0) {
-                    // Update countdown text
                     countdownText.setText(String.valueOf(countdown) + "...");
                     countdown--;
-                    
-                    // Schedule next update in 1 second
+                    // установить следующее обновление через 1 секунду
                     handler.postDelayed(this, 1000);
                 } else {
-                    // Phase completed, move to next phase
                     countdownText.setText("");
-                    
                     if (currentPhase < 3) {
-                        // Move to next phase
                         startPhase(currentPhase + 1);
                     } else {
-                        // All phases completed - restart from beginning
                         currentPhase = 0;
                         startPhase(currentPhase);
 
                         breathRepeatCount++;
 
                         updateButtonVisibility();
-
                     }
                 }
             }
         };
-        
-        // Start the countdown
         handler.post(countdownRunnable);
     }
 
     /**
-     * Starts the square animation for the current phase.
+     * Начинает анимацию квадрата для тек. фазы
      */
     private void startSquareAnimation() {
-        // Останавливаем предыдущую анимацию
         if (squareAnimator != null) {
             squareAnimator.cancel();
         }
 
-        // Создаем новую анимацию
         squareAnimator = ValueAnimator.ofFloat(0f, 1f);
         squareAnimator.setDuration(ANIMATION_DURATION);
 
-        // Рассчитываем прогресс для текущего этапа
+        // рассчитать прогресс для текущего этапа
         float startProgress = currentPhase * 0.25f;
         float endProgress = startProgress + 0.25f;
 
@@ -341,8 +273,6 @@ public class GroundBreathFragment extends Fragment {
                 squareView.setProgress(progress);
             }
         });
-
-        // Запускаем анимацию
         squareAnimator.start();
     }
 
@@ -350,12 +280,6 @@ public class GroundBreathFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        
-        // Clean up resources to prevent memory leaks
-        /*if (animator != null) {
-            animator.cancel();
-        }*/
-        
         if (countdownRunnable != null) {
             handler.removeCallbacks(countdownRunnable);
         }

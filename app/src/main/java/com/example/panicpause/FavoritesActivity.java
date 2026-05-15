@@ -60,7 +60,6 @@ public class FavoritesActivity extends AppCompatActivity {
         else{
             randomOrderLayout.setVisibility(View.VISIBLE);
 
-            // создать адаптер
             FavoritesRVAdapter adapter = new FavoritesRVAdapter(favoritePhotos, this, dataManager);
             favoritesRV.setAdapter(adapter);
 
@@ -68,7 +67,7 @@ public class FavoritesActivity extends AppCompatActivity {
             GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
             favoritesRV.setLayoutManager(layoutManager);
 
-            // добавить отступы
+            // отступы
             int spacing = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 22, getResources().getDisplayMetrics());
             favoritesRV.addItemDecoration(new GridSpacingItemDecoration(spacing));
         }

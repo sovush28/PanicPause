@@ -27,7 +27,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class SignInActivity extends AppCompatActivity {
-
     ImageView backIV;
     EditText emailET, passwET, repeatPasswET;
     TextView logInTV;
@@ -35,7 +34,6 @@ public class SignInActivity extends AppCompatActivity {
     LinearLayout guestBtnLayout;
 
     private FirebaseAuth mAuth;
-
     private DataManager dataManager;
 
     private boolean fromAccSettings = false;
@@ -166,8 +164,6 @@ public class SignInActivity extends AppCompatActivity {
 
     }
 
-    ///
-
     private void signInUser(){
         String email=emailET.getText().toString().trim();
         String password=passwET.getText().toString().trim();
@@ -192,7 +188,6 @@ public class SignInActivity extends AppCompatActivity {
             progressDialog.show(getSupportFragmentManager(), "progress_dialog");
         }
         catch(IllegalStateException ex){
-            // Обработка случая, когда Activity уничтожается
             Log.e("Dialog", "Cannot show dialog - activity state invalid");
         }
 
@@ -239,8 +234,6 @@ public class SignInActivity extends AppCompatActivity {
                 });
 
     }
-
-    /////
 
     private void goToMainActivity(){
         Intent intent = new Intent(SignInActivity.this,MainActivity.class);

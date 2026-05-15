@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".GroundMathFragment">
 
-    <!-- Back button positioned at the top left -->
      <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,7 +17,6 @@
         android:contentDescription="Back Button"
         />
 
-    <!-- Main content container -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -27,7 +25,6 @@
         android:gravity="center"
         >
 
-        <!-- Instruction text -->
         <TextView
             android:id="@+id/instruction_text"
             android:layout_width="match_parent"
@@ -40,7 +37,6 @@
             android:layout_marginBottom="40dp"
             />
 
-        <!-- Math problem text -->
         <TextView
             android:id="@+id/math_problem_text"
             android:layout_width="match_parent"
@@ -52,7 +48,6 @@
             android:layout_marginBottom="40dp"
             />
 
-        <!-- Button container -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -62,7 +57,6 @@
             android:layout_marginEnd="80dp"
             >
 
-            <!-- Another Expression button -->
             <Button
                 android:id="@+id/another_expression_btn"
                 android:layout_width="match_parent"
@@ -78,7 +72,6 @@
                 android:visibility="invisible"
                 />
 
-            <!-- Next button -->
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="55dp"

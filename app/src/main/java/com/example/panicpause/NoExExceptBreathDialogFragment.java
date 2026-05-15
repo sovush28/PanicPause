@@ -18,7 +18,6 @@ public class NoExExceptBreathDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.dialog_no_ex_except_breath, container, false);
 
         Button exitSettingsBtn=view.findViewById(R.id.yes_close_ground_settings_btn);

@@ -20,7 +20,6 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class SelfHelpActivity extends AppCompatActivity {
-
     ImageButton backBtn;
     LinearLayout duringPALayoutExpanded, afterPALayoutExpanded, duringPATitleLayout, afterPATitleLayout;
     TextView duringPATitleTV, afterPATitleTV;
@@ -36,7 +35,6 @@ public class SelfHelpActivity extends AppCompatActivity {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO add smooth transition? theres the default one though
                 finish();
             }
         });
@@ -80,13 +78,10 @@ public class SelfHelpActivity extends AppCompatActivity {
     private void InitializeViews(){
         duringPALayoutExpanded=findViewById(R.id.during_pa_text_expanded);
         afterPALayoutExpanded=findViewById(R.id.after_pa_text_expanded);
-
         duringPATitleTV=findViewById(R.id.during_pa_tv);
         afterPATitleTV=findViewById(R.id.after_pa_tv);
-
         duringPATriangleIV=findViewById(R.id.during_pa_triangle_iv);
         afterPATriangleIV=findViewById(R.id.after_pa_triangle_iv);
-
         duringPATitleLayout=findViewById(R.id.during_pa_title_lin_layout);
         afterPATitleLayout=findViewById(R.id.after_pa_title_lin_layout);
     }
@@ -94,16 +89,12 @@ public class SelfHelpActivity extends AppCompatActivity {
     private void HideDuringPAExpandedText(){
         duringPATitleTV.setTypeface(null, Typeface.NORMAL);
         duringPATriangleIV.setRotation(0);
-        //RotateTriangle(duringPATriangleIV, 0, 90);
-
         CollapseView(duringPALayoutExpanded);
     }
 
     private void HideAfterPAExpandedText(){
         afterPATitleTV.setTypeface(null, Typeface.NORMAL);
         afterPATriangleIV.setRotation(0);
-        //RotateTriangle(afterPATriangleIV, 0, 90);
-
         CollapseView(afterPALayoutExpanded);
     }
 
@@ -111,43 +102,13 @@ public class SelfHelpActivity extends AppCompatActivity {
         ExpandView(duringPALayoutExpanded);
         duringPATitleTV.setTypeface(null, Typeface.BOLD);
         duringPATriangleIV.setRotation(90);
-        //RotateTriangleDown(duringPATriangleIV);
     }
 
     private void ShowAfterPAText(){
         ExpandView(afterPALayoutExpanded);
         afterPATitleTV.setTypeface(null, Typeface.BOLD);
         afterPATriangleIV.setRotation(90);
-        //RotateTriangleDown(afterPATriangleIV);
     }
-
-
-/*
-    //doesnt work as well!!
-    private void RotateTriangle(View triangleIV, int animResID){
-        Animation animation = AnimationUtils.loadAnimation(SelfHelpActivity.this, animResID);
-        triangleIV.startAnimation(animation);
-    }
-
-    private void RotateTriangleDown(View triangleIV){
-        triangleIV.setRotation(0);
-        RotateTriangle(triangleIV, R.anim.rotate_small_triangle_down_anim);
-        triangleIV.setRotation(90);
-    }
-*/
-
-
-/*
-    //doesnt work!! damn!!!
-    private void RotateTriangle(View triangleIV, float fromDegrees, float toDegrees){
-        RotateAnimation rotateAnim = new RotateAnimation(fromDegrees, toDegrees,
-                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        rotateAnim.setDuration(500);
-        rotateAnim.setRepeatCount(0);
-        triangleIV.setAnimation(rotateAnim);
-        triangleIV.setRotation(toDegrees);
-    }
-*/
 
     private void ExpandView(View v){
         int matchParentMeasureSpec = View.MeasureSpec.makeMeasureSpec(((View) v.getParent()).getWidth(), View.MeasureSpec.EXACTLY);
@@ -155,7 +116,7 @@ public class SelfHelpActivity extends AppCompatActivity {
         v.measure(matchParentMeasureSpec, wrapContentMeasureSpec);
         final int targetHeight = v.getMeasuredHeight();
 
-        // Older versions of android (pre API 21) cancel animations for views with a height of 0.
+        // версии Android до API 21 отменяют анимации для элементов с высотой = 0
         v.getLayoutParams().height = 1;
         v.setVisibility(View.VISIBLE);
         Animation a = new Animation(){
@@ -172,7 +133,7 @@ public class SelfHelpActivity extends AppCompatActivity {
                 return true;
             }
         };
-        // Expansion speed of 1dp/ms
+        // скорость раскрытия 1dp/ms
         a.setDuration((int)(targetHeight / v.getContext().getResources().getDisplayMetrics().density));
         v.startAnimation(a);
     }
@@ -198,11 +159,9 @@ public class SelfHelpActivity extends AppCompatActivity {
             }
         };
 
-        // Collapse speed of 1dp/ms
+        // скорость схлопывания 1dp/ms
         a.setDuration((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density));
         v.startAnimation(a);
-
-        //you can obtain a smoother animation by changing the duration (and hence the speed) of the animation
     }
 
 }

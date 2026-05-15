@@ -39,7 +39,7 @@
             app:passwordToggleTint="@color/colorTransparentBeige"
             app:hintEnabled="false"
             >
-            <!--    app:hintEnabled="false" - убирает анимацию хинта при фокусе  -->
+            <!--app:hintEnabled="false" - убирает анимацию хинта при фокусе  -->
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="55dp"

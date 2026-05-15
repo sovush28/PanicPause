@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".GroundCountColorFragment">
 
-    <!-- Back button positioned at the top left -->
      <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,7 +17,6 @@
         android:contentDescription="Back Button"
         />
 
-    <!-- Main content container -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -27,7 +25,6 @@
         android:gravity="center"
         >
 
-        <!-- Button container -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -47,7 +44,6 @@
             android:id="@+id/count_color_tv"
             />
 
-            <!-- Another Color button -->
             <Button
                 android:id="@+id/another_color_btn"
                 android:layout_width="match_parent"
@@ -64,7 +60,6 @@
                 android:gravity="center"
                 />
 
-            <!-- Next button -->
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="55dp"

@@ -18,13 +18,12 @@ import java.util.List;
 import java.util.Set;
 
 public class SetTriggersActivity extends AppCompatActivity implements TriggersRecycleViewAdapter.OnTriggerClickListener{
-
     ImageButton backBtn;
     RecyclerView triggersListRV;
     TriggersRecycleViewAdapter triggersAdapter;
 
     private List<TriggerItem> allTriggerItems=new ArrayList<>();
-    private Set<String> userTriggers = new HashSet<>(); // user's selected triggers
+    private Set<String> userTriggers = new HashSet<>();
 
     private DataManager dataManager;
 
@@ -36,14 +35,11 @@ public class SetTriggersActivity extends AppCompatActivity implements TriggersRe
 
         dataManager = new DataManager(this);
 
-        InitializeViews();
+        initializeViews();
+        setupRecyclerView();
 
-        SetupRecyclerView();
-
-        // Загружаем триггеры из локального файла
-        LoadTriggersFromLocal();
-        // Загружаем выбранные триггеры из локального хранилища
-        LoadUserTriggers();
+        loadTriggersFromLocal();
+        loadUserTriggers();
 
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,53 +55,57 @@ public class SetTriggersActivity extends AppCompatActivity implements TriggersRe
         });
     }
 
-    private void InitializeViews(){
+    private void initializeViews(){
         backBtn=findViewById(R.id.back_btn);
         triggersListRV=findViewById(R.id.triggers_recycler_view);
     }
 
-    private void SetupRecyclerView(){
-        // Use LinearLayoutManager for vertical scrolling list
+    private void setupRecyclerView(){
+        // LinearLayoutManager для вертикального прокручиваемого списка
         triggersListRV.setLayoutManager(new LinearLayoutManager(this));
-
-        // Create adapter with empty list initially, will update when data loads
+        // изначально адаптер создается с пустым списком, позже обновляется после загрузки данных
         triggersAdapter=new TriggersRecycleViewAdapter(allTriggerItems,this);
         triggersListRV.setAdapter(triggersAdapter);
     }
 
-    // Load trigger hierarchy from the local file (tags.json)
-    private void LoadTriggersFromLocal() {
+    private void loadTriggersFromLocal() {
         allTriggerItems = dataManager.getLocalTagsList();
         triggersAdapter.updateItems(allTriggerItems);
     }
 
-    // Load user's selected triggers from local storage
-    private void LoadUserTriggers() {
+    private void loadUserTriggers() {
         userTriggers = new HashSet<>(dataManager.getTriggers());
         triggersAdapter.setUserSelectedTriggers(userTriggers);
     }
 
-    // Handle category expand/collapse clicks
+    /**
+     * Метод onCategoryClick отвечает за клики для раскрытия/скрытия
+     * @param category категория тега (родительский, дочерний)
+     * @param position позиция тега
+     */
     @Override
     public void onCategoryClick(TriggerItem category, int position) {
         triggersAdapter.toggleCategory(position);
     }
 
-    // Handle trigger plus/minus button clicks
+    /**
+     * Метод onTriggerClick отвечает за клики по кнопкам плюс/галочка
+     * @param trigger тег
+     * @param plusButton кнопка плюс
+     * @param isCurrentlySelected выбран ли тег сейчас триггером
+     */
     @Override
     public void onTriggerClick(TriggerItem trigger, ImageButton plusButton, boolean isCurrentlySelected) {
         if (isCurrentlySelected) {
-            // Remove trigger
+            // удалить триггер
             userTriggers.remove(trigger.getImgTag());
         } else {
-            // Add trigger
+            // добавить триггер
             userTriggers.add(trigger.getImgTag());
         }
-
-        // Update adapter and save locally
+        // обновить адаптер и сохранить данные локально
         triggersAdapter.setUserSelectedTriggers(userTriggers);
-
-        // Сохраняем в локальное хранилище (и синхронизируем в Firestore, если пользователь не гость)
+        // сохранить в локальное хранилище (и синхронизировать в Firestore, если пользователь не гость)
         dataManager.saveTriggers(new ArrayList<>(userTriggers));
     }
 

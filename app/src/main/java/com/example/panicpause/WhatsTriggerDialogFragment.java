@@ -18,7 +18,6 @@ public class WhatsTriggerDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.dialog_whats_trigger_info, container, false);
 
         whatsTriggerTV=view.findViewById(R.id.whats_trigger_text_tv);
@@ -35,7 +34,7 @@ public class WhatsTriggerDialogFragment extends DialogFragment {
         view.findViewById(R.id.dialog_content).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Ничего не делаем - предотвращаем закрытие
+                // игнорировать
             }
         });
 
@@ -46,16 +45,15 @@ public class WhatsTriggerDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
 
-        // Делаем прозрачный фон у диалога
+        // прозрачный фон
         if (dialog.getWindow() != null) {
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
 
-        // Разрешаем закрытие при клике вне диалога
+        // закрытие при клике вне диалога
         dialog.setCanceledOnTouchOutside(true);
 
         return dialog;
     }
-
 
 }

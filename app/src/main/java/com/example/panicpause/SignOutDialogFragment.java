@@ -17,13 +17,11 @@ public class SignOutDialogFragment extends DialogFragment {
 
     private OnSignOutListener signOutListener;
 
-    // Интерфейс для обработки действий
+    // интерфейс для обработки действий
     public interface OnSignOutListener {
         void onSignOutConfirmed();
         void onSignOutCancelled();
     }
-
-    // Устанавливаем слушатель
     public void setOnSignOutListener(OnSignOutListener listener) {
         this.signOutListener = listener;
     }
@@ -32,14 +30,7 @@ public class SignOutDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // "Надуваем" кастомный макет
         View view = inflater.inflate(R.layout.dialog_sign_out, container, false);
-
-        // Set transparent background and no title
-        /*if (getDialog() != null && getDialog().getWindow() != null) {
-            getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        }*/
 
         setupViews(view);
 
@@ -51,12 +42,12 @@ public class SignOutDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
 
-        // Делаем прозрачный фон у диалога
+        // прозрачный фон
         if (dialog.getWindow() != null) {
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
 
-        // Разрешаем закрытие при клике вне диалога
+        // закрытие при клике вне диалога
         dialog.setCanceledOnTouchOutside(true);
 
         return dialog;
@@ -66,25 +57,23 @@ public class SignOutDialogFragment extends DialogFragment {
         Button signOutBtn = view.findViewById(R.id.yes_sign_out_btn);
         Button cancelBtn = view.findViewById(R.id.cancel_btn);
 
-        // Обработчик кнопки подтверждения
         signOutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (signOutListener != null) {
                     signOutListener.onSignOutConfirmed();
                 }
-                dismiss(); // Закрываем диалог
+                dismiss();
             }
         });
 
-        // Обработчик кнопки отмены
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (signOutListener != null) {
                     signOutListener.onSignOutCancelled();
                 }
-                dismiss(); // Закрываем диалог
+                dismiss();
             }
         });
 
@@ -100,7 +89,7 @@ public class SignOutDialogFragment extends DialogFragment {
         view.findViewById(R.id.dialog_content).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Ничего не делаем - предотвращаем закрытие
+                // игнорировать
             }
         });
     }

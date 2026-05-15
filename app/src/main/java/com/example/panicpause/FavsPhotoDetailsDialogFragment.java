@@ -58,21 +58,19 @@ public class FavsPhotoDetailsDialogFragment extends DialogFragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         // Аналогично HistorySessionDetailsDialog
-        // Но показываем только одно фото и его теги
-        // Используем HistoryTriggerRVAdapter для тегов
+        // Но показывает только одно фото и его теги
+        // Используется HistoryTriggerRVAdapter для тегов
 
-        // Убираем стандартный фон диалога
+        // убрать стандартный фон диалога
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
 
-        // Инфлейтим макет
         View view = inflater.inflate(R.layout.dialog_favs_photo_info, container, false);
 
-        // Получаем контейнер диалога для обработки кликов на фон
+        // обработка кликов на фон
         LinearLayout dialogContainer = view.findViewById(R.id.dialog_container);
         dialogContainer.setOnClickListener(v -> {
-            // Закрываем диалог при клике на фон
             dismiss();
         });
 
@@ -108,23 +106,21 @@ public class FavsPhotoDetailsDialogFragment extends DialogFragment {
         }
 
         HistoryTriggerRVAdapter photoTagsAdapter = new HistoryTriggerRVAdapter(
-                //photo.tags,
                 photoTriggerItems, // List<TriggerItem>
-                dataManager.getTriggers(), // List<String> — ключи выбранных триггеров
+                dataManager.getTriggers(), // List<String>
                 new HistoryTriggerRVAdapter.OnHistoryTriggerActionListener() {
                     @Override
                     public void onTriggerClick(String tag, boolean isSelected) {
-                        // Обновляем список триггеров пользователя
+                        // обновление списка триггеров пользователя
                         List<String> userTriggers = dataManager.getTriggers();
                         if (isSelected) {
                             userTriggers.remove(tag);
                         } else {
                             userTriggers.add(tag);
                         }
-                        // Сохраняем обновлённый список
                         dataManager.saveTriggers(userTriggers);
 
-                        // ОБНОВЛЯЕМ АДАПТЕР ТЕГА НЕМЕДЛЕННО
+                        // обновление адаптера тега
                         HistoryTriggerRVAdapter photoTagsAdapter =
                                 (HistoryTriggerRVAdapter) photoTagsRV.getAdapter();
                         if (photoTagsAdapter != null) {
@@ -134,12 +130,12 @@ public class FavsPhotoDetailsDialogFragment extends DialogFragment {
                 }
         );
 
-        // Настраиваем список тегов
+        // настройка списка тегов
         FlexboxLayoutManager flexboxLayoutManager = new FlexboxLayoutManager(context);
-        flexboxLayoutManager.setFlexDirection(FlexDirection.ROW); // Горизонтальное направление, слева направо
-        flexboxLayoutManager.setFlexWrap(FlexWrap.WRAP); // Автоматический перенос на новую строку
-        flexboxLayoutManager.setJustifyContent(JustifyContent.FLEX_START); // Выравнивание по левому краю
-        flexboxLayoutManager.setAlignItems(AlignItems.FLEX_START); // Выравнивание по верху
+        flexboxLayoutManager.setFlexDirection(FlexDirection.ROW); // горизонтальное направление, слева направо
+        flexboxLayoutManager.setFlexWrap(FlexWrap.WRAP); // автоматический перенос на новую строку
+        flexboxLayoutManager.setJustifyContent(JustifyContent.FLEX_START); // выравнивание по левому краю
+        flexboxLayoutManager.setAlignItems(AlignItems.FLEX_START); // выравнивание по верху
         photoTagsRV.setLayoutManager(flexboxLayoutManager);
         photoTagsRV.setAdapter(photoTagsAdapter);
 
@@ -147,32 +143,30 @@ public class FavsPhotoDetailsDialogFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 showDeleteFaveConfirmationDialog(photo);
-
             }
         });
-
         return view;
     }
 
     private void loadPhoto(DataManager.PhotoData photo, com.google.android.material.imageview.ShapeableImageView imageView) {
-        // Получаем имя файла из URL
+        // получение имени файла из URL
         String filename = DataManager.getFilenameFromUrl(photo.imgUrl);
         if (filename == null) {
             return;
         }
 
-        // Проверяем наличие локального файла
+        // проверка наличия локального файла
         File photoFile = new File(context.getFilesDir(), "photos/" + filename);
 
         if (photoFile.exists()) {
-            // Загружаем локальный файл
+            // загрузка локального файла
             Glide.with(context)
                     .load(photoFile)
-                    //.placeholder(R.drawable.placeholder_image) // Заглушка при загрузке
-                    //.error(R.drawable.error_image) // Изображение при ошибке
+                    //.placeholder(R.drawable.placeholder_image) // заглушка при загрузке
+                    //.error(R.drawable.error_image) // изображение при ошибке
                     .into(imageView);
         } else {
-            // Загружаем по интернету (если есть)
+            // загрузка по интернету (если есть)
             Glide.with(context)
                     .load(photo.imgUrl)
                     //.placeholder(R.drawable.placeholder_image)
@@ -196,16 +190,16 @@ public class FavsPhotoDetailsDialogFragment extends DialogFragment {
             DeleteFromFavesDialogFragment dialog = new DeleteFromFavesDialogFragment();
             dialog.setOnDeleteFaveListener(new DeleteFromFavesDialogFragment.OnDeleteFaveListener() {
                 @Override
-                public void onDeleteFaveConfirmed() { // Пользователь подтвердил удаление из избр
+                public void onDeleteFaveConfirmed() {
                     List<String> faves = dataManager.getFaves();
                     String photoUrl = photo.imgUrl;
 
                     if (faves.contains(photoUrl)) {
-                        // Удаляем из избранных
+                        // удаление из избранных
                         faves.remove(photoUrl);
                     }
 
-                    // Сохраняем обновлённый список
+                    // сохранение обновлённого списка
                     dataManager.saveFaves(faves);
 
                     if (deleteListener != null) {
@@ -216,7 +210,6 @@ public class FavsPhotoDetailsDialogFragment extends DialogFragment {
 
                 @Override
                 public void onDeleteFaveCancelled() {
-                    // Пользователь отменил удаление
                     dialog.dismiss();
                 }
             });
@@ -224,7 +217,7 @@ public class FavsPhotoDetailsDialogFragment extends DialogFragment {
             dialog.show(((AppCompatActivity) context).getSupportFragmentManager(), "delete_fave_dialog");
         }
         catch(IllegalStateException ex){
-            // Обработка случая, когда Activity уничтожается
+            // обработка случая, когда Activity уничтожается
             Log.e("Dialog", "Cannot show dialog - activity state invalid");
         }
     }

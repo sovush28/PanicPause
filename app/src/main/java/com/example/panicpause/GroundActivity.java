@@ -2,7 +2,6 @@ package com.example.panicpause;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -20,37 +19,31 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * GroundActivity - the main activity that manages the grounding exercises sequence
-
- * The grounding sequence consists of 6 exercises in this order:
- * 1. GroundBreathFragment - Square breathing exercise
- * 2. GroundPhotoFragment - Counting objects in a photo
- * 3. GroundMathFragment - Solving math problems
- * 4. GroundCountColorFragment - Finding objects of a specific color
- * 5. GroundPhotoFragment - Another photo counting exercise
- * 6. GroundBreathFragment - Another breathing exercise with repeat option
-
- * This activity handles navigation between fragments using buttons (back/next/repeat)
- * and manages the exercise sequence flow.
+ * GroundActivity - активность, отвечающая за отображение упражнений.
+ * Состоит из 4 видов упражнений:
+ * 1. Дыхание по квадрату (GroundBreathFragment)
+ * 2. Подсчет предметов на изображении
+ * 3. Математический пример
+ * 4. Подсчет предметов определенного цвета вокруг себя
  */
 public class GroundActivity extends AppCompatActivity {
     private static final String TAG = "GroundActivity";
 
-    // Менеджер фрагментов для работы с экранами
+    // менеджер фрагментов для работы с экранами
     private FragmentManager fragmentManager;
 
-    // Текущий индекс упражнения в последовательности
+    // текущий индекс упражнения в последовательности
     private int currentFragmentIndex = 0;
 
-    // Список для хранения созданных фрагментов
+    // список для хранения созданных фрагментов
     private List<Fragment> fragmentInstances = new ArrayList<>();
 
-    // Список классов фрагментов в правильном порядке
+    // список классов фрагментов в правильном порядке
     private List<Class<? extends Fragment>> fragmentClasses = new ArrayList<>();
 
     private DataManager dataManager;
 
-    // Список использованных фото в текущей сессии
+    // список использованных фото в текущей сессии
     private List<DataManager.PhotoData> currentSessionPhotos = new ArrayList<>();
 
     // поле для хранения доступных фото
@@ -108,7 +101,6 @@ public class GroundActivity extends AppCompatActivity {
     private void buildAndStartGroundSequence(){
         buildExerciseSequence();
 
-        // инициализация уникального пула фото для сессии
         initializeAvailablePhotos();
 
         startGroundingSequence();
@@ -121,7 +113,7 @@ public class GroundActivity extends AppCompatActivity {
             availablePhotosForSession = new ArrayList<>(allPhotos);
 
             if (!useDefaultSettings) {
-                // Фильтрация по триггерам
+                // фильтрация по триггерам
                 List<String> triggers = dataManager.getTriggers();
                 if (triggers != null && !triggers.isEmpty()) {
                     availablePhotosForSession.removeIf(photo ->
@@ -139,45 +131,24 @@ public class GroundActivity extends AppCompatActivity {
             }
         }
 
-        // Перемешиваем
         Collections.shuffle(availablePhotosForSession);
     }
 
     /**
-     * Метод для получения уникального фото
+     * getNextUniquePhoto - метод для получения уникального фото
      * Возвращает следующее уникальное фото из пула или null, если фото закончились.
      */
     public DataManager.PhotoData getNextUniquePhoto() {
         if (availablePhotosForSession.isEmpty()) {
             return null;
         }
-        // Берём первое и удаляем, чтобы не повторилось
+        // взять первое и удалить, чтобы не повторилось
         return availablePhotosForSession.remove(0);
     }
 
-    //Пытается восстановить ранее созданные фрагменты
-    /*private void restoreFragments() {
-        fragmentInstances.clear();
-
-        // Ищем фрагменты в FragmentManager по тегам
-        for (int i = 0; i < fragmentClasses.size(); i++) {
-            String tag = "exercise_fragment_" + i;
-            Fragment fragment = fragmentManager.findFragmentByTag(tag);
-            if (fragment != null) {
-                fragmentInstances.add(fragment);
-            } else {
-                // Если фрагмент не найден, создаем новый
-                createAndAddFragment(i);
-            }
-        }
-
-        // Показываем текущий фрагмент
-        if (!fragmentInstances.isEmpty() && currentFragmentIndex < fragmentInstances.size()) {
-            showFragment(currentFragmentIndex);
-        }
-    }*/
-
-    //Строит последовательность упражнений на основе настроек пользователя
+    /**
+     * Метод buildExerciseSequence строит последовательность упражнений на основе настроек пользователя.
+     */
     private void buildExerciseSequence() {
         fragmentClasses.clear();
 
@@ -198,12 +169,12 @@ public class GroundActivity extends AppCompatActivity {
             // 2. Упражнение с фотографией
             fragmentClasses.add(GroundPhotoFragment.class);
 
-            // 3. Математические примеры (если включены)
+            // 3. Математические примеры
             if (useMath) {
                 fragmentClasses.add(GroundMathFragment.class);
             }
 
-            // 4. Поиск предметов по цвету (если включен)
+            // 4. Поиск предметов по цвету
             if (useSearchObjectsColor) {
                 fragmentClasses.add(GroundCountColorFragment.class);
             }
@@ -212,13 +183,14 @@ public class GroundActivity extends AppCompatActivity {
             fragmentClasses.add(GroundPhotoFragment.class);
         }
 
-        // Последнее упражнение - дыхание
+        // последнее упражнение - дыхание
         fragmentClasses.add(GroundBreathFragment.class);
-
-        Log.d(TAG, "Built exercise sequence with " + fragmentClasses.size() + " exercises");
+        Log.d(TAG, "Последовательность упражнений построена с " + fragmentClasses.size() + " упражнениями");
     }
 
-    //Создает и сохраняет все фрагменты заранее с уникальными тегами
+    /**
+     * Метод startGroundingSequence создает и сохраняет все фрагменты заранее с уникальными тегами.
+     */
     private void startGroundingSequence() {
         if (fragmentClasses.isEmpty()) {
             Toast.makeText(this, "Ошибка: нет упражнений", Toast.LENGTH_SHORT).show();
@@ -226,7 +198,7 @@ public class GroundActivity extends AppCompatActivity {
             return;
         }
         try {
-            // Создаём все фрагменты заранее
+            // создание всех фрагментов заранее
             fragmentInstances.clear();
             for (int i = 0; i < fragmentClasses.size(); i++) {
                 try {
@@ -235,66 +207,24 @@ public class GroundActivity extends AppCompatActivity {
                         DataManager.PhotoData assignedPhoto = getNextUniquePhoto();
                         ((GroundPhotoFragment) fragment).assignPhoto(assignedPhoto);
                     }
-
                     fragmentInstances.add(fragment);
                 }
                 catch (Exception e) {
-                    Log.e(TAG, "Error creating fragment at index " + i, e);
+                    Log.e(TAG, "Ошибка при создании фрагмента с индексом " + i, e);
                     finish();
                     return;
                 }
             }
             showFragment(0);
-
-            // Создаем только первый фрагмент, остальные будут создаваться по мере необходимости
-            /*if (!fragmentClasses.isEmpty()) {
-                //createAndAddFragment(0);
-                showFragment(0);
-            }
-            else{
-                Toast.makeText(this, "Ошибка: нет упражнений", Toast.LENGTH_SHORT).show();
-                finish();
-            }*/
         } catch (Exception e) {
             Log.e(TAG, "Error creating fragment instances", e);
         }
     }
 
-    //Создает один фрагмент и добавляет его в список с уникальным тегом
-    /*private void createAndAddFragment(int index) {
-        try {
-            // не создан ли уже фрагмент для этого индекса
-            if (index < fragmentInstances.size() && fragmentInstances.get(index) != null) {
-                return; // уже создан
-            }
-
-            Fragment fragment = fragmentClasses.get(index).newInstance();
-
-            // уникальный тег для каждого фрагмента
-            String tag = "exercise_fragment_" + index;
-
-            // добавление фрагмента в FragmentManager, если ещё не добавлен
-            if (fragmentManager.findFragmentByTag(tag) == null) {
-                FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.add(R.id.fragment_container, fragment, tag);
-                transaction.hide(fragment); // Сначала скрываем
-                transaction.commit();
-                fragmentManager.executePendingTransactions();
-            }
-
-            // Добавление в список, заполняя пропуски если нужно
-            while (fragmentInstances.size() <= index) {
-                fragmentInstances.add(null);
-            }
-            fragmentInstances.set(index, fragment);
-
-        }
-        catch (Exception e) {
-            Log.e(TAG, "Error creating fragment at index " + index, e);
-        }
-    }*/
-
-    //Показывает фрагмент по указанному индексу в последовательности
+    /**
+     * Метод showFragment показывает фрагмент по указанному индексу в последовательности.
+     * @param fragmentIndex индекс фрагмента
+     */
     private void showFragment(int fragmentIndex) {
         if (fragmentIndex < 0 || fragmentIndex >= fragmentClasses.size()) {
             Log.e(TAG, "Invalid fragment index: " + fragmentIndex);
@@ -304,7 +234,7 @@ public class GroundActivity extends AppCompatActivity {
         Fragment targetFragment = fragmentInstances.get(fragmentIndex);
         androidx.fragment.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-        // Скрываем текущий фрагмент (если есть)
+        // скрыть текущий фрагмент (если есть)
         if (currentFragmentIndex < fragmentInstances.size()) {
             Fragment current = fragmentInstances.get(currentFragmentIndex);
             if (current.isAdded()) {
@@ -315,7 +245,7 @@ public class GroundActivity extends AppCompatActivity {
             }
         }
 
-        // Показываем целевой
+        // показать целевой
         if (targetFragment.isAdded()) {
             transaction.show(targetFragment);
         } else {
@@ -325,73 +255,26 @@ public class GroundActivity extends AppCompatActivity {
         transaction.commit();
         fragmentManager.executePendingTransactions();
 
-        // сначала обновляем индекс
+        // сначала обновить текщий индекс
         currentFragmentIndex = fragmentIndex;
 
-        // ЗАТЕМ обновляем кнопки — теперь isLastFragment() вернёт правильное значение
+        // затем обновить кнопки (таким образом isLastFragment() возвращает правильное значение)
         if (targetFragment instanceof GroundBreathFragment) {
             ((GroundBreathFragment) targetFragment).onFragmentResumed();
             ((GroundBreathFragment) targetFragment).updateButtonsForPosition();
         }
 
         currentFragmentIndex = fragmentIndex;
-        Log.d(TAG, "Showing fragment at index: " + fragmentIndex);
-
-        /*try {
-            Fragment currentFragment = fragmentClasses.get(fragmentIndex).newInstance();
-
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-
-            // Скрытие текущего фрагмента, если он существует
-            if (currentFragment != null) {
-                transaction.hide(currentFragment);
-
-                // Оповещаем текущий фрагмент о том, что он становится невидимым
-                // Это позволяет остановить таймеры и анимации
-                if (currentFragment instanceof GroundBreathFragment) {
-                    ((GroundBreathFragment) currentFragment).onFragmentPaused();
-                }
-
-            }
-
-            // Создание фрагмента, если еще не создан
-            if (fragmentIndex >= fragmentInstances.size() || fragmentInstances.get(fragmentIndex) == null) {
-                createAndAddFragment(fragmentIndex);
-            }
-
-            // Получение целевого фрагмента
-            Fragment targetFragment = fragmentInstances.get(fragmentIndex);
-
-            // Отображение целевого фрагмента
-            transaction.show(targetFragment);
-            transaction.commit();
-            fragmentManager.executePendingTransactions();
-
-            // Обновление текущего фрагмента
-            currentFragment = targetFragment;
-            currentFragmentIndex = fragmentIndex;
-
-            // Оповещаем новый фрагмент о том, что он стал видимым
-            // Это позволяет запустить таймеры и анимации
-            if (targetFragment instanceof GroundBreathFragment) {
-                ((GroundBreathFragment) targetFragment).onFragmentResumed();
-            }
-
-            Log.d(TAG, "Showing fragment at index: " + fragmentIndex);
-        }
-        catch (Exception e) {
-            Log.e(TAG, "Error showing fragment at index"+fragmentIndex, e);
-            finish();
-        }*/
+        Log.d(TAG, "Отображение фрагмента с индексом: " + fragmentIndex);
     }
 
     public void goToNextFragment() {
         if (currentFragmentIndex < fragmentClasses.size() - 1) {
-            // Переход к следующему упражнению
+            // переход к следующему упражнению
             showFragment(currentFragmentIndex + 1);
         } else {
-            Log.d(TAG, "Grounding sequence completed");
-            // Конец последовательности - сохранение истории и закрытие
+            Log.d(TAG, "Последовательность упражнений завершена");
+            // конец последовательности
             saveExerciseHistory();
             finish();
         }
@@ -399,44 +282,46 @@ public class GroundActivity extends AppCompatActivity {
 
     public void goToPreviousFragment() {
         if (currentFragmentIndex == 0) {
-            // На первом упражнении - закрытие активности
+            // на первом упражнении - закрытие активности
             finish();
         } else {
-            // Переход к предыдущему упражнению
+            // переход к предыдущему упражнению
             showFragment(currentFragmentIndex - 1);
         }
     }
 
-    //Перезапускает всю последовательность упражнений
-    //вызывается из последнего фрагмента по нажатию "Повторить"
+    /**
+     * Метод repeatGroundingSequence перезапускает всю последовательность упражнений.
+     * Вызывается из последнего фрагмента по нажатию "Повторить".
+     */
     public void repeatGroundingSequence() {
         saveExerciseHistory();
         currentSessionPhotos.clear();
 
-        // === УДАЛЯЕМ ВСЕ СУЩЕСТВУЮЩИЕ ФРАГМЕНТЫ ИЗ КОНТЕЙНЕРА ===
+        // удалить все существующие фрагменты из контейнера
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         for (Fragment fragment : fragmentInstances) {
             if (fragment != null && fragment.isAdded()) {
                 transaction.remove(fragment);
             }
         }
-        transaction.commitNow(); // commitNow() — синхронно, чтобы избежать race condition
-        // commitNow() вместо commit(),
-        // чтобы гарантировать, что фрагменты удалятся до создания новых
+        transaction.commitNow(); // commitNow() — синхронно, чтобы избежать гонки
+        // (commitNow() вместо commit(),
+        // чтобы гарантировать, что фрагменты удалятся до создания новых)
 
-
-        // Очищаем списки
+        // очистка списков
         fragmentInstances.clear();
         availablePhotosForSession.clear();
 
-        // Сбрасываем индекс
+        // сброс индекса
         currentFragmentIndex = 0;
 
-        // Запускаем новую сессию
+        // запуск новой сессии
         buildAndStartGroundSequence();
 
-        // Остановка текущего фрагмента
-        /*if (currentFragment instanceof GroundBreathFragment) {
+        /*
+        // остановка текущего фрагмента
+        if (currentFragment instanceof GroundBreathFragment) {
             ((GroundBreathFragment) currentFragment).onFragmentPaused();
         }
 
@@ -459,60 +344,37 @@ public class GroundActivity extends AppCompatActivity {
         startGroundingSequence();*/
     }
 
-    // получение данных о фото из фрагмента
     public void onPhotoUsed(DataManager.PhotoData photo) {
         if (photo != null) {
             currentSessionPhotos.add(photo);
-            Log.d(TAG, "Photo used: " + photo.imgUrl);
+            Log.d(TAG, "Фото использовано: " + photo.imgUrl);
         }
     }
 
-    // Сохраняет историю упражнений локально (данные о пройденных упражнениях:
-    // какие изображения пройдены и в какое время)
+    /**
+     * Метод saveExerciseHistory сохраняет историю упражнений локально (данные о пройденных упражнениях:
+     * какие изображения пройдены и в какое время)
+     */
     private void saveExerciseHistory() {
-        // Сохраняем только если есть фото (защита от пустых сессий)
+        // сохранить только если есть фото
         if (currentSessionPhotos.isEmpty()) {
-            Log.w(TAG, "Пропуск сохранения: сессия не содержит фото");
+            Log.w(TAG, "Пропуск сохранения: последовательность упражнений не содержит фото");
             return;
         }
 
-        // Создаём новую сессию с текущим временем и списком фото
+        // создать новую сессию с текущим временем и списком фото
         DataManager.ExerciseSession newSession = new DataManager.ExerciseSession(
                 System.currentTimeMillis(),
-                currentSessionPhotos // Копия создаётся внутри конструктора
+                currentSessionPhotos // копия создаётся внутри конструктора
         );
 
-        // Сохраняем через DataManager (локально + синхронизация с облаком)
         dataManager.addExerciseSessionAndSync(newSession);
 
         Log.d(TAG, "Сессия сохранена: " + currentSessionPhotos.size() + " фото");
     }
 
-    // Checks if the current fragment is the last one in the sequence
     public boolean isLastFragment() {
         return currentFragmentIndex == fragmentClasses.size() - 1;
     }
-
-    /*public int getTotalExercisesCount() {
-        return fragmentClasses.size();
-    }*/
-
-    /*@Override
-    protected void onPause() {
-        super.onPause();
-        // При сворачивании приложения останавливаем текущий фрагмент
-        if (currentFragment instanceof GroundBreathFragment) {
-            ((GroundBreathFragment) currentFragment).onFragmentPaused();
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // При возобновлении приложения запускаем текущий фрагмент
-        if (currentFragment instanceof GroundBreathFragment) {
-            ((GroundBreathFragment) currentFragment).onFragmentResumed();
-        }
-    }*/
 
 }

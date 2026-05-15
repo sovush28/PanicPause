@@ -14,7 +14,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 public class ResetSettingsDIalogFragment extends DialogFragment {
-
     private ResetSettingsDIalogFragment.OnResetSettingsListener resetSettingsListener;
     public interface OnResetSettingsListener{
         void onResetSettingsConfirmed();
@@ -62,7 +61,7 @@ public class ResetSettingsDIalogFragment extends DialogFragment {
                 if (resetSettingsListener != null) {
                     resetSettingsListener.onResetSettingsConfirmed();
                 }
-                dismiss(); // Закрываем диалог
+                dismiss();
             }
         });
 
@@ -72,7 +71,7 @@ public class ResetSettingsDIalogFragment extends DialogFragment {
                 if (resetSettingsListener != null) {
                     resetSettingsListener.onResetSettingsCancelled();
                 }
-                dismiss(); // Закрываем диалог
+                dismiss();
             }
         });
 
@@ -88,7 +87,7 @@ public class ResetSettingsDIalogFragment extends DialogFragment {
         view.findViewById(R.id.dialog_content).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // ничего не делаем
+                // игнорировать
             }
         });
     }

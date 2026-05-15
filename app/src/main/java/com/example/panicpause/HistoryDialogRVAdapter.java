@@ -20,28 +20,28 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-// Адаптер для отображения списка фото в диалоге деталей сессии.
-// Каждый элемент показывает одно фото и его теги.
+/**
+ * HistoryDialogRVAdapter - адаптер для отображения списка фото в диалоге деталей пройденной сессии.
+ * Каждый элемент показывает одно фото и его теги.
+ */
 public class HistoryDialogRVAdapter extends RecyclerView.Adapter<HistoryDialogRVAdapter.HistoryDialogRVViewHolder> {
-
-    // Список фото для отображения
-    private final List<DataManager.PhotoData> photos;
-    // Контекст для загрузки изображений
-    private final Context context;
-    // Менеджер данных для получения триггеров пользователя
+    private final List<DataManager.PhotoData> photos;    // список фото для отображения
+    private final Context context;    // контекст для загрузки изображений
     private final DataManager dataManager;
-
     private final List<TriggerItem> allTriggers;
+    private OnTriggersChangedListener triggersChangedListener;    // слушатель для обновления всего списка при изменении триггеров
 
-    // Слушатель для обновления всего списка при изменении триггеров ===
-    private OnTriggersChangedListener triggersChangedListener;
-
-    // Интерфейс для уведомления об изменении триггеров
+    // интерфейс для уведомления об изменении триггеров
     public interface OnTriggersChangedListener {
         void onTriggersChanged();
     }
 
     // Метод для установки слушателя (вызывается из диалога/фрагмента)
+
+    /**
+     * setOnTriggersChangedListener - метод для установки слушателя (вызывается из диалога/фрагмента)
+     * @param listener слушатель
+     */
     public void setOnTriggersChangedListener(OnTriggersChangedListener listener) {
         this.triggersChangedListener = listener;
     }
@@ -56,7 +56,6 @@ public class HistoryDialogRVAdapter extends RecyclerView.Adapter<HistoryDialogRV
     @NonNull
     @Override
     public HistoryDialogRVViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Создаём представление из макета элемента диалога
         View view = LayoutInflater.from(context)
                 .inflate(R.layout.history_dialog_main_rv_item, parent, false);
         return new HistoryDialogRVViewHolder(view);
@@ -64,10 +63,9 @@ public class HistoryDialogRVAdapter extends RecyclerView.Adapter<HistoryDialogRV
 
     @Override
     public void onBindViewHolder(@NonNull HistoryDialogRVViewHolder holder, int position) {
-        // Получаем фото для текущей позиции
+        // получение фото для текущей позиции
         DataManager.PhotoData photo = photos.get(position);
-
-        // Загружаем фото
+        // загрузка фото
         loadPhoto(photo, holder.historyPhotoIV);
 
         List<TriggerItem> photoTriggerItems = new ArrayList<>();
@@ -78,35 +76,25 @@ public class HistoryDialogRVAdapter extends RecyclerView.Adapter<HistoryDialogRV
             }
         }
 
-        // Создаём адаптер для тегов этого фото
+        // создание адаптера для тегов этого фото
         HistoryTriggerRVAdapter triggerAdapter = new HistoryTriggerRVAdapter(
-                //photo.tags,
                 photoTriggerItems, // List<TriggerItem>
                 new ArrayList<>(dataManager.getTriggers()),
-                //dataManager.getTriggers(), // List<String> — ключи выбранных триггеров
                 new HistoryTriggerRVAdapter.OnHistoryTriggerActionListener() {
                     @Override
                     public void onTriggerClick(String tag, boolean isSelected) {
-                        // Обновляем список триггеров пользователя
+                        // обновление список триггеров пользователя
                         List<String> userTriggers = dataManager.getTriggers();
                         if (isSelected) {
                             userTriggers.remove(tag);
                         } else {
                             userTriggers.add(tag);
                         }
-                        // Сохраняем обновлённый список
                         dataManager.saveTriggers(userTriggers);
 
-                        // ОБНОВЛЯЕМ АДАПТЕР ТЕГА НЕМЕДЛЕННО
-                        /*HistoryTriggerRVAdapter triggerAdapter =
-                                (HistoryTriggerRVAdapter) holder.historyTriggerRV.getAdapter();
-                        if (triggerAdapter != null) {
-                            triggerAdapter.updateUserTriggers(dataManager.getTriggers());
-                        }*/
-
-                        // Уведомляем родительский адаптер об изменении триггеров
-                        // Используем post() для безопасности - откладываем обновление до завершения текущего цикла обработки событий
-                        // Это предотвращает возможные исключения при вызове notifyDataSetChanged() во время привязки данных
+                        // уведомление родительского адаптера об изменении триггеров
+                        // post() для безопасности - отложить обновление до завершения текущего цикла обработки событий
+                        // (предотвращает возможные исключения при вызове notifyDataSetChanged() во время привязки данных)
                         holder.itemView.post(() -> {
                             if (triggersChangedListener != null) {
                                 triggersChangedListener.onTriggersChanged();
@@ -116,12 +104,12 @@ public class HistoryDialogRVAdapter extends RecyclerView.Adapter<HistoryDialogRV
                 }
         );
 
-        // Настраиваем список тегов
+        // настройка списка тегов
         FlexboxLayoutManager flexboxLayoutManager = new FlexboxLayoutManager(context);
-        flexboxLayoutManager.setFlexDirection(FlexDirection.ROW); // Горизонтальное направление, слева направо
-        flexboxLayoutManager.setFlexWrap(FlexWrap.WRAP); // Автоматический перенос на новую строку
-        flexboxLayoutManager.setJustifyContent(JustifyContent.FLEX_START); // Выравнивание по левому краю
-        flexboxLayoutManager.setAlignItems(AlignItems.FLEX_START); // Выравнивание по верху
+        flexboxLayoutManager.setFlexDirection(FlexDirection.ROW); // горизонтальное направление, слева направо
+        flexboxLayoutManager.setFlexWrap(FlexWrap.WRAP); // автоматический перенос на новую строку
+        flexboxLayoutManager.setJustifyContent(JustifyContent.FLEX_START); // выравнивание по левому краю
+        flexboxLayoutManager.setAlignItems(AlignItems.FLEX_START); // выравнивание по верху
         holder.historyTriggerRV.setLayoutManager(flexboxLayoutManager);
         holder.historyTriggerRV.setAdapter(triggerAdapter);
 
@@ -147,43 +135,42 @@ public class HistoryDialogRVAdapter extends RecyclerView.Adapter<HistoryDialogRV
                 String photoUrl = photo.imgUrl;
 
                 if (faves.contains(photoUrl)) {
-                    // Удаляем из избранных
+                    // удаление из избранных
                     faves.remove(photoUrl);
                     holder.favoriteBtn.setImageResource(R.drawable.fav_heart_unselected);
                 } else {
-                    // Добавляем в избранные
+                    // добавление в избранные
                     faves.add(photoUrl);
                     holder.favoriteBtn.setImageResource(R.drawable.fav_heart_selected);
                 }
-
-                // Сохраняем обновлённый список
                 dataManager.saveFaves(faves);
             }
         });
 
     }
 
-    // Загружает фото в изображение с помощью Glide
-    // Сначала пытаемся загрузить локальный файл, если его нет — загружаем по URL
+    /**
+     * Метод loadPhoto загружает фото в изображение с помощью Glide.
+     * Сначала пытается загрузить локальный файл, если его нет - загружает по URL.
+     * @param photo данные о фото
+     * @param imageView imageView, куда загружается фото
+     */
     private void loadPhoto(DataManager.PhotoData photo, com.google.android.material.imageview.ShapeableImageView imageView) {
-        // Получаем имя файла из URL
         String filename = DataManager.getFilenameFromUrl(photo.imgUrl);
         if (filename == null) {
             return;
         }
-
-        // Проверяем наличие локального файла
+        // проверка наличия локального файла
         File photoFile = new File(context.getFilesDir(), "photos/" + filename);
-
         if (photoFile.exists()) {
-            // Загружаем локальный файл
+            // загрузка локального файла
             Glide.with(context)
                     .load(photoFile)
-                    //.placeholder(R.drawable.placeholder_image) // Заглушка при загрузке
-                    //.error(R.drawable.error_image) // Изображение при ошибке
+                    //.placeholder(R.drawable.placeholder_image) // заглушка при загрузке
+                    //.error(R.drawable.error_image) // изображение при ошибке
                     .into(imageView);
         } else {
-            // Загружаем по интернету (если есть)
+            // загрузка по интернету (если есть)
             Glide.with(context)
                     .load(photo.imgUrl)
                     //.placeholder(R.drawable.placeholder_image)
@@ -197,12 +184,10 @@ public class HistoryDialogRVAdapter extends RecyclerView.Adapter<HistoryDialogRV
         return photos.size();
     }
 
-    // ViewHolder для элемента диалога
     static class HistoryDialogRVViewHolder extends RecyclerView.ViewHolder {
         com.google.android.material.imageview.ShapeableImageView historyPhotoIV;
         RecyclerView historyTriggerRV;
         ImageButton favoriteBtn;
-
         HistoryDialogRVViewHolder(@NonNull View itemView) {
             super(itemView);
             historyPhotoIV = itemView.findViewById(R.id.history_dialog_photo_iv);

@@ -17,13 +17,12 @@ public class DeleteFromFavesDialogFragment extends DialogFragment {
 
     private DeleteFromFavesDialogFragment.OnDeleteFaveListener deleteFaveListener;
 
-    // Интерфейс для обработки действий
+    // интерфейс для обработки действий
     public interface OnDeleteFaveListener {
         void onDeleteFaveConfirmed();
         void onDeleteFaveCancelled();
     }
 
-    // Устанавливаем слушатель
     public void setOnDeleteFaveListener(DeleteFromFavesDialogFragment.OnDeleteFaveListener listener) {
         this.deleteFaveListener = listener;
     }
@@ -32,7 +31,6 @@ public class DeleteFromFavesDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // "Надуваем" кастомный макет
         View view = inflater.inflate(R.layout.dialog_delete_from_favs, container, false);
 
         setupViews(view);
@@ -45,12 +43,12 @@ public class DeleteFromFavesDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
 
-        // Делаем прозрачный фон у диалога
+        // прозрачный фон
         if (dialog.getWindow() != null) {
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
 
-        // Разрешаем закрытие при клике вне диалога
+        // закрытие при клике вне диалога
         dialog.setCanceledOnTouchOutside(true);
 
         return dialog;
@@ -60,25 +58,23 @@ public class DeleteFromFavesDialogFragment extends DialogFragment {
         Button deleteFaveBtn = view.findViewById(R.id.yes_delete_fav_btn);
         Button cancelBtn = view.findViewById(R.id.cancel_btn);
 
-        // Обработчик кнопки подтверждения
         deleteFaveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (deleteFaveListener != null) {
                     deleteFaveListener.onDeleteFaveConfirmed();
                 }
-                dismiss(); // Закрываем диалог
+                dismiss();
             }
         });
 
-        // Обработчик кнопки отмены
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (deleteFaveListener != null) {
                     deleteFaveListener.onDeleteFaveCancelled();
                 }
-                dismiss(); // Закрываем диалог
+                dismiss();
             }
         });
 
@@ -94,7 +90,7 @@ public class DeleteFromFavesDialogFragment extends DialogFragment {
         view.findViewById(R.id.dialog_content).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Ничего не делаем - предотвращаем закрытие
+                // ignore
             }
         });
     }

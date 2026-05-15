@@ -3,7 +3,6 @@ package com.example.panicpause;
 import static android.content.ContentValues.TAG;
 
 import android.app.Dialog;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -32,8 +31,8 @@ public class DeleteAccountDialogFragment extends DialogFragment {
     private Button deleteBtn, cancelBtn;
     private EditText passwET;
 
-    private boolean isDeleting = false; // Флаг защиты от повторных нажатий
-    private String userIdToDelete; // Сохраняем UID до удаления Auth
+    private boolean isDeleting = false; // флаг для защиты от повторных нажатий
+    private String userIdToDelete;
 
     private DataManager dataManager;
 
@@ -68,7 +67,7 @@ public class DeleteAccountDialogFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 if (isDeleting) {
-                    return; // Защита от повторных нажатий
+                    return; // защита от повторных нажатий
                 }
                 deleteUserAccount();
 
@@ -92,7 +91,7 @@ public class DeleteAccountDialogFragment extends DialogFragment {
         view.findViewById(R.id.dialog_content).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Блокируем закрытие при клике на контент
+                // блокирование закрытия при клике на контент
             }
         });
     }
@@ -111,12 +110,12 @@ public class DeleteAccountDialogFragment extends DialogFragment {
         }
 
         isDeleting = true;
-        deleteBtn.setEnabled(false); // Блокируем кнопку во время удаления
+        deleteBtn.setEnabled(false); // блокирование кнопки во время удаления
         try {
             progressDialog.show(getChildFragmentManager(), "progress_dialog");
         }
         catch(IllegalStateException ex){
-            // Обработка случая, когда Activity уничтожается
+            // обработка случая, когда Activity уничтожается
             Log.e("Dialog", "Cannot show dialog - activity state invalid");
         }
 
@@ -129,7 +128,7 @@ public class DeleteAccountDialogFragment extends DialogFragment {
                 return;
             }
 
-            // Сохраняем UID ДО удаления Auth (после удаления getCurrentUser() вернёт null)
+            // сохранение UID до удаления уч. записи Auth (нужно т.к. после удаления getCurrentUser() вернёт null)
             userIdToDelete = user.getUid();
             String userEmail = user.getEmail();
 
@@ -142,14 +141,14 @@ public class DeleteAccountDialogFragment extends DialogFragment {
                 return;
             }
 
-            // Шаг 1: Ре-аутентификация пользователя (требуется Firebase для удаления)
+            // 1. Ре-аутентификация пользователя (требуется для удаления)
             AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), password);
             user.reauthenticate(credential)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                // Шаг 2: Удаляем документ пользователя из Firestore
+                                // 2. Удаление документа пользователя из Firestore
                                 deleteUserRecordFromFirestore(userIdToDelete);
                             } else {
                                 deleteBtn.setEnabled(true);
@@ -158,32 +157,6 @@ public class DeleteAccountDialogFragment extends DialogFragment {
                             }
                         }
                     });
-
-            /*if (user != null) {
-                user.reauthenticate(credential)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                user.delete()
-                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful()) {
-                                                    // Шаг 2: Удаляем документ пользователя из Firestore
-                                                    deleteUserRecordFromFirestore(user.getUid());
-                                                    Log.d("TAG", "User account deleted.");
-                                                    Toast.makeText(requireContext(), getString(R.string.user_deleted), Toast.LENGTH_LONG).show();
-                                                    //dismiss();
-                                                }
-                                                else{
-                                                    deleteBtn.setEnabled(true);
-                                                    Toast.makeText(requireContext(), getErrorMessage(task.getException()), Toast.LENGTH_LONG).show();
-                                                }
-                                            }
-                                        });
-                            }
-                        });
-            }*/
         }
         catch(Exception exception){
             isDeleting = false;
@@ -191,40 +164,24 @@ public class DeleteAccountDialogFragment extends DialogFragment {
             progressDialog.dismiss();
             Toast.makeText(requireContext(), getErrorMessage(exception), Toast.LENGTH_LONG).show();
         }
-
     }
 
     private void deleteUserRecordFromFirestore(String userID){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         try{
-            // Шаг 2: Удаляем документ пользователя из Firestore
+            // 2. Удаление документа пользователя из Firestore
             db.collection("users").document(userID)
                     .delete()
                     .addOnSuccessListener(unused -> {
                         Log.d(TAG, "User DocumentSnapshot successfully deleted from Firestore");
-                        // Шаг 3: Удаляем аккаунт Firebase Auth
+                        // 3. Удаление аккаунта Firebase Auth
                         deleteFirebaseAuthAccount();
                     })
                     .addOnFailureListener(e -> {
                         Log.w(TAG, "Error deleting user document from Firestore", e);
-                        // Продолжаем удаление Auth даже если Firestore не удалился (пользователь может попробовать снова)
+                        // продолжить удаление Auth даже если Firestore не удалился (пользователь может попробовать снова)
                         deleteFirebaseAuthAccount();
                     });
-
-            /*db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .delete()
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void unused) {
-                            Log.d(TAG, "User DocumentSnapshot successfully deleted");
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w(TAG, "Error deleting user document", e);
-                        }
-                    });*/
         }
         catch(Exception exception){
             Toast.makeText(requireContext(), getErrorMessage(exception), Toast.LENGTH_LONG).show();
@@ -235,12 +192,12 @@ public class DeleteAccountDialogFragment extends DialogFragment {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user == null) {
-            // Пользователь уже удалён, переходим к очистке локальных данных
+            // пользователь уже удалён, переход к очистке локальных данных
             cleanupAfterDeletion();
             return;
         }
 
-        // Шаг 3: Удаляем аккаунт Firebase Auth
+        // 3. Удаление аккаунта Firebase Auth
         user.delete()
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -258,19 +215,17 @@ public class DeleteAccountDialogFragment extends DialogFragment {
     }
 
     private void cleanupAfterDeletion() {
-        // Шаг 4: Очищаем все локальные данные пользователя и создаём нового гостя
+        // 4. Очиска всех локальных данных пользователя и создание нового гостя
         dataManager.handleAccountDeletion();
 
-        // Шаг 5: Показываем сообщение об успешном удалении
+        // 5. Сообщение об успешном удалении
         Toast.makeText(requireContext(), getString(R.string.user_deleted), Toast.LENGTH_LONG).show();
 
         progressDialog.dismiss();
 
-        // Шаг 6: Закрываем диалог
+        // 6. Закрытие диалога
         dismiss();
 
-        // Шаг 7: Завершаем AccountSettingsActivity и возвращаемся в MainActivity
-        // Используем Intent с флагами для очистки стека активностей
         if (getActivity() != null) {
             /*Intent intent = new Intent(requireContext(), MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

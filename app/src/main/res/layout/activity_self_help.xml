@@ -7,11 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".SelfHelpActivity"
     >
-<!--
-    Using fillViewPort makes the ScrollView fill the parent area.
-    Setting the layout_weight on one of the views in the LinearLayout
-        makes that view expand to fill any extra space.
--->
 
     <ScrollView
         android:layout_width="match_parent"
@@ -19,10 +14,6 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:fillViewport="true"
         >
-<!--    android:scrollbars="vertical"
-        android:scrollbarFadeDuration="@integer/material_motion_duration_short_1"
-        android:scrollbarStyle="insideOverlay"
-        removed -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -262,6 +253,7 @@
             </LinearLayout>
 
         </LinearLayout>
+
     </ScrollView>
 
     <ImageButton

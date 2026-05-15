@@ -13,7 +13,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 public class ProgressDialogFragment extends DialogFragment {
-
     ProgressBar progressBar;
 
     @Override
@@ -22,7 +21,6 @@ public class ProgressDialogFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_progress_dark, container, false);
 
         progressBar=view.findViewById(R.id.progress_bar);
-
         progressBar.getProgress();
 
         return view;

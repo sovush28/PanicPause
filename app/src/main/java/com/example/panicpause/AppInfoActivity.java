@@ -76,15 +76,11 @@ public class AppInfoActivity extends AppCompatActivity {
     private void goToGroundSettingsActivity(){
         Intent intent = new Intent(this, GroundSettingsActivity.class);
         startActivity(intent);
-        //overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        //finish();
     }
 
     private void goToSetTriggersActivity(){
         Intent intent = new Intent(this, SetTriggersActivity.class);
         startActivity(intent);
-        //overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        //finish();
     }
 
     private void showWhatsTriggerDialog(){
@@ -93,7 +89,7 @@ public class AppInfoActivity extends AppCompatActivity {
             dialog.show(getSupportFragmentManager(), "whats_trigger_dialog");
         }
         catch(IllegalStateException ex){
-            // Обработка случая, когда Activity уничтожается
+            // обработка случая, когда Activity уничтожается
             Log.e("Dialog", "Cannot show dialog - activity state invalid");
         }
     }

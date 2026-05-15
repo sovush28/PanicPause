@@ -19,7 +19,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 
 public class ResetPasswordActivity extends AppCompatActivity {
-
     private EditText emailET;
     private Button sendLinkBtn;
     private TextView cancelTV;
@@ -90,11 +89,10 @@ public class ResetPasswordActivity extends AppCompatActivity {
             progressDialog.show(getSupportFragmentManager(), "progress_dialog");
         }
         catch(IllegalStateException ex){
-            // Обработка случая, когда Activity уничтожается
             Log.e("Dialog", "Cannot show dialog - activity state invalid");
         }
 
-        // ОТПРАВКА ЗАПРОСА В FIREBASE
+        // отправка запроса в Firebase
         mAuth.sendPasswordResetEmail(email)
                 .addOnCompleteListener(task -> {
                     progressDialog.dismiss();
@@ -108,13 +106,11 @@ public class ResetPasswordActivity extends AppCompatActivity {
     }
 
     private boolean validateEmail(String email) {
-        // Проверка на пустоту
         if (email == null || email.isEmpty()) {
             Toast.makeText(this,R.string.enter_email, Toast.LENGTH_SHORT).show();
             return false;
         }
-
-        // Проверка формата через regex
+        // проверка формата через regex
         if (!email.matches(EMAIL_PATTERN) ||
                 !email.contains("@") || !email.contains(".")) {
             Toast.makeText(this,R.string.invalid_email_error, Toast.LENGTH_SHORT).show();
@@ -150,7 +146,6 @@ public class ResetPasswordActivity extends AppCompatActivity {
             dialog.show(getSupportFragmentManager(), "reset_passw_dialog");
         }
         catch(IllegalStateException ex){
-            // Обработка случая, когда Activity уничтожается
             Log.e("Dialog", "Cannot show dialog - activity state invalid");
         }
     }

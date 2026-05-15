@@ -15,19 +15,18 @@ import com.bumptech.glide.Glide;
 import java.io.File;
 
 /**
- * DialogFragment для полноэкранного просмотра фото.
+ * FullscreenImageDialogFragment - DialogFragment для полноэкранного просмотра фото.
  * Показывает изображение по URL, поддерживает локальные и сетевые файлы.
  * Закрывается по клику на изображение или фон.
  */
 public class FullscreenImageDialogFragment extends DialogFragment {
-
     private String imageUrl;
     private Context context;
 
     /**
-     * Создаёт новый экземпляр диалога.
+     * Метод newInstance создаёт новый экземпляр диалога.
      * @param imageUrl URL или путь к изображению
-     * @return Новый экземпляр
+     * @return Новый экземпляр диалога
      */
     public static FullscreenImageDialogFragment newInstance(String imageUrl) {
         FullscreenImageDialogFragment fragment = new FullscreenImageDialogFragment();
@@ -40,9 +39,9 @@ public class FullscreenImageDialogFragment extends DialogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Устанавливаем стиль без заголовка
+        // стиль без заголовка
         setStyle(DialogFragment.STYLE_NO_TITLE, 0);
-        // Получаем данные из аргументов
+        // получение данных из аргументов
         if (getArguments() != null) {
             imageUrl = getArguments().getString("image_url");
         }
@@ -54,7 +53,7 @@ public class FullscreenImageDialogFragment extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        // Убираем фон окна
+        // убрать фон окна
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
@@ -68,17 +67,17 @@ public class FullscreenImageDialogFragment extends DialogFragment {
         androidx.appcompat.widget.AppCompatImageView fullscreenImageView =
                 view.findViewById(R.id.fullscreen_image_view);
 
-        // Загружаем изображение
+        // загрузка изображения
         loadPhoto(imageUrl, fullscreenImageView);
 
-        // Закрытие по клику на изображение
+        // закрытие по клику на изображение
         fullscreenImageView.setOnClickListener(v -> dismiss());
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        // Настройка размеров диалога
+        // настройка размеров диалога
         Dialog dialog = getDialog();
         if (dialog != null && dialog.getWindow() != null) {
             Window window = dialog.getWindow();
